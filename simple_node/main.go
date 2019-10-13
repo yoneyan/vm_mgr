@@ -5,7 +5,7 @@ import (
 	"github.com/urfave/cli"
 	"os"
 	"os/exec"
-	_ "os/exec"
+	"strconv"
 )
 
 func main() {
@@ -20,7 +20,7 @@ func main() {
 
 	app.Name = "vm_mgr"
 	app.Usage = "This app echo input arguments"
-	app.Version = "0.1"
+	app.Version = "0.0.2"
 	app.Commands = []cli.Command{
 		{
 			Name:    "create",
@@ -43,7 +43,7 @@ func main() {
 						},
 					},
 					Action: func(c *cli.Context) error {
-						out, err := exec.Command("qemu-img", "create", "-f", "qcow2", path, size).Output()
+						out, err := exec.Command("qemu-img", "create", "-f", "qcow2", path, strconv.Itoa(size)).Output()
 						if err != nil {
 							fmt.Println(err.Error())
 							os.Exit(1)
