@@ -20,8 +20,28 @@ func main() {
 
 	app.Name = "vm_mgr"
 	app.Usage = "This app echo input arguments"
-	app.Version = "0.0.2"
+	app.Version = "0.0.3"
 	app.Commands = []cli.Command{
+		{
+			Name:    "install",
+			Aliases: []string{"c"},
+			Usage:   "install kvm",
+			Action: func(c *cli.Context) error {
+				if f, err := os.Stat("/etc/redhat-release"); os.IsNotExist(err) || f.IsDir() {
+					fmt.Println("Not exists！")
+				} else {
+					fmt.Println("This working os is CentOS")
+					out, err := exec.Command("sudo ", "yum", "-y", "install", "qemu-img", "qemu-kvm", "libvirt", "virt-install", "bridge-utils").Output()
+					if err != nil {
+						fmt.Println(err.Error())
+						os.Exit(1)
+					}
+					fmt.Println(string(out))
+				}
+
+				return nil
+			},
+		},
 		{
 			Name:    "create",
 			Aliases: []string{"c"},
