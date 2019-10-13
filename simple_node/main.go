@@ -18,7 +18,7 @@ func main() {
 
 	app.Name = "vm_mgr"
 	app.Usage = "This app echo input arguments"
-	app.Version = "0.0.3.2"
+	app.Version = "0.0.3.3"
 	app.Commands = []cli.Command{
 		{
 			Name:    "install",
@@ -76,56 +76,56 @@ func main() {
 					Usage: "vm",
 					Flags: []cli.Flag{
 						cli.StringFlag{
-							Name:        "name",
+							Name:        "n,name",
 							Usage:       "vm name",
 							Destination: &value[0],
 							Value:       "none",
 						},
 						cli.StringFlag{
-							Name:        "c",
+							Name:        "c,core",
 							Required:    true,
 							Destination: &value[1],
 							Value:       "none",
 						},
 						cli.StringFlag{
-							Name:        "m",
+							Name:        "m,memory",
 							Required:    true,
 							Destination: &value[2],
 							Value:       "none",
 						},
 						cli.StringFlag{
-							Name:        "t",
+							Name:        "t,type",
 							Usage:       "os-type",
 							Destination: &value[3],
 							Value:       "none",
 						},
 						cli.StringFlag{
-							Name:        "v",
+							Name:        "v,variant",
 							Usage:       "os-variant",
 							Destination: &value[4],
 							Value:       "none",
 						},
 						cli.StringFlag{
-							Name:        "disk",
+							Name:        "d,disk",
 							Usage:       "disk path",
 							Destination: &value[5],
 							Value:       "none",
 						},
 						cli.StringFlag{
-							Name:        "iso",
+							Name:        "I,iso",
 							Usage:       "iso",
 							Destination: &value[6],
 							Value:       "none",
 						},
 						cli.StringFlag{
-							Name:        "net, N",
+							Name:        "N,net",
 							Usage:       "network",
 							Destination: &value[7],
 							Value:       "none",
 						},
 
 						cli.StringFlag{
-							Name:        "vnc",
+							Name:        "V,vnc",
 							Usage:       "vnc port",
 							Destination: &value[8],
 							Value:       "none",
