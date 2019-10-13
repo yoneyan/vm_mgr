@@ -5,7 +5,6 @@ import (
 	"github.com/urfave/cli"
 	"os"
 	"os/exec"
-	"strconv"
 )
 
 func main() {
@@ -13,14 +12,13 @@ func main() {
 	command := []string{"--name ", "--vcpus ", "--ram ", "--os-type ", "--os-variant ", "--disk path= ", "--cdrom ", "--network=bridge:", "--graphics vnc,listen=0.0.0.0,port="}
 	value := []string{"none", "none", "none", "none", "none", "none", "none", "none", "none", "none"}
 
-	var path string
-	var size int
+	var path, size string
 
 	app := cli.NewApp()
 
 	app.Name = "vm_mgr"
 	app.Usage = "This app echo input arguments"
-	app.Version = "0.0.3.1"
+	app.Version = "0.0.3.2"
 	app.Commands = []cli.Command{
 		{
 			Name:    "install",
@@ -28,7 +26,7 @@ func main() {
 			Usage:   "install kvm",
 			Action: func(c *cli.Context) error {
 				if f, err := os.Stat("/etc/redhat-release"); os.IsNotExist(err) || f.IsDir() {
-					fmt.Println("Not exists！")
+					fmt.Println("not compatible")
 				} else {
 					fmt.Println("This working os is CentOS")
 					out, err := exec.Command("yum", "-y", "install", "qemu-img", "qemu-kvm", "libvirt", "virt-install", "bridge-utils").Output()
@@ -51,7 +49,7 @@ func main() {
 					Name:  "storage",
 					Usage: "storage",
 					Flags: []cli.Flag{
-						cli.IntFlag{
+						cli.StringFlag{
 							Name:        "size, s",
 							Usage:       "disk size",
 							Destination: &size,
@@ -63,7 +61,7 @@ func main() {
 						},
 					},
 					Action: func(c *cli.Context) error {
-						out, err := exec.Command("qemu-img", "create", "-f", "qcow2", path, strconv.Itoa(size)).Output()
+						out, err := exec.Command("qemu-img", "create", "-f", "qcow2", path, size).Output()
 						if err != nil {
 							fmt.Println(err.Error())
 							os.Exit(1)
