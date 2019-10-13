@@ -1,22 +1,149 @@
-/*
-Copyright © 2019 NAME HERE <EMAIL ADDRESS>
-
-Licensed under the Apache License, Version 2.0 (the "License");
-you may not use this file except in compliance with the License.
-You may obtain a copy of the License at
-
-    http://www.apache.org/licenses/LICENSE-2.0
-
-Unless required by applicable law or agreed to in writing, software
-distributed under the License is distributed on an "AS IS" BASIS,
-WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-See the License for the specific language governing permissions and
-limitations under the License.
-*/
 package main
 
-import "cmd"
+import (
+	"fmt"
+	"github.com/urfave/cli"
+	"os"
+	"os/exec"
+	_ "os/exec"
+)
 
 func main() {
-	cmd.Execute()
+
+	command := []string{"--name ", "--vcpus ", "--ram ", "--os-type ", "--os-variant ", "--disk path= ", "--cdrom ", "--network=bridge:", "--graphics vnc,listen=0.0.0.0,port="}
+	value := []string{"none", "none", "none", "none", "none", "none", "none", "none", "none", "none"}
+
+	var path string
+	var size int
+
+	app := cli.NewApp()
+
+	app.Name = "vm_mgr"
+	app.Usage = "This app echo input arguments"
+	app.Version = "0.1"
+	app.Commands = []cli.Command{
+		{
+			Name:    "create",
+			Aliases: []string{"c"},
+			Usage:   "vm create command",
+			Subcommands: []cli.Command{
+				{
+					Name:  "storage",
+					Usage: "storage",
+					Flags: []cli.Flag{
+						cli.IntFlag{
+							Name:        "size, s",
+							Usage:       "disk size",
+							Destination: &size,
+						},
+						cli.StringFlag{
+							Name:        "path, p",
+							Usage:       "disk path",
+							Destination: &path,
+						},
+					},
+					Action: func(c *cli.Context) error {
+						out, err := exec.Command("qemu-img", "create", "-f", "qcow2", path, size).Output()
+						if err != nil {
+							fmt.Println(err.Error())
+							os.Exit(1)
+						}
+						fmt.Println(string(out))
+
+						return nil
+					},
+				},
+				{
+					Name:  "vm",
+					Usage: "vm",
+					Flags: []cli.Flag{
+						cli.StringFlag{
+							Name:        "name",
+							Usage:       "vm name",
+							Destination: &value[0],
+							Value:       "none",
+						},
+						cli.StringFlag{
+							Name:        "c",
+							Required:    true,
+							Destination: &value[1],
+							Value:       "none",
+						},
+						cli.StringFlag{
+							Name:        "m",
+							Required:    true,
+							Destination: &value[2],
+							Value:       "none",
+						},
+						cli.StringFlag{
+							Name:        "t",
+							Usage:       "os-type",
+							Destination: &value[3],
+							Value:       "none",
+						},
+						cli.StringFlag{
+							Name:        "v",
+							Usage:       "os-variant",
+							Destination: &value[4],
+							Value:       "none",
+						},
+						cli.StringFlag{
+							Name:        "disk",
+							Usage:       "disk path",
+							Destination: &value[5],
+							Value:       "none",
+						},
+						cli.StringFlag{
+							Name:        "iso",
+							Usage:       "iso",
+							Destination: &value[6],
+							Value:       "none",
+						},
+						cli.StringFlag{
+							Name:        "net, N",
+							Usage:       "network",
+							Destination: &value[7],
+							Value:       "none",
+						},
+
+						cli.StringFlag{
+							Name:        "vnc",
+							Usage:       "vnc port",
+							Destination: &value[8],
+							Value:       "none",
+						},
+					},
+					Action: func(c *cli.Context) error {
+
+						for i := range command {
+							fmt.Printf("%s: %s\n", command[i], value[i])
+						}
+
+						var command_exec []string
+
+						for i := range value {
+							if value[i] == "none" {
+
+							} else {
+								command_exec = append(command_exec, command[i]+value[i])
+							}
+						}
+
+						fmt.Println(command_exec)
+
+						out, err := exec.Command("virt-install", command_exec...).Output()
+						if err != nil {
+							fmt.Println(err.Error())
+							os.Exit(1)
+						}
+						fmt.Println(string(out))
+
+						return nil
+					},
+				},
+			},
+		},
+	}
+
+	app.Run(os.Args)
 }
