@@ -150,26 +150,25 @@ func main() {
 						}
 
 						fmt.Println(command_exec)
-
-						cmd := exec.Command("virt-install", command_exec...)
-						output, err := cmd.CombinedOutput()
-						if err != nil {
-							fmt.Println(fmt.Sprint(err) + ": " + string(output))
-							return nil
-						} else {
-							fmt.Println(string(output))
-						}
-
 						/*
-							out, err := exec.Command("virt-install","--name","test").Output()
-							fmt.Println(string(out))
+							cmd := exec.Command("virt-install", command_exec...)
+							output, err := cmd.CombinedOutput()
 							if err != nil {
-								fmt.Println(err.Error()+ ": " + string(out))
-								os.Exit(1)
+								fmt.Println(fmt.Sprint(err) + ": " + string(output))
+								return nil
+							} else {
+								fmt.Println(string(output))
 							}
-							return nil*/
+						*/
 
+						out, err := exec.Command("virt-install", command_exec...).Output()
+						fmt.Println(string(out))
+						if err != nil {
+							fmt.Println(err.Error() + ": " + string(out))
+							os.Exit(1)
+						}
 						return nil
+
 					},
 				},
 			},
