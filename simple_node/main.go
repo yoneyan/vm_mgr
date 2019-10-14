@@ -138,10 +138,10 @@ func main() {
 						}
 
 						var command_exec []string
-
-						command_exec = append(command_exec, "-c")
-						command_exec = append(command_exec, "virt-install")
-
+						/*
+							command_exec = append(command_exec, "-c")
+							command_exec = append(command_exec, "virt-install")
+						*/
 						for i := range value {
 							if value[i] == "none" {
 
@@ -154,19 +154,18 @@ func main() {
 
 						fmt.Println(command_exec)
 						/*
-								cmd := exec.Command("virt-install", command_exec...)
-								output, err := cmd.CombinedOutput()
-								if err != nil {
-									fmt.Println(fmt.Sprint(err) + ": " + string(output))
-									return nil
-								} else {
-									fmt.Println(string(output))
-								}
+							cmd := exec.Command("virt-install", command_exec...)
+							output, err := cmd.CombinedOutput()
+							if err != nil {
+								fmt.Println(fmt.Sprint(err) + ": " + string(output))
+								return nil
+							} else {
+								fmt.Println(string(output))
+							}
 
 
-							command_test := "--name database1 --vcpus 4 --memory 8192 --os-type linux --os-variant rhel8.0 --disk path=/mnt/bootdata/kvm/images/database1.img --cdrom /mnt/bootdata/kvm/isos/CentOS-8-x86_64-1905-dvd1.iso --graphics vnc,listen=0.0.0.0,port=5912"
 						*/
-						out, err := exec.Command("sh", command_exec...).Output()
+						out, err := exec.Command("/bin/virt-install", command_exec...).Output()
 						fmt.Println(string(out))
 						if err != nil {
 							fmt.Println(err.Error() + ": " + string(out))
