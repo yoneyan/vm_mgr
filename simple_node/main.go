@@ -161,7 +161,9 @@ func main() {
 							}
 						*/
 
-						out, err := exec.Command("virt-install", command_exec...).Output()
+						command_test := "virt-install --name database1 --vcpus 4 --memory 8192 --os-type linux --os-variant rhel8.0 --disk path=/mnt/bootdata/kvm/images/database1.img --cdrom /mnt/bootdata/kvm/isos/CentOS-8-x86_64-1905-dvd1.iso --graphics vnc,listen=0.0.0.0,port=5912"
+
+						out, err := exec.Command(command_test).Output()
 						fmt.Println(string(out))
 						if err != nil {
 							fmt.Println(err.Error() + ": " + string(out))
