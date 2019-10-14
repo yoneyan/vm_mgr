@@ -19,7 +19,7 @@ func main() {
 
 	app.Name = "vm_mgr"
 	app.Usage = "This app echo input arguments"
-	app.Version = "0.0.3.6.5"
+	app.Version = "0.0.3.6.6"
 	app.Commands = []cli.Command{
 		{
 			Name:    "install",
@@ -140,9 +140,9 @@ func main() {
 
 						var command_exec []string
 						/*
-							command_exec = append(command_exec, "-c")
-							command_exec = append(command_exec, "virt-install")
-						*/
+							command_exec = append(command_exec, "-c")*/
+						command_exec = append(command_exec, "virt-install")
+
 						for i := range value {
 							if value[i] == "none" {
 
