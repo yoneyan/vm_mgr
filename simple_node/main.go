@@ -9,7 +9,7 @@ import (
 
 func main() {
 
-	command := []string{"--name ", "--vcpus ", "--memory ", "--os-type ", "--os-variant ", "--disk path= ", "--cdrom ", "--network=bridge:", "--graphics vnc,listen=0.0.0.0,port="}
+	command := []string{"--name ", "--vcpus ", "--memory ", "--os-type ", "--os-variant ", "--disk path=", "--cdrom ", "--network=bridge:", "--graphics vnc,listen=0.0.0.0,port="}
 	value := []string{"none", "none", "none", "none", "none", "none", "none", "none", "none", "none"}
 
 	var path, size string
@@ -18,7 +18,7 @@ func main() {
 
 	app.Name = "vm_mgr"
 	app.Usage = "This app echo input arguments"
-	app.Version = "0.0.3.4"
+	app.Version = "0.0.3.5"
 	app.Commands = []cli.Command{
 		{
 			Name:    "install",
