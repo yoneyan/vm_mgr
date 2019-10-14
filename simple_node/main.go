@@ -5,6 +5,7 @@ import (
 	"github.com/urfave/cli"
 	"os"
 	"os/exec"
+	"strings"
 )
 
 func main() {
@@ -18,7 +19,7 @@ func main() {
 
 	app.Name = "vm_mgr"
 	app.Usage = "This app echo input arguments"
-	app.Version = "0.0.3.6.4"
+	app.Version = "0.0.3.6.5"
 	app.Commands = []cli.Command{
 		{
 			Name:    "install",
@@ -154,7 +155,7 @@ func main() {
 
 						fmt.Println(command_exec)
 
-						cmd := exec.Command("virt-install", command_exec...)
+						cmd := exec.Command(os.Getenv("SHELL"), "-c", strings.Join(command_exec, " "))
 						output, err := cmd.CombinedOutput()
 						if err != nil {
 							fmt.Println(fmt.Sprint(err) + ": " + string(output))
