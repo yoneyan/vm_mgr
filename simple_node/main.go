@@ -9,7 +9,7 @@ import (
 
 func main() {
 
-	command := []string{"--name ", "--vcpus ", "--ram ", "--os-type ", "--os-variant ", "--disk path= ", "--cdrom ", "--network=bridge:", "--graphics vnc,listen=0.0.0.0,port="}
+	command := []string{"--name ", "--vcpus ", "--memory ", "--os-type ", "--os-variant ", "--disk path= ", "--cdrom ", "--network=bridge:", "--graphics vnc,listen=0.0.0.0,port="}
 	value := []string{"none", "none", "none", "none", "none", "none", "none", "none", "none", "none"}
 
 	var path, size string
@@ -18,7 +18,7 @@ func main() {
 
 	app.Name = "vm_mgr"
 	app.Usage = "This app echo input arguments"
-	app.Version = "0.0.3.3"
+	app.Version = "0.0.3.4"
 	app.Commands = []cli.Command{
 		{
 			Name:    "install",
@@ -144,17 +144,30 @@ func main() {
 
 							} else {
 								command_exec = append(command_exec, command[i]+value[i])
+								/*command_exec = append(command_exec,command[i])
+								command_exec = append(command_exec,value[i])*/
 							}
 						}
 
 						fmt.Println(command_exec)
 
-						out, err := exec.Command("virt-install", command_exec...).Output()
+						cmd := exec.Command("virt-install", command_exec...)
+						output, err := cmd.CombinedOutput()
 						if err != nil {
-							fmt.Println(err.Error())
-							os.Exit(1)
+							fmt.Println(fmt.Sprint(err) + ": " + string(output))
+							return nil
+						} else {
+							fmt.Println(string(output))
 						}
-						fmt.Println(string(out))
+
+						/*
+							out, err := exec.Command("virt-install","--name","test").Output()
+							fmt.Println(string(out))
+							if err != nil {
+								fmt.Println(err.Error()+ ": " + string(out))
+								os.Exit(1)
+							}
+							return nil*/
 
 						return nil
 					},
