@@ -19,7 +19,7 @@ func main() {
 
 	app.Name = "vm_mgr"
 	app.Usage = "This app echo input arguments"
-	app.Version = "0.0.3.6.6"
+	app.Version = "0.1"
 	app.Commands = []cli.Command{
 		{
 			Name:    "install",
@@ -78,6 +78,7 @@ func main() {
 					Flags: []cli.Flag{
 						cli.StringFlag{
 							Name:        "n,name",
+							Required:    true,
 							Usage:       "vm name",
 							Destination: &value[0],
 							Value:       "none",
@@ -139,8 +140,7 @@ func main() {
 						}
 
 						var command_exec []string
-						/*
-							command_exec = append(command_exec, "-c")*/
+
 						command_exec = append(command_exec, "virt-install")
 
 						for i := range value {
@@ -148,8 +148,6 @@ func main() {
 
 							} else {
 								command_exec = append(command_exec, command[i]+value[i])
-								/*command_exec = append(command_exec,command[i])
-								command_exec = append(command_exec,value[i])*/
 							}
 						}
 
@@ -163,14 +161,6 @@ func main() {
 						} else {
 							fmt.Println(string(output))
 						}
-
-						/*
-							out, err := exec.Command("echo", command_exec...).Output()
-							fmt.Println(string(out))
-							if err != nil {
-								fmt.Println(err.Error() + ": " + string(out))
-								os.Exit(1)
-							}*/
 						return nil
 
 					},
