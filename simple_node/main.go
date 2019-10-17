@@ -13,7 +13,7 @@ func main() {
 
 	app.Name = "vm_mgr"
 	app.Usage = "This app echo input arguments"
-	app.Version = "0.1"
+	app.Version = "0.1.2"
 	app.Commands = []cli.Command{
 		{
 			Name:    "install",
@@ -77,16 +77,16 @@ func main() {
 						command_exec = append(command_exec, "virt-install")
 						command_exec = append(command_exec, "--name "+c.String("name"))
 						if c.String("core") != "" {
-							command_exec = append(command_exec, "--vcpus"+c.String("core"))
+							command_exec = append(command_exec, "--vcpus "+c.String("core"))
 						}
 						if c.String("memory") != "" {
-							command_exec = append(command_exec, "--memory"+c.String("memory"))
+							command_exec = append(command_exec, "--memory "+c.String("memory"))
 						}
 						if c.String("os-type") != "" {
-							command_exec = append(command_exec, "--os-type"+c.String("type"))
+							command_exec = append(command_exec, "--os-type "+c.String("type"))
 						}
 						if c.String("variant") != "" {
-							command_exec = append(command_exec, "--os-variant"+c.String("variant"))
+							command_exec = append(command_exec, "--os-variant "+c.String("variant"))
 						}
 						if c.String("disk") != "" {
 							command_exec = append(command_exec, "--disk path="+c.String("disk"))
