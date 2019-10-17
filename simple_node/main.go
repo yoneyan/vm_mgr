@@ -9,12 +9,6 @@ import (
 )
 
 func main() {
-
-	command := []string{"--name ", "--vcpus ", "--memory ", "--os-type ", "--os-variant ", "--disk path=", "--cdrom ", "--network=bridge:", "--graphics vnc,listen=0.0.0.0,port="}
-	value := []string{"none", "none", "none", "none", "none", "none", "none", "none", "none", "none"}
-
-	var path, size string
-
 	app := cli.NewApp()
 
 	app.Name = "vm_mgr"
@@ -50,19 +44,11 @@ func main() {
 					Name:  "storage",
 					Usage: "storage",
 					Flags: []cli.Flag{
-						cli.StringFlag{
-							Name:        "size, s",
-							Usage:       "disk size",
-							Destination: &size,
-						},
-						cli.StringFlag{
-							Name:        "path, p",
-							Usage:       "disk path",
-							Destination: &path,
-						},
+						cli.StringFlag{Name: "size, s"},
+						cli.StringFlag{Name: "path, p"},
 					},
 					Action: func(c *cli.Context) error {
-						out, err := exec.Command("qemu-img", "create", "-f", "qcow2", path, size).Output()
+						out, err := exec.Command("qemu-img", "create", "-f", "qcow2", c.String("path"), c.String("size")).Output()
 						if err != nil {
 							fmt.Println(err.Error())
 							os.Exit(1)
@@ -76,79 +62,43 @@ func main() {
 					Name:  "vm",
 					Usage: "vm",
 					Flags: []cli.Flag{
-						cli.StringFlag{
-							Name:        "n,name",
-							Required:    true,
-							Usage:       "vm name",
-							Destination: &value[0],
-							Value:       "none",
-						},
-						cli.StringFlag{
-							Name:        "c,core",
-							Required:    true,
-							Destination: &value[1],
-							Value:       "none",
-						},
-						cli.StringFlag{
-							Name:        "m,memory",
-							Required:    true,
-							Destination: &value[2],
-							Value:       "none",
-						},
-						cli.StringFlag{
-							Name:        "t,type",
-							Usage:       "os-type",
-							Destination: &value[3],
-							Value:       "none",
-						},
-						cli.StringFlag{
-							Name:        "v,variant",
-							Usage:       "os-variant",
-							Destination: &value[4],
-							Value:       "none",
-						},
-						cli.StringFlag{
-							Name:        "d,disk",
-							Usage:       "disk path",
-							Destination: &value[5],
-							Value:       "none",
-						},
-						cli.StringFlag{
-							Name:        "I,iso",
-							Usage:       "iso",
-							Destination: &value[6],
-							Value:       "none",
-						},
-						cli.StringFlag{
-							Name:        "N,net",
-							Usage:       "network",
-							Destination: &value[7],
-							Value:       "none",
-						},
-
-						cli.StringFlag{
-							Name:        "V,vnc",
-							Usage:       "vnc port",
-							Destination: &value[8],
-							Value:       "none",
-						},
+						cli.StringFlag{Name: "n,name"},
+						cli.StringFlag{Name: "c,core"},
+						cli.StringFlag{Name: "m,memory"},
+						cli.StringFlag{Name: "t,type"},
+						cli.StringFlag{Name: "v,variant"},
+						cli.StringFlag{Name: "d,disk"},
+						cli.StringFlag{Name: "I,iso"},
+						cli.StringFlag{Name: "N,net"},
+						cli.StringFlag{Name: "V,vnc"},
 					},
 					Action: func(c *cli.Context) error {
-
-						for i := range command {
-							fmt.Printf("%s: %s\n", command[i], value[i])
-						}
-
 						var command_exec []string
-
 						command_exec = append(command_exec, "virt-install")
-
-						for i := range value {
-							if value[i] == "none" {
-
-							} else {
-								command_exec = append(command_exec, command[i]+value[i])
-							}
+						command_exec = append(command_exec, "--name "+c.String("name"))
+						if c.String("core") != "" {
+							command_exec = append(command_exec, "--vcpus"+c.String("core"))
+						}
+						if c.String("memory") != "" {
+							command_exec = append(command_exec, "--memory"+c.String("memory"))
+						}
+						if c.String("os-type") != "" {
+							command_exec = append(command_exec, "--os-type"+c.String("type"))
+						}
+						if c.String("variant") != "" {
+							command_exec = append(command_exec, "--os-variant"+c.String("variant"))
+						}
+						if c.String("disk") != "" {
+							command_exec = append(command_exec, "--disk path="+c.String("disk"))
+						}
+						if c.String("iso") != "" {
+							command_exec = append(command_exec, "--cdrom "+c.String("iso"))
+						}
+						if c.String("net") != "" {
+							command_exec = append(command_exec, "--network=bridge:"+c.String("net"))
+						}
+						if c.String("vnc") != "" {
+							command_exec = append(command_exec, "--graphics vnc,listen=0.0.0.0,port="+c.String("vnc"))
 						}
 
 						fmt.Println(command_exec)
@@ -162,7 +112,6 @@ func main() {
 							fmt.Println(string(output))
 						}
 						return nil
-
 					},
 				},
 			},
