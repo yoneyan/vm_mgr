@@ -2,7 +2,8 @@ package main
 
 import (
 	"fmt"
-	"github.com/urfave/cli"
+	//"github.com/urfave/cli"
+	"gopkg.in/urfave/cli.v1"
 	"os"
 	"os/exec"
 	"strings"
