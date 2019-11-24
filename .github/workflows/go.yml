@@ -26,4 +26,4 @@ jobs:
         cd simple_node
 
     - name: Build
-      run: go build -v .
+      run: go build simple_node/main.go
