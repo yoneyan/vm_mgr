@@ -23,6 +23,7 @@ jobs:
             curl https://raw.githubusercontent.com/golang/dep/master/install.sh | sh
             dep ensure
         fi
+        cd simple_node
 
     - name: Build
       run: go build -v .
