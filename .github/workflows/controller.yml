@@ -1,4 +1,4 @@
-name: Go
+name: Go-controller
 on: [push]
 jobs:
 
@@ -25,4 +25,4 @@ jobs:
         fi
         cd simple_node
     - name: Build
-      run: go build controller
+      run: go build controller/
