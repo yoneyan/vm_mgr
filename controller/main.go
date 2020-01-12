@@ -25,11 +25,20 @@ func main() {
 			},
 		},
 		{
-			Name:    "test",
-			Aliases: []string{"t"},
-			Usage:   "test script",
+			Name:    "test-1",
+			Aliases: []string{"t1"},
+			Usage:   "test1 script",
 			Action: func(c *cli.Context) error {
 				fmt.Println(initdb())
+				return nil
+			},
+		},
+		{
+			Name:    "test-2",
+			Aliases: []string{"t2"},
+			Usage:   "test2 script",
+			Action: func(c *cli.Context) error {
+				fmt.Println(sshTest())
 				return nil
 			},
 		},
