@@ -37,7 +37,6 @@ func initdb() bool {
 			panic(err)
 			value = false
 		}
-
 		//create node data table
 		_, err = db.Exec(`CREATE TABLE IF NOT EXISTS "node"("id" INTEGER PRIMARY KEY,"name" varchar,"ip" varchar,"port" integer,"cpu" integer,"memory" integer,"storage" integer)`,)
 		if err != nil{
@@ -45,7 +44,6 @@ func initdb() bool {
 			panic(err)
 			value = false
 		}
-
 		//create vm data table
 		_, err = db.Exec(`CREATE TABLE IF NOT EXISTS "node"("id" INTEGER PRIMARY KEY,"name" varchar,"vcpu" integer,"vmemory" integer,"vstorage" integer,"vnc" integer,)`,)
 		if err != nil{
@@ -53,7 +51,6 @@ func initdb() bool {
 			panic(err)
 			value = false
 		}
-
 	*/
 	return value
 }
