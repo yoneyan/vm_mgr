@@ -25,6 +25,12 @@ func initdb() bool {
 	if err != nil {
 		panic(err)
 	}
+
+	_, err = db.Exec(`CREATE TABLE IF NOT EXISTS "user" ("id" INTEGER PRIMARY KEY, "name" VARCHAR(255), "pass" VARCHAR(255), "authority" INT)`)
+	if err != nil {
+		panic(err)
+	}
+
 	/*
 		//create controller data table
 		_, err = db.Exec(`CREATE TABLE IF NOT EXISTS "controller"{"id" INTEGER PRIMARY KEY,"name" varchar,"ip" varchar,"port" integer)`, )
@@ -76,6 +82,38 @@ func db_controller(function ,hostname, ip string, port int, user, password strin
 	}else if (function == "remove") {
 		delete_db := "DELETE FROM controller WHERE hostname = ?"
 		_, err = db.Exec(delete_db, hostname)
+		if err != nil {
+			log.Fatalln(err)
+			return false
+		}
+	}
+
+	return true
+}
+
+func db_user(function,name,pass string, authority int)bool{
+	db, err := sql.Open("sqlite3", db_name)
+	if err != nil {
+		log.Fatalln(err)
+		fmt.Println("SQL open error")
+		panic(err)
+		return false
+	}
+
+	if(function == "add"){
+		add_db, err := db.Prepare(`INSERT INTO "user" ("name","pass","authority") VALUES (?,?,?)`)
+		if err != nil {
+			panic(err)
+			return false
+		}
+
+		if _, err := add_db.Exec(name,pass,authority); err != nil {
+			panic(err)
+			return false
+		}
+	}else if (function == "delete") {
+		delete_db := "DELETE FROM user WHERE name = ?"
+		_, err = db.Exec(delete_db, name)
 		if err != nil {
 			log.Fatalln(err)
 			return false

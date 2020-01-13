@@ -30,9 +30,9 @@ func main() {
 					},
 				},
 				{
-					Name: "node",
+					Name:  "node",
 					Usage: "node",
-					Action: func(c *cli.Context) error{
+					Action: func(c *cli.Context) error {
 						fmt.Println("Not implemented")
 						return nil
 					},
@@ -83,6 +83,42 @@ func main() {
 					Action: func(c *cli.Context) error {
 						zero := "zero"
 						result := db_controller("remove", c.String("hostname"), zero, 0, zero, zero)
+						fmt.Println(result)
+
+						return nil
+					},
+				},
+			},
+		},
+		{
+			Name:    "user",
+			Aliases: []string{"u"},
+			Usage:   "user",
+			Subcommands: []cli.Command{
+				{
+					Name:  "add",
+					Usage: "user add",
+					Flags: []cli.Flag{
+						cli.StringFlag{Name: "name, n"},
+						cli.StringFlag{Name: "password, p"},
+						cli.StringFlag{Name: "authority, a"},
+					},
+					Action: func(c *cli.Context) error {
+						authority, _ := strconv.Atoi(c.String("authority"))
+						result := db_user("add", c.String("name"), c.String("password"), authority)
+						fmt.Println(result)
+
+						return nil
+					},
+				},
+				{
+					Name:  "delete",
+					Usage: "user delete",
+					Flags: []cli.Flag{
+						cli.StringFlag{Name: "name, n"},
+					},
+					Action: func(c *cli.Context) error {
+						result := db_user("delete", c.String("name"), "0", 100)
 						fmt.Println(result)
 
 						return nil
