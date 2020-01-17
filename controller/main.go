@@ -68,7 +68,7 @@ func main() {
 						port, _ = strconv.Atoi(c.String("port"))
 						result := sshTest(c.String("ip"), port, c.String("user"), c.String("pass"))
 						fmt.Println(result)
-						result = db_controller("add", c.String("hostname"), c.String("ip"), port, c.String("user"), c.String("pass"))
+						result = addDBController(controller{c.String("hostname"), c.String("ip"), port, c.String("user"), c.String("pass")})
 						fmt.Println(result)
 
 						return nil
@@ -81,8 +81,7 @@ func main() {
 						cli.StringFlag{Name: "hostname, H"},
 					},
 					Action: func(c *cli.Context) error {
-						zero := "zero"
-						result := db_controller("remove", c.String("hostname"), zero, 0, zero, zero)
+						result := deleteDBController(c.String("hostname"))
 						fmt.Println(result)
 
 						return nil
@@ -102,10 +101,14 @@ func main() {
 						cli.StringFlag{Name: "name, n"},
 						cli.StringFlag{Name: "password, p"},
 						cli.StringFlag{Name: "authority, a"},
+						cli.StringFlag{Name: "cpu, c"},
+						cli.StringFlag{Name: "memory, m"},
 					},
 					Action: func(c *cli.Context) error {
 						authority, _ := strconv.Atoi(c.String("authority"))
-						result := db_user("add", c.String("name"), c.String("password"), authority)
+						cpu, _ := strconv.Atoi(c.String("cpu"))
+						memory, _ := strconv.Atoi(c.String("memory"))
+						result := addDBUser(vmUser{c.String("name"), c.String("password"), authority, cpu, memory})
 						fmt.Println(result)
 
 						return nil
@@ -118,7 +121,21 @@ func main() {
 						cli.StringFlag{Name: "name, n"},
 					},
 					Action: func(c *cli.Context) error {
-						result := db_user("delete", c.String("name"), "0", 100)
+						result := deleteDBUser(c.String("name"))
+						fmt.Println(result)
+
+						return nil
+					},
+				},
+				{
+					Name:  "test_pass",
+					Usage: "verify password test",
+					Flags: []cli.Flag{
+						cli.StringFlag{Name: "name, n"},
+						cli.StringFlag{Name: "password, p"},
+					},
+					Action: func(c *cli.Context) error {
+						result := TestPassDBUser(c.String("name"), c.String("password"))
 						fmt.Println(result)
 
 						return nil

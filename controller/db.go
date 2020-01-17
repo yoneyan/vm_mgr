@@ -9,37 +9,52 @@ import (
 
 const db_name = "./main.sql"
 
-func initdb() bool {
+type controller struct {
+	HostName string
+	ip       string
+	port     int
+	user     string
+	password string
+}
 
-	value := true
+type vmUser struct {
+	Name      string
+	Pass      string
+	Authority int
+	MaxCPU    int
+	MaxMemory int
+}
 
+func connectdb() *sql.DB {
 	db, err := sql.Open("sqlite3", db_name)
 	if err != nil {
 		log.Fatalln(err)
 		fmt.Println("SQL open error")
 		panic(err)
-		value = false
 	}
 
-	_, err = db.Exec(`CREATE TABLE IF NOT EXISTS "controller" ("id" INTEGER PRIMARY KEY, "hostname" VARCHAR(255), "ip" VARCHAR(255), "port" INT, "user" VARCHAR(255),"password" VARCHAR(255))`)
+	//defer db.Close()
+
+	return db
+}
+
+func createdb(database string) bool {
+	db := *connectdb()
+
+	_, err := db.Exec(database)
 	if err != nil {
-		panic(err)
+		log.Fatalln(err)
+		return false
 	}
+	return true
+}
 
-	_, err = db.Exec(`CREATE TABLE IF NOT EXISTS "user" ("id" INTEGER PRIMARY KEY, "name" VARCHAR(255), "pass" VARCHAR(255), "authority" INT)`)
-	if err != nil {
-		panic(err)
-	}
+func initdb() bool {
+	createdb(`CREATE TABLE IF NOT EXISTS "controller" ("id" INTEGER PRIMARY KEY, "hostname" VARCHAR(255), "ip" VARCHAR(255), "port" INT, "user" VARCHAR(255),"password" VARCHAR(255))`)
 
+	createdb(`CREATE TABLE IF NOT EXISTS "user" ("id" INTEGER PRIMARY KEY, "name" VARCHAR(255), "pass" VARCHAR(255), "authority" INT)`)
 	/*
-		//create controller data table
-		_, err = db.Exec(`CREATE TABLE IF NOT EXISTS "controller"{"id" INTEGER PRIMARY KEY,"name" varchar,"ip" varchar,"port" integer)`, )
-		if err != nil {
-			log.Fatalln(err)
-			fmt.Println("failed create controller data table")
-			panic(err)
-			value = false
-		}
+
 		/*
 			//create vm data table
 			_, err = db.Exec(`CREATE TABLE IF NOT EXISTS "vm"("id" INTEGER PRIMARY KEY,"name" varchar,"ip" varchar,"port" integer,"cpu" integer,"memory" integer,"storage" integer)`,)
@@ -56,69 +71,72 @@ func initdb() bool {
 				value = false
 			}
 	*/
-	return value
+	return true
 }
 
-func db_controller(function ,hostname, ip string, port int, user, password string) bool{
-	db, err := sql.Open("sqlite3", db_name)
+//Controller
+
+func addDBController(data controller) bool {
+	db := *connectdb()
+	addDb, err := db.Prepare(`INSERT INTO "controller" ("hostname","ip","port","user","password") VALUES (?,?,?,?,?)`)
 	if err != nil {
-		log.Fatalln(err)
-		fmt.Println("SQL open error")
 		panic(err)
 		return false
 	}
 
-	if(function == "add"){
-		add_db, err := db.Prepare(`INSERT INTO "controller" ("hostname","ip","port","user","password") VALUES (?,?,?,?,?)`)
-		if err != nil {
-			panic(err)
-			return false
-		}
+	if _, err := addDb.Exec(data.HostName, data.ip, data.port, data.user, data.password); err != nil {
+		panic(err)
+		return false
+	}
+	return true
+}
 
-		if _, err := add_db.Exec(hostname, ip, port, user, password); err != nil {
-			panic(err)
-			return false
-		}
-	}else if (function == "remove") {
-		delete_db := "DELETE FROM controller WHERE hostname = ?"
-		_, err = db.Exec(delete_db, hostname)
-		if err != nil {
-			log.Fatalln(err)
-			return false
-		}
+func deleteDBController(hostname string) bool {
+	db := connectdb()
+	deleteDb := "DELETE FROM controller WHERE hostname = ?"
+	_, err := db.Exec(deleteDb, hostname)
+	if err != nil {
+		log.Fatalln(err)
+		return false
+	}
+	return true
+}
+
+//User
+
+func addDBUser(data vmUser) bool {
+	db := connectdb()
+	addDb, err := db.Prepare(`INSERT INTO "user" ("name","pass","authority") VALUES (?,?,?)`)
+	if err != nil {
+		panic(err)
+		return false
+	}
+
+	if _, err := addDb.Exec(data.Name, hashgenerate(data.Pass), data.Authority); err != nil {
+		panic(err)
+		return false
 	}
 
 	return true
 }
 
-func db_user(function,name,pass string, authority int)bool{
-	db, err := sql.Open("sqlite3", db_name)
+func deleteDBUser(name string) bool {
+	db := connectdb()
+	deleteDb := "DELETE FROM user WHERE name = ?"
+	_, err := db.Exec(deleteDb, name)
 	if err != nil {
 		log.Fatalln(err)
-		fmt.Println("SQL open error")
-		panic(err)
 		return false
 	}
+	return true
+}
 
-	if(function == "add"){
-		add_db, err := db.Prepare(`INSERT INTO "user" ("name","pass","authority") VALUES (?,?,?)`)
-		if err != nil {
-			panic(err)
-			return false
-		}
-
-		if _, err := add_db.Exec(name,pass,authority); err != nil {
-			panic(err)
-			return false
-		}
-	}else if (function == "delete") {
-		delete_db := "DELETE FROM user WHERE name = ?"
-		_, err = db.Exec(delete_db, name)
-		if err != nil {
-			log.Fatalln(err)
-			return false
-		}
+func TestPassDBUser(name, pass string) bool {
+	db := connectdb()
+	var hash string
+	if err := db.QueryRow("SELECT pass FROM user WHERE name = ?", name).Scan(&hash); err != nil {
+		log.Fatal(err)
 	}
 
-	return true
+	return verifyhashdata(pass, hash)
 }
