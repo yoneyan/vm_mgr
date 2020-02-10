@@ -5,14 +5,14 @@ import (
 	"log"
 )
 
-func hashgenerate(data string)string{
+func hashgenerate(data string) string {
 	hash, err := bcrypt.GenerateFromPassword([]byte(data), bcrypt.DefaultCost)
-	if err != nil{
+	if err != nil {
 		log.Fatal(err)
 	}
 	return string(hash)
 }
 
-func verifyhashdata(data string,hash string)bool{
+func verifyhashdata(data string, hash string) bool {
 	return bcrypt.CompareHashAndPassword([]byte(hash), []byte(data)) == nil
 }

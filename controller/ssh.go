@@ -8,11 +8,11 @@ import (
 	"strconv"
 )
 
-func sshTest(addr string,port int,user ,pass string) bool{
+func sshTest(addr string, port int, user, pass string) bool {
 
 	config := &ssh.ClientConfig{User: user, HostKeyCallback: ssh.InsecureIgnoreHostKey(), Auth: []ssh.AuthMethod{ssh.Password(pass)}}
 
-	fmt.Println(addr+":"+strconv.Itoa(port))
+	fmt.Println(addr + ":" + strconv.Itoa(port))
 	conn, err := ssh.Dial("tcp", addr+":"+strconv.Itoa(port), config)
 	//conn, err := ssh.Dial("tcp", addr+":"+string(port), config)
 	if err != nil {
@@ -29,7 +29,7 @@ func sshTest(addr string,port int,user ,pass string) bool{
 	return true
 }
 
-func sshTest1() string{
+func sshTest1() string {
 	ip := "127.0.0.1"
 	port := "22"
 	user := "user"
