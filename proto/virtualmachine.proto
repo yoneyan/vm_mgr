@@ -1,12 +1,12 @@
 syntax = "proto3";
 
-//import "google/protobuf/timestamp.proto";
+//import "google/protobuf/timestamp.proto-go";
 
 service Cat {
-    rpc CreateVM (VMData) returns (Result)
-    rpc DeleteVM (VMID) returns (Result)
-    rpc GetVM (VMID) returns (VMData)
-    rpc GetVMName (VMName) returns (VMData)
+    rpc CreateVM (VMData) returns (Result) {}
+    rpc DeleteVM (VMID) returns (Result) {}
+    rpc GetVM (VMID) returns (VMData) {}
+    rpc GetVMName (VMName) returns (VMData) {}
 }
 
 message VMData {
@@ -19,7 +19,7 @@ message VMData {
     string storage = 7;
 }
 
-message VMName{
+message VMName {
     string vmname = 1;
 }
 
