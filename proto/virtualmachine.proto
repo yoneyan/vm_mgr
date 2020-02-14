@@ -1,0 +1,37 @@
+syntax = "proto3";
+
+//import "google/protobuf/timestamp.proto";
+
+service Cat {
+    rpc CreateVM (VMData) returns (Result)
+    rpc DeleteVM (VMID) returns (Result)
+    rpc GetVM (VMID) returns (VMData)
+    rpc GetVMName (VMName) returns (VMData)
+}
+
+message VMData {
+    int32 id = 1;
+    string vmname = 2;
+    int32 vcpu = 3;
+    int32 vmem = 4;
+    string vnet = 5;
+    int32 vnc = 6;
+    string storage = 7;
+}
+
+message VMName{
+    string vmname = 1;
+}
+
+message VMDataResponse {
+    repeated VMData VMDatas = 1;
+}
+
+message VMID {
+    int32 id = 1;
+}
+
+
+message Result {
+    bool status = 1;
+}
