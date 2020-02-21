@@ -1,4 +1,4 @@
-package main
+package data
 
 import (
 	"context"
@@ -32,7 +32,7 @@ func (s *server) DeleteVM(ctx context.Context, in *pb.VMID) (*pb.Result, error) 
 	return &pb.Result{Status: false}, nil
 }
 
-func grpc_test() {
+func Maingrpc() {
 	lis, err := net.Listen("tcp", port)
 	if err != nil {
 		log.Fatalf("failed to listen: %v", err)

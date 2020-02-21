@@ -1,5 +1,7 @@
 package main
 
+import "github.com/yoneyan/vm_mgr/node/data"
+
 func main() {
-	grpc_test()
+	data.Maingrpc()
 }
