@@ -1,11 +1,11 @@
-package main
+package etc
 
 import (
 	"golang.org/x/crypto/bcrypt"
 	"log"
 )
 
-func hashgenerate(data string) string {
+func Hashgenerate(data string) string {
 	hash, err := bcrypt.GenerateFromPassword([]byte(data), bcrypt.DefaultCost)
 	if err != nil {
 		log.Fatal(err)
@@ -13,6 +13,6 @@ func hashgenerate(data string) string {
 	return string(hash)
 }
 
-func verifyhashdata(data string, hash string) bool {
+func Verifyhashdata(data string, hash string) bool {
 	return bcrypt.CompareHashAndPassword([]byte(hash), []byte(data)) == nil
 }
