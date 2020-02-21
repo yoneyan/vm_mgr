@@ -11,10 +11,11 @@ import (
 const port = ":50100"
 
 type server struct {
-	pb.UnimplementedGreaterServer
+	pb.UnimplementedVMServer
 }
 
 func (s *server) CreateVM(ctx context.Context, in *pb.VMData) (*pb.Result, error) {
+	log.Println("----CreateVM----")
 	log.Printf("Receive ID: %v", in.GetId())
 	log.Printf("Receive Storage: %v", in.GetStorage())
 	log.Printf("Receive cpu: %v", in.GetVcpu())
@@ -25,13 +26,19 @@ func (s *server) CreateVM(ctx context.Context, in *pb.VMData) (*pb.Result, error
 	return &pb.Result{Status: false}, nil
 }
 
-func web() {
+func (s *server) DeleteVM(ctx context.Context, in *pb.VMID) (*pb.Result, error) {
+	log.Println("----DeleteVM----")
+	log.Printf("Receive ID: %v", in.GetId())
+	return &pb.Result{Status: false}, nil
+}
+
+func grpc_test() {
 	lis, err := net.Listen("tcp", port)
 	if err != nil {
 		log.Fatalf("failed to listen: %v", err)
 	}
 	s := grpc.NewServer()
-	pb.RegisterGreaterServer(s, &server{})
+	pb.RegisterVMServer(s, &server{})
 	if err := s.Serve(lis); err != nil {
 		log.Fatalf("failed to serve: %v", err)
 	}
