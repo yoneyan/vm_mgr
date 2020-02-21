@@ -17,6 +17,7 @@ message VMData {
     string vnet = 5;
     int32 vnc = 6;
     string storage = 7;
+    string storage_path = 8;
 }
 
 message VMName {
