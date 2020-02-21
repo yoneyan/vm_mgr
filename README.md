@@ -23,11 +23,12 @@ vm_mgrはvm+managerを合わせた意味になっています。
 ## 構想
 * Controller
 * Node
-* Client
+* Client  
+
 上記の3つの構造を基本とします。  
 ControllerとNode間はgRPCにてデータのやり取りを行います。
 
-実装状況はGithubのProjectに載せています。  
+**実装予定はGithubのProjectに載せています。**
 
 #### 対処法
 **authentication unavailable: no polkit agent available to authenticate action 'org.libvirt.unix.manage''**
