@@ -10,14 +10,14 @@ service VM {
 }
 
 message VMData {
-    int32 id = 1;
+    int64 id = 1;
     string vmname = 2;
-    int32 vcpu = 3;
-    int32 vmem = 4;
+    int64 vcpu = 3;
+    int64 vmem = 4;
     string storage_path = 5;
-    int32 storage = 6;
+    int64 storage = 6;
     string vnet = 7;
-    int32 vnc = 8;
+    int64 vnc = 8;
 }
 
 message VMName {
