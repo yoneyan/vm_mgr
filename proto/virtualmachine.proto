@@ -14,10 +14,10 @@ message VMData {
     string vmname = 2;
     int32 vcpu = 3;
     int32 vmem = 4;
-    string vnet = 5;
-    int32 vnc = 6;
-    string storage = 7;
-    string storage_path = 8;
+    string storage_path = 5;
+    int32 storage = 6;
+    string vnet = 7;
+    int32 vnc = 8;
 }
 
 message VMName {
