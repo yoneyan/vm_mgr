@@ -9,3 +9,6 @@ I am aiming to manage KVM reasonably.
 ```
 usermod --append --groups libvirt `username`
 ```
+
+### gRPCで使用するポート
+Port: 50100/tcp  
