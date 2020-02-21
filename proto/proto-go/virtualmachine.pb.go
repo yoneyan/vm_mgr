@@ -278,26 +278,26 @@ func init() {
 func init() { proto.RegisterFile("virtualmachine.proto", fileDescriptor_f620cdfcc6a9426c) }
 
 var fileDescriptor_f620cdfcc6a9426c = []byte{
-	// 292 bytes of a gzipped FileDescriptorProto
-	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x5c, 0x51, 0x41, 0x4e, 0xc3, 0x30,
-	0x10, 0xac, 0xdb, 0x26, 0x6e, 0x17, 0xa9, 0x42, 0x16, 0xaa, 0x0c, 0x42, 0x10, 0x7c, 0xea, 0x29,
-	0x87, 0xf6, 0x09, 0x54, 0xaa, 0x38, 0x84, 0x43, 0x0e, 0xb9, 0x9b, 0x74, 0x05, 0x91, 0xe2, 0x24,
-	0x8a, 0x9d, 0x7c, 0x80, 0x4f, 0xf0, 0x5c, 0xe4, 0x4d, 0x22, 0x22, 0x6e, 0xb3, 0x33, 0xe3, 0x9d,
-	0x59, 0x19, 0xee, 0xfa, 0xa2, 0x75, 0x9d, 0x2e, 0x8d, 0xce, 0xbf, 0x8a, 0x0a, 0xe3, 0xa6, 0xad,
-	0x5d, 0xad, 0x7e, 0x18, 0x84, 0x59, 0x72, 0xd6, 0x4e, 0x8b, 0x1d, 0x2c, 0x8b, 0xab, 0x64, 0x11,
-	0x3b, 0x04, 0xe9, 0xb2, 0xb8, 0x8a, 0x3d, 0x84, 0xbd, 0xa9, 0xb4, 0x41, 0xb9, 0x8c, 0xd8, 0x61,
-	0x9b, 0x8e, 0x93, 0x10, 0xb0, 0xee, 0xf3, 0xa6, 0x93, 0x2b, 0x72, 0x12, 0x26, 0xce, 0xa0, 0x91,
-	0xeb, 0x91, 0x33, 0x68, 0x88, 0xab, 0xd0, 0xc9, 0x80, 0x5e, 0x13, 0x16, 0xb7, 0xb0, 0xea, 0xab,
-	0x5c, 0x86, 0x64, 0xf3, 0x50, 0x48, 0xe0, 0xd6, 0xd5, 0xad, 0xfe, 0x44, 0xc9, 0xc9, 0x38, 0x8d,
-	0x2a, 0xf2, 0xcd, 0xde, 0x7d, 0xe2, 0x5f, 0x13, 0x36, 0x6f, 0xa2, 0x4e, 0xb0, 0x1b, 0xba, 0xa7,
-	0x68, 0x9b, 0xba, 0xb2, 0x28, 0x5e, 0x80, 0x0f, 0x8c, 0x95, 0x2c, 0x5a, 0x1d, 0x6e, 0x8e, 0x3c,
-	0x1e, 0x1d, 0x13, 0xaf, 0xf6, 0xb0, 0xce, 0x92, 0xb7, 0xf3, 0xff, 0x73, 0x7d, 0x5c, 0x8a, 0xb6,
-	0x2b, 0x9d, 0x8f, 0xb3, 0x4e, 0xbb, 0xce, 0x92, 0xba, 0x49, 0xc7, 0xe9, 0xf8, 0xcd, 0x80, 0x5f,
-	0x5a, 0xd4, 0x0e, 0x5b, 0xf1, 0x04, 0x9b, 0x57, 0x82, 0x59, 0x22, 0xa6, 0x8c, 0x07, 0x1e, 0x0f,
-	0x1b, 0xd4, 0x42, 0x3c, 0xc2, 0xe6, 0x8c, 0x25, 0x92, 0x1e, 0xc4, 0x3e, 0x70, 0xae, 0xde, 0x43,
-	0x70, 0x41, 0x37, 0x97, 0x86, 0x0d, 0x6a, 0x21, 0x9e, 0x61, 0x4b, 0x12, 0x1d, 0xee, 0x79, 0x0f,
-	0x66, 0x86, 0x8f, 0x90, 0x3e, 0xee, 0xf4, 0x1b, 0x00, 0x00, 0xff, 0xff, 0x29, 0x50, 0x48, 0xa5,
-	0xd0, 0x01, 0x00, 0x00,
+	// 290 bytes of a gzipped FileDescriptorProto
+	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x5c, 0x51, 0xc1, 0x6e, 0xab, 0x30,
+	0x10, 0x8c, 0x49, 0x80, 0x64, 0x9f, 0x14, 0x3d, 0x59, 0x55, 0xe4, 0x56, 0x55, 0x4b, 0x7d, 0xe2,
+	0xc4, 0x21, 0xf9, 0x84, 0x22, 0x55, 0x3d, 0xd0, 0x03, 0x07, 0xee, 0x2e, 0x59, 0xb5, 0x48, 0x18,
+	0x10, 0x36, 0x1c, 0xfb, 0x1d, 0xfd, 0xdc, 0xca, 0x0b, 0xa8, 0xa8, 0xb7, 0xd9, 0x99, 0xf1, 0xce,
+	0xac, 0x0c, 0x37, 0x63, 0xd5, 0xdb, 0x41, 0xd5, 0x5a, 0x95, 0x9f, 0x55, 0x83, 0x49, 0xd7, 0xb7,
+	0xb6, 0x95, 0xdf, 0x0c, 0x82, 0x22, 0x4b, 0x95, 0x55, 0xfc, 0x08, 0x5e, 0x75, 0x15, 0x2c, 0x62,
+	0xb1, 0x9f, 0x7b, 0xd5, 0x95, 0x9f, 0x20, 0x18, 0x75, 0xa3, 0x34, 0x0a, 0x2f, 0x62, 0xf1, 0x21,
+	0x9f, 0x27, 0xce, 0x61, 0x37, 0x96, 0xdd, 0x20, 0xb6, 0xe4, 0x24, 0x4c, 0x9c, 0x46, 0x2d, 0x76,
+	0x33, 0xa7, 0x51, 0x13, 0xd7, 0xa0, 0x15, 0x3e, 0xbd, 0x26, 0xcc, 0xff, 0xc3, 0x76, 0x6c, 0x4a,
+	0x11, 0x90, 0xcd, 0x41, 0x2e, 0x20, 0x34, 0xb6, 0xed, 0xd5, 0x07, 0x8a, 0x90, 0x8c, 0xcb, 0x28,
+	0x23, 0xd7, 0xec, 0xcd, 0x25, 0xfe, 0x36, 0x61, 0xeb, 0x26, 0xf2, 0x02, 0xc7, 0xa9, 0x7b, 0x8e,
+	0xa6, 0x6b, 0x1b, 0x83, 0xfc, 0x09, 0xc2, 0x89, 0x31, 0x82, 0x45, 0xdb, 0xf8, 0xdf, 0x39, 0x4c,
+	0x66, 0xc7, 0xc2, 0xcb, 0x13, 0xec, 0x8a, 0xec, 0x35, 0xfd, 0x7b, 0xae, 0x8b, 0xcb, 0xd1, 0x0c,
+	0xb5, 0x75, 0x71, 0xc6, 0x2a, 0x3b, 0x18, 0x52, 0xf7, 0xf9, 0x3c, 0x9d, 0xbf, 0xc0, 0x2b, 0x32,
+	0xfe, 0x00, 0xfb, 0xe7, 0x1e, 0x95, 0xc5, 0x22, 0xe3, 0xcb, 0xf6, 0xbb, 0x30, 0x99, 0xde, 0xca,
+	0x0d, 0xbf, 0x87, 0x7d, 0x8a, 0x35, 0x92, 0xee, 0x27, 0x2e, 0x6a, 0xad, 0xde, 0x82, 0xff, 0x82,
+	0x76, 0x2d, 0x4d, 0x1b, 0xe4, 0x86, 0x3f, 0xc2, 0x81, 0x24, 0x3a, 0xd9, 0xf1, 0x0e, 0xac, 0x0c,
+	0xef, 0x01, 0x7d, 0xd9, 0xe5, 0x27, 0x00, 0x00, 0xff, 0xff, 0x78, 0x3a, 0xa8, 0xb1, 0xca, 0x01,
+	0x00, 0x00,
 }
 
 // Reference imports to suppress errors if they are not otherwise used.
@@ -308,180 +308,180 @@ var _ grpc.ClientConnInterface
 // is compatible with the grpc package it is being compiled against.
 const _ = grpc.SupportPackageIsVersion6
 
-// GreaterClient is the client API for Greater service.
+// VMClient is the client API for VM service.
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://godoc.org/google.golang.org/grpc#ClientConn.NewStream.
-type GreaterClient interface {
+type VMClient interface {
 	CreateVM(ctx context.Context, in *VMData, opts ...grpc.CallOption) (*Result, error)
 	DeleteVM(ctx context.Context, in *VMID, opts ...grpc.CallOption) (*Result, error)
 	GetVM(ctx context.Context, in *VMID, opts ...grpc.CallOption) (*VMData, error)
 	GetVMName(ctx context.Context, in *VMName, opts ...grpc.CallOption) (*VMData, error)
 }
 
-type greaterClient struct {
+type vMClient struct {
 	cc grpc.ClientConnInterface
 }
 
-func NewGreaterClient(cc grpc.ClientConnInterface) GreaterClient {
-	return &greaterClient{cc}
+func NewVMClient(cc grpc.ClientConnInterface) VMClient {
+	return &vMClient{cc}
 }
 
-func (c *greaterClient) CreateVM(ctx context.Context, in *VMData, opts ...grpc.CallOption) (*Result, error) {
+func (c *vMClient) CreateVM(ctx context.Context, in *VMData, opts ...grpc.CallOption) (*Result, error) {
 	out := new(Result)
-	err := c.cc.Invoke(ctx, "/Greater/CreateVM", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/VM/CreateVM", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *greaterClient) DeleteVM(ctx context.Context, in *VMID, opts ...grpc.CallOption) (*Result, error) {
+func (c *vMClient) DeleteVM(ctx context.Context, in *VMID, opts ...grpc.CallOption) (*Result, error) {
 	out := new(Result)
-	err := c.cc.Invoke(ctx, "/Greater/DeleteVM", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/VM/DeleteVM", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *greaterClient) GetVM(ctx context.Context, in *VMID, opts ...grpc.CallOption) (*VMData, error) {
+func (c *vMClient) GetVM(ctx context.Context, in *VMID, opts ...grpc.CallOption) (*VMData, error) {
 	out := new(VMData)
-	err := c.cc.Invoke(ctx, "/Greater/GetVM", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/VM/GetVM", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *greaterClient) GetVMName(ctx context.Context, in *VMName, opts ...grpc.CallOption) (*VMData, error) {
+func (c *vMClient) GetVMName(ctx context.Context, in *VMName, opts ...grpc.CallOption) (*VMData, error) {
 	out := new(VMData)
-	err := c.cc.Invoke(ctx, "/Greater/GetVMName", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/VM/GetVMName", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-// GreaterServer is the server API for Greater service.
-type GreaterServer interface {
+// VMServer is the server API for VM service.
+type VMServer interface {
 	CreateVM(context.Context, *VMData) (*Result, error)
 	DeleteVM(context.Context, *VMID) (*Result, error)
 	GetVM(context.Context, *VMID) (*VMData, error)
 	GetVMName(context.Context, *VMName) (*VMData, error)
 }
 
-// UnimplementedGreaterServer can be embedded to have forward compatible implementations.
-type UnimplementedGreaterServer struct {
+// UnimplementedVMServer can be embedded to have forward compatible implementations.
+type UnimplementedVMServer struct {
 }
 
-func (*UnimplementedGreaterServer) CreateVM(ctx context.Context, req *VMData) (*Result, error) {
+func (*UnimplementedVMServer) CreateVM(ctx context.Context, req *VMData) (*Result, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CreateVM not implemented")
 }
-func (*UnimplementedGreaterServer) DeleteVM(ctx context.Context, req *VMID) (*Result, error) {
+func (*UnimplementedVMServer) DeleteVM(ctx context.Context, req *VMID) (*Result, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method DeleteVM not implemented")
 }
-func (*UnimplementedGreaterServer) GetVM(ctx context.Context, req *VMID) (*VMData, error) {
+func (*UnimplementedVMServer) GetVM(ctx context.Context, req *VMID) (*VMData, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetVM not implemented")
 }
-func (*UnimplementedGreaterServer) GetVMName(ctx context.Context, req *VMName) (*VMData, error) {
+func (*UnimplementedVMServer) GetVMName(ctx context.Context, req *VMName) (*VMData, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetVMName not implemented")
 }
 
-func RegisterGreaterServer(s *grpc.Server, srv GreaterServer) {
-	s.RegisterService(&_Greater_serviceDesc, srv)
+func RegisterVMServer(s *grpc.Server, srv VMServer) {
+	s.RegisterService(&_VM_serviceDesc, srv)
 }
 
-func _Greater_CreateVM_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _VM_CreateVM_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(VMData)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(GreaterServer).CreateVM(ctx, in)
+		return srv.(VMServer).CreateVM(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/Greater/CreateVM",
+		FullMethod: "/VM/CreateVM",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(GreaterServer).CreateVM(ctx, req.(*VMData))
+		return srv.(VMServer).CreateVM(ctx, req.(*VMData))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _Greater_DeleteVM_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _VM_DeleteVM_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(VMID)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(GreaterServer).DeleteVM(ctx, in)
+		return srv.(VMServer).DeleteVM(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/Greater/DeleteVM",
+		FullMethod: "/VM/DeleteVM",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(GreaterServer).DeleteVM(ctx, req.(*VMID))
+		return srv.(VMServer).DeleteVM(ctx, req.(*VMID))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _Greater_GetVM_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _VM_GetVM_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(VMID)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(GreaterServer).GetVM(ctx, in)
+		return srv.(VMServer).GetVM(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/Greater/GetVM",
+		FullMethod: "/VM/GetVM",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(GreaterServer).GetVM(ctx, req.(*VMID))
+		return srv.(VMServer).GetVM(ctx, req.(*VMID))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _Greater_GetVMName_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _VM_GetVMName_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(VMName)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(GreaterServer).GetVMName(ctx, in)
+		return srv.(VMServer).GetVMName(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/Greater/GetVMName",
+		FullMethod: "/VM/GetVMName",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(GreaterServer).GetVMName(ctx, req.(*VMName))
+		return srv.(VMServer).GetVMName(ctx, req.(*VMName))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-var _Greater_serviceDesc = grpc.ServiceDesc{
-	ServiceName: "Greater",
-	HandlerType: (*GreaterServer)(nil),
+var _VM_serviceDesc = grpc.ServiceDesc{
+	ServiceName: "VM",
+	HandlerType: (*VMServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
 			MethodName: "CreateVM",
-			Handler:    _Greater_CreateVM_Handler,
+			Handler:    _VM_CreateVM_Handler,
 		},
 		{
 			MethodName: "DeleteVM",
-			Handler:    _Greater_DeleteVM_Handler,
+			Handler:    _VM_DeleteVM_Handler,
 		},
 		{
 			MethodName: "GetVM",
-			Handler:    _Greater_GetVM_Handler,
+			Handler:    _VM_GetVM_Handler,
 		},
 		{
 			MethodName: "GetVMName",
-			Handler:    _Greater_GetVMName_Handler,
+			Handler:    _VM_GetVMName_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

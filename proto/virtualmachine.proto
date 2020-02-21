@@ -2,7 +2,7 @@ syntax = "proto3";
 
 //import "google/protobuf/timestamp.proto-go";
 
-service Greater {
+service VM {
     rpc CreateVM (VMData) returns (Result) {}
     rpc DeleteVM (VMID) returns (Result) {}
     rpc GetVM (VMID) returns (VMData) {}
