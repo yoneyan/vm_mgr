@@ -27,6 +27,7 @@ vm_mgrはvm+managerを合わせた意味になっています。
 
 上記の3つの構造を基本とします。  
 ControllerとNode間はgRPCにてデータのやり取りを行います。
+変更として、LibvirtのAPIを使わず直接QEMUを叩く設計に変えました。
 
 **実装予定はGithubのProjectに載せています。**
 
