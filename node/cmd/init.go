@@ -3,7 +3,7 @@ package cmd
 import (
 	"fmt"
 	"github.com/spf13/cobra"
-	"github.com/yoneyan/vm_mgr/controller/db"
+	"github.com/yoneyan/vm_mgr/node/db"
 )
 
 // initCmd represents the init command
