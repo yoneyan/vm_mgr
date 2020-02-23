@@ -9,6 +9,11 @@ func SocketConnectionPath(socketfile string) string {
 	return socket
 }
 
+func SocketGenerate(socketfile string) string {
+	//unix:/tmp/monitor.sock,server,nowait
+	return "unix:" + sockpath + "/" + socketfile + ".sock,server,nowait"
+}
+
 func GeneratePath(path, name string) string {
 	return path + "/" + name
 }
