@@ -22,8 +22,10 @@ vm_mgrはvm+managerを合わせた意味になっています。
 
 ## 実行テスト
 ### Node
+
 `go run . start`
 ### Client
+
 `go run . vm create -n test -c 1 -m 1024 -p /home/yoneyan/test.qcow2 -s 1024 -N br100 -v 200 -C /home/yoneyan/Downloads/ubuntu-18.04.4-live-server-amd64.iso -M false`
 
 ## 構想
