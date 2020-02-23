@@ -22,7 +22,7 @@ var testRestartCmd = &cobra.Command{
 	Short: "restart qemu (name: test)",
 	Long:  `test1 command`,
 	RunE: func(cmd *cobra.Command, args []string) error {
-		vm.Restart("name")
+		vm.Restart("test")
 
 		return nil
 	},
