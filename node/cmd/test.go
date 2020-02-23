@@ -2,7 +2,9 @@ package cmd
 
 import (
 	"github.com/spf13/cobra"
+	"github.com/yoneyan/vm_mgr/node/manage"
 	"github.com/yoneyan/vm_mgr/node/vm"
+	"log"
 )
 
 // testCmd represents the test command
@@ -35,11 +37,32 @@ var testAddCmd = &cobra.Command{
 		return nil
 	},
 }
+var testStorageAddCmd = &cobra.Command{
+	Use:   "sadd",
+	Short: "storage add test",
+	Long:  "storage add test",
+	RunE: func(cmd *cobra.Command, args []string) error {
+		s := manage.Storage{
+			Path:   "/home/yoneyan",
+			Name:   "test",
+			Format: "qcow2",
+			Size:   100,
+		}
+
+		err := manage.CreateStorage(&s)
+		if err != nil {
+			log.Fatal(err)
+		}
+
+		return nil
+	},
+}
 
 func init() {
 	rootCmd.AddCommand(testCmd)
 
 	testCmd.AddCommand(testAddCmd)
 	testCmd.AddCommand(testRestartCmd)
+	testCmd.AddCommand(testStorageAddCmd)
 
 }

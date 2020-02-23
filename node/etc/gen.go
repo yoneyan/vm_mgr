@@ -1,4 +1,4 @@
-package run
+package etc
 
 const (
 	sockpath = "/kvm/socket"
@@ -7,4 +7,8 @@ const (
 func SocketConnectionPath(socketfile string) string {
 	socket := "unix-connect:" + sockpath + "/" + socketfile + ".sock"
 	return socket
+}
+
+func GeneratePath(path, name string) string {
+	return path + "/" + name
 }
