@@ -19,9 +19,9 @@ node init:     init node`,
 	},
 }
 var initdbCmd = &cobra.Command{
-	Use:   "node",
-	Short: "node init",
-	Long:  "node init cmd",
+	Use:   "db",
+	Short: "db init",
+	Long:  "db init cmd",
 	RunE: func(cmd *cobra.Command, args []string) error {
 		fmt.Println(db.Initdb())
 		return nil
