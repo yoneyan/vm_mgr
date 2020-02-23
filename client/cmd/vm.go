@@ -41,11 +41,14 @@ create is vm create. Also, delete is vm delete.`,
 var vmCreateCmd = &cobra.Command{
 	Use:   "create",
 	Short: "create vm",
-	Long:  "VM create tool",
+	Long: `VM create tool
+For example:
+vm create -n test -c 1 -m 1024 -p /home/yoneyan/test.qcow2 -s 1024 -N br100 -v 200 -C /home/yoneyan/Downloads/ubuntu-18.04.4-live-server-amd64.iso -M false
+`,
 	RunE: func(cmd *cobra.Command, args []string) error {
-		stringArray := []string{"name", "storage_path", "vnet"}
+		stringArray := []string{"name", "storage_path", "cdrom", "vnet"}
 		int64Array := []string{"cpu", "mem", "storage", "vnc"}
-		var resultStringArray [3]string
+		var resultStringArray [4]string
 		var resultInt64Array [4]int64
 		for i, b := range stringArray {
 			result, err := cmd.PersistentFlags().GetString(b)
@@ -64,7 +67,13 @@ var vmCreateCmd = &cobra.Command{
 			resultInt64Array[i] = result
 		}
 
-		data.CreateVM(resultStringArray[0], resultInt64Array[0], resultInt64Array[1], resultInt64Array[2], resultStringArray[1], resultStringArray[2], resultInt64Array[3])
+		change, err := cmd.PersistentFlags().GetBool("change")
+		if err != nil {
+			log.Fatalf("could not greet: %v", err)
+			return nil
+		}
+
+		data.CreateVM(resultStringArray[0], resultInt64Array[0], resultInt64Array[1], resultInt64Array[2], resultStringArray[1], resultStringArray[2], resultStringArray[3], resultInt64Array[3], change)
 		fmt.Println("Process End")
 		return nil
 	},
@@ -93,8 +102,10 @@ func init() {
 	vmCreateCmd.PersistentFlags().Int64P("mem", "m", 0, "virtual memory")
 	vmCreateCmd.PersistentFlags().StringP("storage_path", "p", "none", "storage path")
 	vmCreateCmd.PersistentFlags().Int64P("storage", "s", 0, "storage capacity")
+	vmCreateCmd.PersistentFlags().StringP("cdrom", "C", "", "cdrom path")
 	vmCreateCmd.PersistentFlags().StringP("vnet", "N", "none", "virtual net")
 	vmCreateCmd.PersistentFlags().Int64P("vnc", "v", 0, "vnc port")
+	vmCreateCmd.PersistentFlags().BoolP("change", "M", false, "change spec")
 
 	rootCmd.AddCommand(vmCmd)
 	vmCmd.AddCommand(vmCreateCmd)
