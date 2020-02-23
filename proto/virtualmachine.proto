@@ -3,10 +3,18 @@ syntax = "proto3";
 //import "google/protobuf/timestamp.proto-go";
 
 service VM {
-    rpc CreateVM (VMData) returns (Result) {}
-    rpc DeleteVM (VMID) returns (Result) {}
-    rpc GetVM (VMID) returns (VMData) {}
-    rpc GetVMName (VMName) returns (VMData) {}
+    rpc CreateVM (VMData) returns (Result) {
+    }
+    rpc DeleteVM (VMID) returns (Result) {
+    }
+    rpc StartVM (VMID) returns (Result) {
+    }
+    rpc StopVM (VMID) returns (Result) {
+    }
+    rpc GetVM (VMID) returns (VMData) {
+    }
+    rpc GetVMName (VMName) returns (VMData) {
+    }
 }
 
 message VMData {
@@ -16,8 +24,10 @@ message VMData {
     int64 vmem = 4;
     string storage_path = 5;
     int64 storage = 6;
-    string vnet = 7;
-    int64 vnc = 8;
+    string cdrom_path = 7;
+    string vnet = 8;
+    int64 vnc = 9;
+    bool change = 10;
 }
 
 message VMName {
