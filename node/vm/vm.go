@@ -34,14 +34,6 @@ func RunQEMUCmd(cmd []string) {
 
 }
 
-func Start() {
-
-}
-
-func Stop() {
-
-}
-
 func Shutdown(sockname string) error {
 	err := RunQEMUMonitor("system_powerdown", etc.SocketConnectionPath(sockname))
 	if err != nil {

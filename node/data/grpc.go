@@ -3,6 +3,7 @@ package data
 import (
 	"context"
 	"fmt"
+	"github.com/yoneyan/vm_mgr/node/db"
 	"github.com/yoneyan/vm_mgr/node/etc"
 	"github.com/yoneyan/vm_mgr/node/manage"
 	"github.com/yoneyan/vm_mgr/node/vm"
@@ -42,7 +43,8 @@ func (s *server) CreateVM(ctx context.Context, in *pb.VMData) (*pb.Result, error
 
 	vm.CreateGenerateCmd(&r)
 
-	if etc.FileExists(in.GetStoragePath()) == false {
+	if etc.FileExists(in.GetStoragePath()+"/"+in.GetVmname()+".img") == false {
+		fmt.Println("Not storage file exists")
 		storage := manage.Storage{
 			Path:   in.GetStoragePath(),
 			Name:   in.GetVmname(),
@@ -65,6 +67,33 @@ func (s *server) CreateVM(ctx context.Context, in *pb.VMData) (*pb.Result, error
 
 func (s *server) DeleteVM(ctx context.Context, in *pb.VMID) (*pb.Result, error) {
 	log.Println("----DeleteVM----")
+	log.Printf("Receive ID: %v", in.GetId())
+	return &pb.Result{Status: false}, nil
+}
+
+func (s *server) StartVM(ctx context.Context, in *pb.VMID) (*pb.Result, error) {
+	log.Println("----StartVM----")
+	log.Printf("Receive ID: %v", in.GetId())
+	return &pb.Result{Status: false}, nil
+}
+
+func (s *server) StopVM(ctx context.Context, in *pb.VMID) (*pb.Result, error) {
+	log.Println("----StopVM----")
+	result, err := db.VMDBGetData(int(in.GetId()))
+	fmt.Println(result)
+	if err != nil {
+		log.Fatalf("Error!!")
+	}
+
+	if result.Status == 0 { //要修正
+		fmt.Println("PowerOn")
+
+		fmt.Println(result.Name)
+		vm.VMStop(result.Name)
+	}
+	if err != nil {
+		log.Fatalf("Error!!")
+	}
 	log.Printf("Receive ID: %v", in.GetId())
 	return &pb.Result{Status: false}, nil
 }

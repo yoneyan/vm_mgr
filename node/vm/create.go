@@ -27,6 +27,7 @@ func CreateVMDBProcess(c *CreateVMInformation) {
 		Net:         c.Net,
 		Vnc:         c.VNC,
 		Socket:      etc.SocketGenerate(c.Name),
+		Status:      0,
 	}
 	db.AddDBVM(dbdata)
 }
@@ -38,25 +39,18 @@ func StartVMProcess(id int) {
 func CreateGenerateCmd(c *CreateVMInformation) []string {
 	var cmd []string
 
-	cmd = append(cmd, "-enable-kvm") //kvm enable
-	cmd = append(cmd, "-smp")
-	cmd = append(cmd, strconv.Itoa(c.CPU))
-	cmd = append(cmd, "-m")
-	cmd = append(cmd, strconv.Itoa(c.Mem))
-	cmd = append(cmd, "-monitor")
-	cmd = append(cmd, etc.SocketGenerate(c.Name))
-	cmd = append(cmd, "-boot")
+	begin := []string{"-enable-kvm", "-name", c.Name, "-smp", strconv.Itoa(c.CPU), "-m", strconv.Itoa(c.Mem), "-monitor", etc.SocketGenerate(c.Name), "-hda", c.StoragePath + "/" + c.Name + ".img", "-vnc", ":" + strconv.Itoa(c.VNC)}
+	cmdarray := []string{"-boot"}
+
+	cmd = append(cmd, begin...)
 	if c.CDROM != "" {
+		cmd = append(cmd, cmdarray[0])
 		cmd = append(cmd, "order=d")
 		cmd = append(cmd, "-cdrom")
 		cmd = append(cmd, c.CDROM)
 	} else {
 		cmd = append(cmd, "order=c")
 	}
-	cmd = append(cmd, "-hda")
-	cmd = append(cmd, c.StoragePath)
-	cmd = append(cmd, "-vnc")
-	cmd = append(cmd, ":"+strconv.Itoa(c.VNC))
 
 	fmt.Println(cmd)
 

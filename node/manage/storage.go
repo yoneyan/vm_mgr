@@ -16,13 +16,12 @@ type Storage struct {
 
 func RunStorageCmd(cmd []string) {
 	out, _ := exec.Command("qemu-img", cmd...).Output()
-	fmt.Println(out)
+	fmt.Println(string(out))
 }
 
 //path, name string, format, size int
 func CreateStorage(s *Storage) error {
 	fmt.Println("----storage create----")
-	fmt.Println(s)
 	if s.Size < 0 {
 		return fmt.Errorf("Wrong storage size !!")
 	}
@@ -35,20 +34,13 @@ func CreateStorage(s *Storage) error {
 
 	//qemu-img create [-f format] filename [size]
 
-	size := strconv.Itoa(s.Size) + "M"
-	path := etc.GeneratePath(s.Path, s.Name) + ".img"
-	cmd = append(cmd, "create")
-	cmd = append(cmd, "-f")
-	cmd = append(cmd, s.Format)
-	cmd = append(cmd, path)
-	cmd = append(cmd, size)
+	cmdarray := []string{"create", "-f", s.Format, etc.GeneratePath(s.Path, s.Name) + ".img", strconv.Itoa(s.Size) + "M"}
 
-	fmt.Println(cmd)
+	fmt.Println(cmdarray)
+
+	cmd = append(cmd, cmdarray...)
 
 	RunStorageCmd(cmd)
-
-	out, _ := exec.Command("qemu-img", cmd...).Output()
-	fmt.Println(out)
 
 	return nil
 }
