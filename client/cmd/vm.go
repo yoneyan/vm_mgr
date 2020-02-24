@@ -126,7 +126,7 @@ var vmStopCmd = &cobra.Command{
 		if result < 0 {
 			return errors.New("value failed")
 		}
-		data.DeleteVM(int64(result))
+		data.StopVM(int64(result))
 		fmt.Println("Process End")
 		return nil
 	},
