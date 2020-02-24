@@ -96,6 +96,83 @@ var vmDeleteCmd = &cobra.Command{
 	},
 }
 
+var vmStartCmd = &cobra.Command{
+	Use:   "start",
+	Short: "vm start",
+	Long:  "VM start tool",
+	RunE: func(cmd *cobra.Command, args []string) error {
+		if len(args) < 1 {
+			return errors.New("requires id")
+		}
+		result, _ := strconv.Atoi(args[0])
+		if result < 0 {
+			return errors.New("value failed")
+		}
+		data.StartVM(int64(result))
+		fmt.Println("Process End")
+		return nil
+	},
+}
+
+var vmStopCmd = &cobra.Command{
+	Use:   "stop",
+	Short: "vm stop",
+	Long:  "VM stop tool",
+	RunE: func(cmd *cobra.Command, args []string) error {
+		if len(args) < 1 {
+			return errors.New("requires id")
+		}
+		result, _ := strconv.Atoi(args[0])
+		if result < 0 {
+			return errors.New("value failed")
+		}
+		data.DeleteVM(int64(result))
+		fmt.Println("Process End")
+		return nil
+	},
+}
+
+var vmGetCmd = &cobra.Command{
+	Use:   "get",
+	Short: "vm get",
+	Long:  "VM get tool",
+	RunE: func(cmd *cobra.Command, args []string) error {
+		return nil
+	},
+}
+
+var vmGetIDCmd = &cobra.Command{
+	Use:   "id",
+	Short: "get id",
+	Long:  "VM get tool from vmid",
+	RunE: func(cmd *cobra.Command, args []string) error {
+		if len(args) < 1 {
+			return errors.New("requires id")
+		}
+		result, _ := strconv.Atoi(args[0])
+		if result < 0 {
+			return errors.New("value failed")
+		}
+		data.GetVM(int64(result))
+		fmt.Println("Process End")
+		return nil
+	},
+}
+var vmGetNameCmd = &cobra.Command{
+	Use:   "name",
+	Short: "get name",
+	Long:  "VM get tool from name.",
+	RunE: func(cmd *cobra.Command, args []string) error {
+		if len(args) < 1 {
+			return errors.New("requires id")
+		}
+		result := args[0]
+		data.GetVMName(result)
+		fmt.Println("Process End")
+		return nil
+	},
+}
+
 func init() {
 	vmCreateCmd.PersistentFlags().StringP("name", "n", "none", "vm name")
 	vmCreateCmd.PersistentFlags().Int64P("cpu", "c", 0, "virtual cpu")
@@ -110,6 +187,11 @@ func init() {
 	rootCmd.AddCommand(vmCmd)
 	vmCmd.AddCommand(vmCreateCmd)
 	vmCmd.AddCommand(vmDeleteCmd)
+	vmCmd.AddCommand(vmStartCmd)
+	vmCmd.AddCommand(vmStopCmd)
+	vmCmd.AddCommand(vmGetCmd)
+	vmGetCmd.AddCommand(vmGetIDCmd)
+	vmGetCmd.AddCommand(vmGetNameCmd)
 
 	// Here you will define your flags and configuration settings.
 

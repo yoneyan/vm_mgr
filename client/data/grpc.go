@@ -97,3 +97,105 @@ func DeleteVM(id int64) bool {
 	log.Printf("Greeting: %s", r.GetStatus())
 	return r.GetStatus()
 }
+
+func StartVM(id int64) bool {
+	if id < 1 {
+		fmt.Println("Value False")
+		fmt.Printf("Debug: value is ")
+		fmt.Println(id)
+		return false
+	}
+
+	conn, err := grpc.Dial(address, grpc.WithInsecure(), grpc.WithBlock())
+	if err != nil {
+		log.Fatalf("Not connect; %v", err)
+	}
+	defer conn.Close()
+	c := pb.NewVMClient(conn)
+
+	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
+	defer cancel()
+	r, err := c.StartVM(ctx, &pb.VMID{Id: id})
+	if err != nil {
+		log.Fatalf("could not greet: %v", err)
+	}
+	log.Printf("Greeting: %s", r.GetStatus())
+	return r.GetStatus()
+}
+
+func StopVM(id int64) bool {
+	if id < 1 {
+		fmt.Println("Value False")
+		fmt.Printf("Debug: value is ")
+		fmt.Println(id)
+		return false
+	}
+
+	conn, err := grpc.Dial(address, grpc.WithInsecure(), grpc.WithBlock())
+	if err != nil {
+		log.Fatalf("Not connect; %v", err)
+	}
+	defer conn.Close()
+	c := pb.NewVMClient(conn)
+
+	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
+	defer cancel()
+	r, err := c.StopVM(ctx, &pb.VMID{Id: id})
+	if err != nil {
+		log.Fatalf("could not greet: %v", err)
+	}
+	log.Printf("Greeting: %s", r.GetStatus())
+	return r.GetStatus()
+}
+
+func GetVM(id int64) {
+	if id < 1 {
+		fmt.Println("Value False")
+		fmt.Printf("Debug: value is ")
+		fmt.Println(id)
+	}
+
+	conn, err := grpc.Dial(address, grpc.WithInsecure(), grpc.WithBlock())
+	if err != nil {
+		log.Fatalf("Not connect; %v", err)
+	}
+	defer conn.Close()
+	c := pb.NewVMClient(conn)
+
+	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
+	defer cancel()
+	r, err := c.GetVM(ctx, &pb.VMID{Id: id})
+	if err != nil {
+		log.Fatalf("could not greet: %v", err)
+	}
+	log.Printf("ID: %s", r.GetId())
+	log.Printf("VMName: %s", r.GetVmname())
+	log.Printf("cpu: %s", r.GetVcpu())
+	log.Printf("memory: %s", r.GetVmem())
+	log.Printf("Storage: %s", r.GetStoragePath())
+	log.Printf("VNC: %s", r.GetVnc())
+	log.Printf("Net: %s", r.GetVnet())
+}
+
+func GetVMName(name string) {
+	conn, err := grpc.Dial(address, grpc.WithInsecure(), grpc.WithBlock())
+	if err != nil {
+		log.Fatalf("Not connect; %v", err)
+	}
+	defer conn.Close()
+	c := pb.NewVMClient(conn)
+
+	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
+	defer cancel()
+	r, err := c.GetVMName(ctx, &pb.VMName{Vmname: name})
+	if err != nil {
+		log.Fatalf("could not greet: %v", err)
+	}
+	log.Printf("ID: %s", r.GetId())
+	log.Printf("VMName: %s", r.GetVmname())
+	log.Printf("cpu: %s", r.GetVcpu())
+	log.Printf("memory: %s", r.GetVmem())
+	log.Printf("Storage: %s", r.GetStoragePath())
+	log.Printf("VNC: %s", r.GetVnc())
+	log.Printf("Net: %s", r.GetVnet())
+}
