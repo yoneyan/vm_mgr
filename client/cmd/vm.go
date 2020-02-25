@@ -26,6 +26,7 @@ import (
 	"fmt"
 	"github.com/spf13/cobra"
 	"github.com/yoneyan/vm_mgr/client/data"
+	pb "github.com/yoneyan/vm_mgr/proto/proto-go"
 	"log"
 	"strconv"
 )
@@ -43,7 +44,7 @@ var vmCreateCmd = &cobra.Command{
 	Short: "create vm",
 	Long: `VM create tool
 For example:
-vm create -n test -c 1 -m 1024 -p /home/yoneyan/test.qcow2 -s 1024 -N br100 -v 200 -C /home/yoneyan/Downloads/ubuntu-18.04.4-live-server-amd64.iso -M false
+vm create -n test -c 1 -m 1024 -p /home/yoneyan/test.qcow2 -s 1024 -N br100 -v 200 -C /home/yoneyan/Downloads/ubuntu-18.04.4-live-server-amd64.iso -a 1
 `,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		stringArray := []string{"name", "storage_path", "cdrom", "vnet"}
@@ -67,14 +68,28 @@ vm create -n test -c 1 -m 1024 -p /home/yoneyan/test.qcow2 -s 1024 -N br100 -v 2
 			resultInt64Array[i] = result
 		}
 
-		status, err := cmd.PersistentFlags().GetInt32("status")
+		autostart, err := cmd.PersistentFlags().GetBool("autostart")
 		if err != nil {
 			log.Fatalf("could not greet: %v", err)
 			return nil
 		}
 
-		data.CreateVM(resultStringArray[0], resultInt64Array[0], resultInt64Array[1], resultInt64Array[2], resultStringArray[1], resultStringArray[2], resultStringArray[3], resultInt64Array[3], status)
-		fmt.Println("Process End")
+		c := pb.VMData{
+			Vmname:      resultStringArray[0],
+			Vcpu:        resultInt64Array[0],
+			Vmem:        resultInt64Array[1],
+			Storage:     resultInt64Array[2],
+			StoragePath: resultStringArray[1],
+			CdromPath:   resultStringArray[2],
+			Vnet:        resultStringArray[3],
+			Vnc:         resultInt64Array[3],
+			Autostart:   autostart,
+		}
+		if data.CreateVM(&c) {
+			fmt.Println("Process End")
+		} else {
+			fmt.Println("Process Failed")
+		}
 		return nil
 	},
 }
@@ -192,7 +207,7 @@ func init() {
 	vmCreateCmd.PersistentFlags().StringP("cdrom", "C", "", "cdrom path")
 	vmCreateCmd.PersistentFlags().StringP("vnet", "N", "none", "virtual net")
 	vmCreateCmd.PersistentFlags().Int64P("vnc", "v", 0, "vnc port")
-	vmCreateCmd.PersistentFlags().Int32P("status", "M", 1, "begin status")
+	vmCreateCmd.PersistentFlags().BoolP("autostart", "a", false, "autostart")
 
 	rootCmd.AddCommand(vmCmd)
 	vmCmd.AddCommand(vmCreateCmd)
