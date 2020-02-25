@@ -11,6 +11,18 @@ service VM {
     }
     rpc StopVM (VMID) returns (Result) {
     }
+    rpc ShutdownVM (VMID) returns (Result) {
+    }
+    rpc ResetVN (VMID) returns (Result) {
+    }
+    rpc PauseVN (VMID) returns (Result) {
+    }
+    rpc ResumeVM (VMID) returns (Result) {
+    }
+    rpc GetSnapshotVM (VMID) returns (SnapshotData) {
+    }
+    rpc SnapshotOperationVM (SnapshotOperationData) returns (Result){
+    }
     rpc GetVM (VMID) returns (VMData) {
     }
     rpc GetVMName (VMName) returns (VMData) {
@@ -30,6 +42,21 @@ message VMData {
     string vnet = 8;
     int64 vnc = 9;
     bool autostart = 10;
+}
+
+message SnapshotOperationData {
+    int64 vmid = 1;
+    int32 operation = 2; //0: Create ,1: Load ,2: Delete
+
+    string tag = 3;
+}
+
+message SnapshotData {
+    int64 id = 1;
+    string tag = 2;
+    string size = 3;
+    string date = 4;
+    string vmclock = 5;
 }
 
 message VMName {

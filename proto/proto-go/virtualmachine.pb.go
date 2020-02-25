@@ -135,6 +135,132 @@ func (m *VMData) GetAutostart() bool {
 	return false
 }
 
+type SnapshotOperationData struct {
+	Vmid                 int64    `protobuf:"varint,1,opt,name=vmid,proto3" json:"vmid,omitempty"`
+	Operation            int32    `protobuf:"varint,2,opt,name=operation,proto3" json:"operation,omitempty"`
+	Tag                  string   `protobuf:"bytes,3,opt,name=tag,proto3" json:"tag,omitempty"`
+	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_unrecognized     []byte   `json:"-"`
+	XXX_sizecache        int32    `json:"-"`
+}
+
+func (m *SnapshotOperationData) Reset()         { *m = SnapshotOperationData{} }
+func (m *SnapshotOperationData) String() string { return proto.CompactTextString(m) }
+func (*SnapshotOperationData) ProtoMessage()    {}
+func (*SnapshotOperationData) Descriptor() ([]byte, []int) {
+	return fileDescriptor_f620cdfcc6a9426c, []int{1}
+}
+
+func (m *SnapshotOperationData) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_SnapshotOperationData.Unmarshal(m, b)
+}
+func (m *SnapshotOperationData) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_SnapshotOperationData.Marshal(b, m, deterministic)
+}
+func (m *SnapshotOperationData) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_SnapshotOperationData.Merge(m, src)
+}
+func (m *SnapshotOperationData) XXX_Size() int {
+	return xxx_messageInfo_SnapshotOperationData.Size(m)
+}
+func (m *SnapshotOperationData) XXX_DiscardUnknown() {
+	xxx_messageInfo_SnapshotOperationData.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_SnapshotOperationData proto.InternalMessageInfo
+
+func (m *SnapshotOperationData) GetVmid() int64 {
+	if m != nil {
+		return m.Vmid
+	}
+	return 0
+}
+
+func (m *SnapshotOperationData) GetOperation() int32 {
+	if m != nil {
+		return m.Operation
+	}
+	return 0
+}
+
+func (m *SnapshotOperationData) GetTag() string {
+	if m != nil {
+		return m.Tag
+	}
+	return ""
+}
+
+type SnapshotData struct {
+	Id                   int64    `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
+	Tag                  string   `protobuf:"bytes,2,opt,name=tag,proto3" json:"tag,omitempty"`
+	Size                 string   `protobuf:"bytes,3,opt,name=size,proto3" json:"size,omitempty"`
+	Date                 string   `protobuf:"bytes,4,opt,name=date,proto3" json:"date,omitempty"`
+	Vmclock              string   `protobuf:"bytes,5,opt,name=vmclock,proto3" json:"vmclock,omitempty"`
+	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_unrecognized     []byte   `json:"-"`
+	XXX_sizecache        int32    `json:"-"`
+}
+
+func (m *SnapshotData) Reset()         { *m = SnapshotData{} }
+func (m *SnapshotData) String() string { return proto.CompactTextString(m) }
+func (*SnapshotData) ProtoMessage()    {}
+func (*SnapshotData) Descriptor() ([]byte, []int) {
+	return fileDescriptor_f620cdfcc6a9426c, []int{2}
+}
+
+func (m *SnapshotData) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_SnapshotData.Unmarshal(m, b)
+}
+func (m *SnapshotData) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_SnapshotData.Marshal(b, m, deterministic)
+}
+func (m *SnapshotData) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_SnapshotData.Merge(m, src)
+}
+func (m *SnapshotData) XXX_Size() int {
+	return xxx_messageInfo_SnapshotData.Size(m)
+}
+func (m *SnapshotData) XXX_DiscardUnknown() {
+	xxx_messageInfo_SnapshotData.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_SnapshotData proto.InternalMessageInfo
+
+func (m *SnapshotData) GetId() int64 {
+	if m != nil {
+		return m.Id
+	}
+	return 0
+}
+
+func (m *SnapshotData) GetTag() string {
+	if m != nil {
+		return m.Tag
+	}
+	return ""
+}
+
+func (m *SnapshotData) GetSize() string {
+	if m != nil {
+		return m.Size
+	}
+	return ""
+}
+
+func (m *SnapshotData) GetDate() string {
+	if m != nil {
+		return m.Date
+	}
+	return ""
+}
+
+func (m *SnapshotData) GetVmclock() string {
+	if m != nil {
+		return m.Vmclock
+	}
+	return ""
+}
+
 type VMName struct {
 	Vmname               string   `protobuf:"bytes,1,opt,name=vmname,proto3" json:"vmname,omitempty"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
@@ -146,7 +272,7 @@ func (m *VMName) Reset()         { *m = VMName{} }
 func (m *VMName) String() string { return proto.CompactTextString(m) }
 func (*VMName) ProtoMessage()    {}
 func (*VMName) Descriptor() ([]byte, []int) {
-	return fileDescriptor_f620cdfcc6a9426c, []int{1}
+	return fileDescriptor_f620cdfcc6a9426c, []int{3}
 }
 
 func (m *VMName) XXX_Unmarshal(b []byte) error {
@@ -185,7 +311,7 @@ func (m *VMDataResponse) Reset()         { *m = VMDataResponse{} }
 func (m *VMDataResponse) String() string { return proto.CompactTextString(m) }
 func (*VMDataResponse) ProtoMessage()    {}
 func (*VMDataResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_f620cdfcc6a9426c, []int{2}
+	return fileDescriptor_f620cdfcc6a9426c, []int{4}
 }
 
 func (m *VMDataResponse) XXX_Unmarshal(b []byte) error {
@@ -224,7 +350,7 @@ func (m *VMID) Reset()         { *m = VMID{} }
 func (m *VMID) String() string { return proto.CompactTextString(m) }
 func (*VMID) ProtoMessage()    {}
 func (*VMID) Descriptor() ([]byte, []int) {
-	return fileDescriptor_f620cdfcc6a9426c, []int{3}
+	return fileDescriptor_f620cdfcc6a9426c, []int{5}
 }
 
 func (m *VMID) XXX_Unmarshal(b []byte) error {
@@ -263,7 +389,7 @@ func (m *Result) Reset()         { *m = Result{} }
 func (m *Result) String() string { return proto.CompactTextString(m) }
 func (*Result) ProtoMessage()    {}
 func (*Result) Descriptor() ([]byte, []int) {
-	return fileDescriptor_f620cdfcc6a9426c, []int{4}
+	return fileDescriptor_f620cdfcc6a9426c, []int{6}
 }
 
 func (m *Result) XXX_Unmarshal(b []byte) error {
@@ -293,6 +419,8 @@ func (m *Result) GetStatus() bool {
 
 func init() {
 	proto.RegisterType((*VMData)(nil), "VMData")
+	proto.RegisterType((*SnapshotOperationData)(nil), "SnapshotOperationData")
+	proto.RegisterType((*SnapshotData)(nil), "SnapshotData")
 	proto.RegisterType((*VMName)(nil), "VMName")
 	proto.RegisterType((*VMDataResponse)(nil), "VMDataResponse")
 	proto.RegisterType((*VMID)(nil), "VMID")
@@ -302,30 +430,40 @@ func init() {
 func init() { proto.RegisterFile("virtualmachine.proto", fileDescriptor_f620cdfcc6a9426c) }
 
 var fileDescriptor_f620cdfcc6a9426c = []byte{
-	// 367 bytes of a gzipped FileDescriptorProto
-	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x6c, 0x52, 0x4d, 0xab, 0xdb, 0x30,
-	0x10, 0x7c, 0xb2, 0x13, 0x7f, 0xec, 0x2b, 0x8f, 0x22, 0x4a, 0x50, 0xd3, 0xb4, 0x75, 0x7c, 0xf2,
-	0xc9, 0x87, 0xe4, 0x17, 0x94, 0x06, 0x42, 0x0f, 0x2e, 0xc5, 0x01, 0x5f, 0x8b, 0xea, 0x88, 0xc6,
-	0x60, 0xd9, 0xc6, 0x5a, 0xfb, 0x9f, 0xf6, 0xbf, 0xf4, 0x58, 0xb4, 0x76, 0x48, 0xfa, 0xc8, 0x6d,
-	0x77, 0x46, 0x33, 0xc3, 0x2c, 0x82, 0x77, 0x63, 0xd5, 0xe3, 0x20, 0x6b, 0x2d, 0xcb, 0x4b, 0xd5,
-	0xa8, 0xb4, 0xeb, 0x5b, 0x6c, 0xe3, 0xbf, 0x0c, 0xbc, 0x22, 0x3b, 0x48, 0x94, 0xfc, 0x05, 0x9c,
-	0xea, 0x2c, 0x58, 0xc4, 0x12, 0x37, 0x77, 0xaa, 0x33, 0x5f, 0x81, 0x37, 0xea, 0x46, 0x6a, 0x25,
-	0x9c, 0x88, 0x25, 0x61, 0x3e, 0x6f, 0x9c, 0xc3, 0x62, 0x2c, 0xbb, 0x41, 0xb8, 0xf4, 0x92, 0x66,
-	0xc2, 0xb4, 0xd2, 0x62, 0x31, 0x63, 0x5a, 0x69, 0xbe, 0x85, 0x37, 0x06, 0xdb, 0x5e, 0xfe, 0x56,
-	0x3f, 0x3b, 0x89, 0x17, 0xb1, 0x24, 0x97, 0xe7, 0x19, 0xfb, 0x21, 0xf1, 0xc2, 0x05, 0xf8, 0xf3,
-	0x2a, 0x3c, 0x52, 0x5e, 0x57, 0xfe, 0x11, 0xa0, 0x3c, 0xf7, 0xad, 0x9e, 0xa4, 0x3e, 0x49, 0x43,
-	0x42, 0x48, 0x68, 0xf3, 0x1a, 0x85, 0x22, 0x20, 0x82, 0x66, 0xfe, 0x16, 0xdc, 0xb1, 0x29, 0x45,
-	0x48, 0x46, 0x76, 0xe4, 0x1b, 0x08, 0xe5, 0x80, 0xad, 0x41, 0xd9, 0xa3, 0x80, 0x88, 0x25, 0x41,
-	0x7e, 0x03, 0xe2, 0xc8, 0x36, 0xff, 0x6e, 0x1b, 0xdd, 0x9a, 0xb2, 0xfb, 0xa6, 0xf1, 0x1e, 0x5e,
-	0xa6, 0xdb, 0xe4, 0xca, 0x74, 0x6d, 0x63, 0x14, 0xdf, 0x82, 0x3f, 0x21, 0x46, 0xb0, 0xc8, 0x4d,
-	0x9e, 0x77, 0x7e, 0x3a, 0xbf, 0xb8, 0xe2, 0xf1, 0x0a, 0x16, 0x45, 0xf6, 0xed, 0xf0, 0xfa, 0x9c,
-	0x36, 0x2e, 0x57, 0x66, 0xa8, 0xd1, 0xc6, 0x19, 0x94, 0x38, 0x18, 0x62, 0x83, 0x7c, 0xde, 0x76,
-	0x7f, 0x18, 0x38, 0x45, 0xc6, 0x3f, 0x41, 0xf0, 0xb5, 0x57, 0x12, 0x55, 0x91, 0xf1, 0xab, 0xfd,
-	0xda, 0x4f, 0x27, 0x71, 0xfc, 0xc4, 0x37, 0x10, 0x1c, 0x54, 0xad, 0x88, 0x5f, 0xa6, 0x36, 0xeb,
-	0x9e, 0xfd, 0x00, 0xfe, 0xc9, 0xd6, 0x7b, 0x48, 0xae, 0xc1, 0x3b, 0x61, 0xdb, 0x3d, 0xe4, 0xde,
-	0xc3, 0xf2, 0xa8, 0xfe, 0x93, 0x4d, 0xd1, 0xf1, 0x13, 0xff, 0x0c, 0x21, 0x51, 0x74, 0x2c, 0x8b,
-	0xdb, 0xe1, 0xfe, 0xc1, 0x06, 0x82, 0xa3, 0xc2, 0x2f, 0x75, 0xfd, 0xc8, 0xf9, 0x97, 0x47, 0x5f,
-	0x6d, 0xff, 0x2f, 0x00, 0x00, 0xff, 0xff, 0x89, 0x71, 0x45, 0x26, 0x82, 0x02, 0x00, 0x00,
+	// 516 bytes of a gzipped FileDescriptorProto
+	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x74, 0x54, 0x4b, 0x8f, 0xd3, 0x4c,
+	0x10, 0x8c, 0xf3, 0xb2, 0xdd, 0xfb, 0xd0, 0xa7, 0xf9, 0x20, 0x1a, 0x96, 0xb0, 0x64, 0x7d, 0x21,
+	0x27, 0x1f, 0x76, 0x2f, 0x5c, 0x11, 0x91, 0x22, 0x0e, 0x59, 0x56, 0x8e, 0xe4, 0x0b, 0x07, 0x34,
+	0x38, 0xad, 0x8d, 0x85, 0xed, 0xb1, 0x3c, 0xed, 0x20, 0xf1, 0xab, 0xf8, 0x79, 0x1c, 0xd1, 0x74,
+	0xec, 0x8d, 0x01, 0x73, 0xab, 0xae, 0xea, 0x87, 0xa7, 0xba, 0x65, 0x78, 0x76, 0x48, 0x2b, 0xaa,
+	0x55, 0x96, 0xab, 0x64, 0x9f, 0x16, 0x18, 0x96, 0x95, 0x26, 0x1d, 0xfc, 0x74, 0x60, 0x1a, 0x6f,
+	0x56, 0x8a, 0x94, 0xb8, 0x84, 0x61, 0xba, 0x93, 0xce, 0xc2, 0x59, 0x8e, 0xa2, 0x61, 0xba, 0x13,
+	0x33, 0x98, 0x1e, 0xf2, 0x42, 0xe5, 0x28, 0x87, 0x0b, 0x67, 0xe9, 0x47, 0x4d, 0x24, 0x04, 0x8c,
+	0x0f, 0x49, 0x59, 0xcb, 0x11, 0x67, 0x32, 0x66, 0x2e, 0xc7, 0x5c, 0x8e, 0x1b, 0x2e, 0xc7, 0x5c,
+	0xdc, 0xc0, 0xb9, 0x21, 0x5d, 0xa9, 0x47, 0xfc, 0x5c, 0x2a, 0xda, 0xcb, 0x09, 0x77, 0x39, 0x6b,
+	0xb8, 0x07, 0x45, 0x7b, 0x21, 0xc1, 0x6d, 0x42, 0x39, 0xe5, 0xca, 0x36, 0x14, 0xaf, 0x00, 0x92,
+	0x5d, 0xa5, 0xf3, 0x63, 0xa9, 0xcb, 0xa5, 0x3e, 0x33, 0x5c, 0x68, 0xe7, 0x15, 0x48, 0xd2, 0x63,
+	0x81, 0xb1, 0xf8, 0x0f, 0x46, 0x87, 0x22, 0x91, 0x3e, 0x37, 0xb2, 0x50, 0xcc, 0xc1, 0x57, 0x35,
+	0x69, 0x43, 0xaa, 0x22, 0x09, 0x0b, 0x67, 0xe9, 0x45, 0x27, 0x22, 0xf8, 0x04, 0xcf, 0xb7, 0x85,
+	0x2a, 0xcd, 0x5e, 0xd3, 0xc7, 0x12, 0x2b, 0x45, 0xa9, 0x2e, 0xd8, 0x08, 0x7e, 0xcc, 0x93, 0x15,
+	0x8c, 0x6d, 0x2b, 0xdd, 0x26, 0xb1, 0x1f, 0x93, 0xe8, 0x44, 0xd8, 0xd1, 0xa4, 0x1e, 0xd9, 0x11,
+	0x3f, 0xb2, 0x30, 0xa8, 0xe0, 0xbc, 0x6d, 0xde, 0x6b, 0x6e, 0x53, 0x31, 0x7c, 0xaa, 0xb0, 0x53,
+	0x4d, 0xfa, 0x1d, 0x9b, 0x26, 0x8c, 0x2d, 0xb7, 0x53, 0x84, 0x6c, 0xab, 0x1f, 0x31, 0xb6, 0x9e,
+	0x1d, 0xf2, 0x24, 0xd3, 0xc9, 0xd7, 0xc6, 0xd1, 0x36, 0x0c, 0x16, 0x76, 0x95, 0xf7, 0x76, 0x45,
+	0xa7, 0xd5, 0x39, 0xdd, 0xd5, 0x05, 0x77, 0x70, 0x79, 0x5c, 0x76, 0x84, 0xa6, 0xd4, 0x85, 0x41,
+	0x71, 0x03, 0xee, 0x91, 0x31, 0xd2, 0x59, 0x8c, 0x96, 0x67, 0xb7, 0x6e, 0xd8, 0x64, 0xb4, 0x7c,
+	0x30, 0x83, 0x71, 0xbc, 0xf9, 0xb0, 0xfa, 0xf3, 0x09, 0x76, 0x5c, 0x84, 0xa6, 0xce, 0xc8, 0x8e,
+	0x33, 0xa4, 0xa8, 0x36, 0xac, 0x7a, 0x51, 0x13, 0xdd, 0xfe, 0x18, 0xc1, 0x30, 0xde, 0x88, 0x6b,
+	0xf0, 0xde, 0x57, 0xa8, 0x08, 0xe3, 0x8d, 0x68, 0xdb, 0x5f, 0xb9, 0xe1, 0xb1, 0x38, 0x18, 0x88,
+	0x39, 0x78, 0x2b, 0xcc, 0x90, 0xf5, 0x49, 0x68, 0x67, 0x75, 0xd5, 0x97, 0xe0, 0x6e, 0xed, 0xbe,
+	0x7a, 0xc5, 0x2b, 0x98, 0x6e, 0x49, 0x97, 0xbd, 0xda, 0x35, 0xc0, 0x76, 0x5f, 0xd3, 0x4e, 0x7f,
+	0x2b, 0xfe, 0xd5, 0x38, 0x42, 0x83, 0x14, 0xdf, 0xf7, 0x8b, 0x0f, 0xaa, 0x36, 0xd8, 0x2b, 0xce,
+	0xc1, 0xb3, 0x38, 0xef, 0xff, 0xe0, 0x37, 0x70, 0xb1, 0x46, 0x6a, 0xb7, 0x7f, 0x4a, 0xb9, 0x08,
+	0xbb, 0x17, 0x11, 0x0c, 0xc4, 0x5b, 0xf8, 0xff, 0xaf, 0x03, 0x8c, 0x37, 0x62, 0x16, 0xf6, 0x9e,
+	0x65, 0x77, 0xc4, 0x0b, 0x98, 0xac, 0xf1, 0x37, 0x47, 0x8e, 0xae, 0x06, 0x03, 0xf1, 0x1a, 0x7c,
+	0x96, 0xf8, 0x0e, 0x2c, 0x6f, 0x41, 0x37, 0x61, 0x0e, 0xde, 0x1a, 0xe9, 0x5d, 0x96, 0xf5, 0x7d,
+	0xfc, 0x97, 0x29, 0xff, 0x16, 0xee, 0x7e, 0x05, 0x00, 0x00, 0xff, 0xff, 0x46, 0x37, 0x1c, 0xbc,
+	0x2e, 0x04, 0x00, 0x00,
 }
 
 // Reference imports to suppress errors if they are not otherwise used.
@@ -344,6 +482,12 @@ type VMClient interface {
 	DeleteVM(ctx context.Context, in *VMID, opts ...grpc.CallOption) (*Result, error)
 	StartVM(ctx context.Context, in *VMID, opts ...grpc.CallOption) (*Result, error)
 	StopVM(ctx context.Context, in *VMID, opts ...grpc.CallOption) (*Result, error)
+	ShutdownVM(ctx context.Context, in *VMID, opts ...grpc.CallOption) (*Result, error)
+	ResetVN(ctx context.Context, in *VMID, opts ...grpc.CallOption) (*Result, error)
+	PauseVN(ctx context.Context, in *VMID, opts ...grpc.CallOption) (*Result, error)
+	ResumeVM(ctx context.Context, in *VMID, opts ...grpc.CallOption) (*Result, error)
+	GetSnapshotVM(ctx context.Context, in *VMID, opts ...grpc.CallOption) (*SnapshotData, error)
+	SnapshotOperationVM(ctx context.Context, in *SnapshotOperationData, opts ...grpc.CallOption) (*Result, error)
 	GetVM(ctx context.Context, in *VMID, opts ...grpc.CallOption) (*VMData, error)
 	GetVMName(ctx context.Context, in *VMName, opts ...grpc.CallOption) (*VMData, error)
 	GetAllVM(ctx context.Context, in *VMID, opts ...grpc.CallOption) (*Result, error)
@@ -393,6 +537,60 @@ func (c *vMClient) StopVM(ctx context.Context, in *VMID, opts ...grpc.CallOption
 	return out, nil
 }
 
+func (c *vMClient) ShutdownVM(ctx context.Context, in *VMID, opts ...grpc.CallOption) (*Result, error) {
+	out := new(Result)
+	err := c.cc.Invoke(ctx, "/VM/ShutdownVM", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *vMClient) ResetVN(ctx context.Context, in *VMID, opts ...grpc.CallOption) (*Result, error) {
+	out := new(Result)
+	err := c.cc.Invoke(ctx, "/VM/ResetVN", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *vMClient) PauseVN(ctx context.Context, in *VMID, opts ...grpc.CallOption) (*Result, error) {
+	out := new(Result)
+	err := c.cc.Invoke(ctx, "/VM/PauseVN", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *vMClient) ResumeVM(ctx context.Context, in *VMID, opts ...grpc.CallOption) (*Result, error) {
+	out := new(Result)
+	err := c.cc.Invoke(ctx, "/VM/ResumeVM", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *vMClient) GetSnapshotVM(ctx context.Context, in *VMID, opts ...grpc.CallOption) (*SnapshotData, error) {
+	out := new(SnapshotData)
+	err := c.cc.Invoke(ctx, "/VM/GetSnapshotVM", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *vMClient) SnapshotOperationVM(ctx context.Context, in *SnapshotOperationData, opts ...grpc.CallOption) (*Result, error) {
+	out := new(Result)
+	err := c.cc.Invoke(ctx, "/VM/SnapshotOperationVM", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 func (c *vMClient) GetVM(ctx context.Context, in *VMID, opts ...grpc.CallOption) (*VMData, error) {
 	out := new(VMData)
 	err := c.cc.Invoke(ctx, "/VM/GetVM", in, out, opts...)
@@ -426,6 +624,12 @@ type VMServer interface {
 	DeleteVM(context.Context, *VMID) (*Result, error)
 	StartVM(context.Context, *VMID) (*Result, error)
 	StopVM(context.Context, *VMID) (*Result, error)
+	ShutdownVM(context.Context, *VMID) (*Result, error)
+	ResetVN(context.Context, *VMID) (*Result, error)
+	PauseVN(context.Context, *VMID) (*Result, error)
+	ResumeVM(context.Context, *VMID) (*Result, error)
+	GetSnapshotVM(context.Context, *VMID) (*SnapshotData, error)
+	SnapshotOperationVM(context.Context, *SnapshotOperationData) (*Result, error)
 	GetVM(context.Context, *VMID) (*VMData, error)
 	GetVMName(context.Context, *VMName) (*VMData, error)
 	GetAllVM(context.Context, *VMID) (*Result, error)
@@ -446,6 +650,24 @@ func (*UnimplementedVMServer) StartVM(ctx context.Context, req *VMID) (*Result, 
 }
 func (*UnimplementedVMServer) StopVM(ctx context.Context, req *VMID) (*Result, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method StopVM not implemented")
+}
+func (*UnimplementedVMServer) ShutdownVM(ctx context.Context, req *VMID) (*Result, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ShutdownVM not implemented")
+}
+func (*UnimplementedVMServer) ResetVN(ctx context.Context, req *VMID) (*Result, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ResetVN not implemented")
+}
+func (*UnimplementedVMServer) PauseVN(ctx context.Context, req *VMID) (*Result, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method PauseVN not implemented")
+}
+func (*UnimplementedVMServer) ResumeVM(ctx context.Context, req *VMID) (*Result, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ResumeVM not implemented")
+}
+func (*UnimplementedVMServer) GetSnapshotVM(ctx context.Context, req *VMID) (*SnapshotData, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetSnapshotVM not implemented")
+}
+func (*UnimplementedVMServer) SnapshotOperationVM(ctx context.Context, req *SnapshotOperationData) (*Result, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method SnapshotOperationVM not implemented")
 }
 func (*UnimplementedVMServer) GetVM(ctx context.Context, req *VMID) (*VMData, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetVM not implemented")
@@ -533,6 +755,114 @@ func _VM_StopVM_Handler(srv interface{}, ctx context.Context, dec func(interface
 	return interceptor(ctx, in, info, handler)
 }
 
+func _VM_ShutdownVM_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(VMID)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(VMServer).ShutdownVM(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/VM/ShutdownVM",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(VMServer).ShutdownVM(ctx, req.(*VMID))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _VM_ResetVN_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(VMID)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(VMServer).ResetVN(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/VM/ResetVN",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(VMServer).ResetVN(ctx, req.(*VMID))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _VM_PauseVN_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(VMID)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(VMServer).PauseVN(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/VM/PauseVN",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(VMServer).PauseVN(ctx, req.(*VMID))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _VM_ResumeVM_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(VMID)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(VMServer).ResumeVM(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/VM/ResumeVM",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(VMServer).ResumeVM(ctx, req.(*VMID))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _VM_GetSnapshotVM_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(VMID)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(VMServer).GetSnapshotVM(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/VM/GetSnapshotVM",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(VMServer).GetSnapshotVM(ctx, req.(*VMID))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _VM_SnapshotOperationVM_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(SnapshotOperationData)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(VMServer).SnapshotOperationVM(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/VM/SnapshotOperationVM",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(VMServer).SnapshotOperationVM(ctx, req.(*SnapshotOperationData))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _VM_GetVM_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(VMID)
 	if err := dec(in); err != nil {
@@ -606,6 +936,30 @@ var _VM_serviceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "StopVM",
 			Handler:    _VM_StopVM_Handler,
+		},
+		{
+			MethodName: "ShutdownVM",
+			Handler:    _VM_ShutdownVM_Handler,
+		},
+		{
+			MethodName: "ResetVN",
+			Handler:    _VM_ResetVN_Handler,
+		},
+		{
+			MethodName: "PauseVN",
+			Handler:    _VM_PauseVN_Handler,
+		},
+		{
+			MethodName: "ResumeVM",
+			Handler:    _VM_ResumeVM_Handler,
+		},
+		{
+			MethodName: "GetSnapshotVM",
+			Handler:    _VM_GetSnapshotVM_Handler,
+		},
+		{
+			MethodName: "SnapshotOperationVM",
+			Handler:    _VM_SnapshotOperationVM_Handler,
 		},
 		{
 			MethodName: "GetVM",
