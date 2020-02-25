@@ -6,6 +6,7 @@ import (
 	"github.com/yoneyan/vm_mgr/node/etc"
 	"log"
 	"os/exec"
+	"strconv"
 )
 
 func RunQEMUMonitor(command, socket string) error {
@@ -29,29 +30,30 @@ func RunQEMUCmd(cmd []string) error {
 
 	//cmd = append(cmd,"-") //Intel VT-d support enable
 
-	out, err := exec.Command("qemu-system-x86_64", cmd...).Output()
+	err := exec.Command("qemu-system-x86_64", cmd...).Start()
 	if err != nil {
-		log.Fatal(err)
-		return err
-	}
-	fmt.Println(out)
-	return nil
-}
-
-func Shutdown(sockname string) error {
-	err := RunQEMUMonitor("system_powerdown", etc.SocketConnectionPath(sockname))
-	if err != nil {
-		log.Fatal(err)
+		fmt.Println(err)
+		fmt.Println("Command Error!")
 		return err
 	}
 	return nil
 }
 
-func Restart(sockname string) error {
-	err := RunQEMUMonitor("system_reset", etc.SocketConnectionPath(sockname))
-	if err != nil {
-		log.Fatal(err)
-		return err
+func CreateGenerateCmd(c *CreateVMInformation) []string {
+	var cmd []string
+
+	begin := []string{"-enable-kvm", "-name", c.Name, "-smp", strconv.Itoa(c.CPU), "-m", strconv.Itoa(c.Mem), "-monitor", etc.SocketGenerate(c.Name), "-hda", c.StoragePath + "/" + c.Name + ".img", "-vnc", ":" + strconv.Itoa(c.VNC)}
+	cmdarray := []string{"-boot"}
+
+	cmd = append(cmd, begin...)
+	if c.CDROM != "" {
+		cmd = append(cmd, cmdarray[0])
+		cmd = append(cmd, "order=d")
+		cmd = append(cmd, "-cdrom")
+		cmd = append(cmd, c.CDROM)
 	}
-	return nil
+
+	fmt.Println(cmd)
+
+	return cmd
 }

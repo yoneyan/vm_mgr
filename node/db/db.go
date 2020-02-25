@@ -125,6 +125,7 @@ func VMDBGetVMStatus(id int) (int, error) {
 
 func VMDBStatusUpdate(id, status int) bool {
 	db := *connectdb()
+	fmt.Println("status:" + string(status))
 
 	cmd := "UPDATE nodevm SET status = ? WHERE id = ?"
 	_, err := db.Exec(cmd, status, id)
@@ -147,7 +148,6 @@ func VMDBGetData(id int) (*NodeVM, error) {
 		}
 	}
 	return &result, fmt.Errorf("Not Found")
-
 }
 
 func VMDBUpdate(data *NodeVM) {

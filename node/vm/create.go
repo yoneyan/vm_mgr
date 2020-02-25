@@ -5,10 +5,12 @@ import (
 	"fmt"
 	"github.com/yoneyan/vm_mgr/node/db"
 	"github.com/yoneyan/vm_mgr/node/etc"
-	"strconv"
+	"github.com/yoneyan/vm_mgr/node/manage"
+	"log"
 )
 
 type CreateVMInformation struct {
+	ID          int
 	Name        string
 	CPU         int
 	Mem         int
@@ -16,6 +18,24 @@ type CreateVMInformation struct {
 	CDROM       string
 	Net         string
 	VNC         int
+}
+
+func CreateVMProcess(c *CreateVMInformation) error {
+	fmt.Println("----VMNewCreate")
+	if manage.VMExistsName(c.Name) {
+		fmt.Println("A VM with the same name exists. So, change the name of the VM.")
+	} else {
+		CreateVMDBProcess(c)
+		err := RunQEMUCmd(CreateGenerateCmd(c))
+		if err != nil {
+			log.Fatal(err)
+			return fmt.Errorf("VMNewCreate Error!!")
+		} else {
+			db.VMDBStatusUpdate(c.ID, 1)
+		}
+		return nil
+	}
+	return nil
 }
 
 func CreateVMDBProcess(c *CreateVMInformation) {
@@ -30,29 +50,4 @@ func CreateVMDBProcess(c *CreateVMInformation) {
 		Status:      0,
 	}
 	db.AddDBVM(dbdata)
-}
-
-func StartVMProcess(id int) {
-
-}
-
-func CreateGenerateCmd(c *CreateVMInformation) []string {
-	var cmd []string
-
-	begin := []string{"-enable-kvm", "-name", c.Name, "-smp", strconv.Itoa(c.CPU), "-m", strconv.Itoa(c.Mem), "-monitor", etc.SocketGenerate(c.Name), "-hda", c.StoragePath + "/" + c.Name + ".img", "-vnc", ":" + strconv.Itoa(c.VNC)}
-	cmdarray := []string{"-boot"}
-
-	cmd = append(cmd, begin...)
-	if c.CDROM != "" {
-		cmd = append(cmd, cmdarray[0])
-		cmd = append(cmd, "order=d")
-		cmd = append(cmd, "-cdrom")
-		cmd = append(cmd, c.CDROM)
-	} else {
-		cmd = append(cmd, "order=c")
-	}
-
-	fmt.Println(cmd)
-
-	return cmd
 }
