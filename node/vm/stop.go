@@ -35,7 +35,7 @@ func VMStop(id int) error {
 	fmt.Println("-----VMStop Command-----")
 	out, err := pipeline.CombinedOutput(
 		[]string{"ps", "axf"},
-		[]string{"grep", result.Name},
+		[]string{"grep", result.Name + ".sock"},
 		[]string{"grep", "qemu"},
 		[]string{"grep", "-v", "grep"},
 		[]string{"awk", "{print \"kill -9 \" $1}"},
@@ -45,7 +45,7 @@ func VMStop(id int) error {
 		fmt.Println(err)
 		return err
 	}
-	fmt.Println(string(out))
+	fmt.Printf("%s", out)
 
 	if db.VMDBStatusUpdate(id, 0) {
 		fmt.Println("Power Off state")

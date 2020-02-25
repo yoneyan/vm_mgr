@@ -14,11 +14,14 @@ vm_mgrはvm+managerを合わせた意味になっています。
 |node|NG|
 |client|NG|
 
-### 現時点（2020/2/22 4:51）
+### 現時点（2020/2/26 3:10）
 実装予定の内容が多すぎるため、完了したタスクのみを挙げています。  
 **完了タスク**
 * gRPCによるデータのやり取り client -> node controller -> nodeはまだダメ
 * cliライブラリをurfave/cliからspf13/cobraへ移行
+* VM停止、開始
+* VM死活監視
+* node側DBの完成
 
 ## 実行テスト
 ### Node

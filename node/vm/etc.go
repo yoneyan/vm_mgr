@@ -5,8 +5,8 @@ import (
 	"log"
 )
 
-func Shutdown(sockname string) error {
-	err := RunQEMUMonitor("system_powerdown", etc.SocketConnectionPath(sockname))
+func VMShutdown(name string) error {
+	err := RunQEMUMonitor("system_powerdown", etc.SocketConnectionPath(name))
 	if err != nil {
 		log.Fatal(err)
 		return err
@@ -14,8 +14,26 @@ func Shutdown(sockname string) error {
 	return nil
 }
 
-func Restart(sockname string) error {
-	err := RunQEMUMonitor("system_reset", etc.SocketConnectionPath(sockname))
+func VMRestart(name string) error {
+	err := RunQEMUMonitor("system_reset", etc.SocketConnectionPath(name))
+	if err != nil {
+		log.Fatal(err)
+		return err
+	}
+	return nil
+}
+
+func VMPause(name string) error {
+	err := RunQEMUMonitor("system_reset", etc.SocketConnectionPath(name))
+	if err != nil {
+		log.Fatal(err)
+		return err
+	}
+	return nil
+}
+
+func VMResume(name string) error {
+	err := RunQEMUMonitor("system_reset", etc.SocketConnectionPath(name))
 	if err != nil {
 		log.Fatal(err)
 		return err

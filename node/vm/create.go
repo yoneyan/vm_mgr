@@ -18,23 +18,30 @@ type CreateVMInformation struct {
 	CDROM       string
 	Net         string
 	VNC         int
+	AutoStart   bool
 }
 
 func CreateVMProcess(c *CreateVMInformation) error {
 	fmt.Println("----VMNewCreate")
-	if manage.VMExistsName(c.Name) {
-		fmt.Println("A VM with the same name exists. So, change the name of the VM.")
+
+	if manage.VMVncExistsCheck(c.VNC) {
+		fmt.Println("A VM with the same vnc port exists. So, change vnc port of the VM.")
 	} else {
-		CreateVMDBProcess(c)
-		err := RunQEMUCmd(CreateGenerateCmd(c))
-		if err != nil {
-			log.Fatal(err)
-			return fmt.Errorf("VMNewCreate Error!!")
+		if manage.VMExistsName(c.Name) {
+			fmt.Println("A VM with the same name exists. So, change the name of the VM.")
 		} else {
-			db.VMDBStatusUpdate(c.ID, 1)
+			CreateVMDBProcess(c)
+			err := RunQEMUCmd(CreateGenerateCmd(c))
+			if err != nil {
+				log.Fatal(err)
+				return fmt.Errorf("VMNewCreate Error!!")
+			} else {
+				db.VMDBStatusUpdate(c.ID, 1)
+			}
+			return nil
 		}
-		return nil
 	}
+
 	return nil
 }
 
@@ -48,6 +55,7 @@ func CreateVMDBProcess(c *CreateVMInformation) {
 		Vnc:         c.VNC,
 		Socket:      etc.SocketGenerate(c.Name),
 		Status:      0,
+		AutoStart:   c.AutoStart,
 	}
 	db.AddDBVM(dbdata)
 }
