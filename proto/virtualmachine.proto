@@ -19,7 +19,7 @@ service VM {
     }
     rpc ResumeVM (VMID) returns (Result) {
     }
-    rpc GetSnapshotVM (VMID) returns (SnapshotData) {
+    rpc GetSnapshotVM (VMID) returns (stream SnapshotData) {
     }
     rpc SnapshotOperationVM (SnapshotOperationData) returns (Result){
     }
