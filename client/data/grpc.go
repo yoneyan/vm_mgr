@@ -34,7 +34,7 @@ func grpc_client_test() {
 	log.Printf("Greeting: %s", r.GetStatus())
 }
 
-func CreateVM(name string, vcpu, vmem, storage int64, storage_path string, cdrom string, vnet string, vnc int64, change bool) bool {
+func CreateVM(name string, vcpu, vmem, storage int64, storage_path string, cdrom string, vnet string, vnc int64, status int32) bool {
 	//value verification
 	i := []int64{vcpu, vmem, storage, vnc}
 	s := []string{name, storage_path, vnet}
@@ -65,7 +65,7 @@ func CreateVM(name string, vcpu, vmem, storage int64, storage_path string, cdrom
 	// Contact the server and print out its response.
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
 	defer cancel()
-	r, err := c.CreateVM(ctx, &pb.VMData{Vmname: name, Vcpu: vcpu, Vmem: vmem, Vnet: vnet, Vnc: vnc, Storage: storage, StoragePath: storage_path, CdromPath: cdrom, Change: change})
+	r, err := c.CreateVM(ctx, &pb.VMData{Vmname: name, Vcpu: vcpu, Vmem: vmem, Vnet: vnet, Vnc: vnc, Storage: storage, StoragePath: storage_path, CdromPath: cdrom, Status: status})
 	if err != nil {
 		log.Fatalf("could not greet: %v", err)
 	}
@@ -167,6 +167,9 @@ func GetVM(id int64) {
 	r, err := c.GetVM(ctx, &pb.VMID{Id: id})
 	if err != nil {
 		log.Fatalf("could not greet: %v", err)
+	}
+	if r.GetVmname() == "" {
+		fmt.Println("None")
 	}
 	log.Printf("ID: %s", r.GetId())
 	log.Printf("VMName: %s", r.GetVmname())

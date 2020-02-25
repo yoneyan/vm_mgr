@@ -24,14 +24,18 @@ func RunQEMUMonitor(command, socket string) error {
 	fmt.Println(string(out))
 	return nil
 }
-func RunQEMUCmd(cmd []string) {
+func RunQEMUCmd(cmd []string) error {
 	fmt.Println("----CommandRun")
 
 	//cmd = append(cmd,"-") //Intel VT-d support enable
 
-	out, _ := exec.Command("qemu-system-x86_64", cmd...).Output()
+	out, err := exec.Command("qemu-system-x86_64", cmd...).Output()
+	if err != nil {
+		log.Fatal(err)
+		return err
+	}
 	fmt.Println(out)
-
+	return nil
 }
 
 func Shutdown(sockname string) error {

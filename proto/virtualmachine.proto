@@ -29,7 +29,7 @@ message VMData {
     string cdrom_path = 7;
     string vnet = 8;
     int64 vnc = 9;
-    bool change = 10;
+    int32 status = 10;
 }
 
 message VMName {

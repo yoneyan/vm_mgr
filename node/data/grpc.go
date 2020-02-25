@@ -20,7 +20,7 @@ type server struct {
 }
 
 func (s *server) CreateVM(ctx context.Context, in *pb.VMData) (*pb.Result, error) {
-	log.Println("----CreateVM----")
+	fmt.Println("----------CreateVM-----")
 	log.Printf("Receive ID: %v", in.GetId())
 	log.Printf("Receive name: %v", in.GetVmname())
 	log.Printf("Receive cpu: %v", in.GetVcpu())
@@ -29,7 +29,7 @@ func (s *server) CreateVM(ctx context.Context, in *pb.VMData) (*pb.Result, error
 	log.Printf("Receive Storage: %v", in.GetStorage())
 	log.Printf("Receive vnc: %v", in.GetVnc())
 	log.Printf("Receive net: %v", in.GetVnet())
-	log.Printf("Receive change: %v", in.GetChange())
+	log.Printf("Receive change: %v", in.GetStatus())
 
 	var r vm.CreateVMInformation
 
@@ -40,8 +40,6 @@ func (s *server) CreateVM(ctx context.Context, in *pb.VMData) (*pb.Result, error
 	r.CDROM = in.GetCdromPath()
 	r.Net = in.GetVnet()
 	r.VNC = int(in.GetVnc())
-
-	vm.CreateGenerateCmd(&r)
 
 	if etc.FileExists(in.GetStoragePath()+"/"+in.GetVmname()+".img") == false {
 		fmt.Println("Not storage file exists")
@@ -60,42 +58,112 @@ func (s *server) CreateVM(ctx context.Context, in *pb.VMData) (*pb.Result, error
 	} else {
 		fmt.Println("----VMNewCreate")
 		vm.CreateVMDBProcess(&r)
-		vm.RunQEMUCmd(vm.CreateGenerateCmd(&r))
+		err := vm.RunQEMUCmd(vm.CreateGenerateCmd(&r))
+		if err != nil {
+			log.Fatal(err)
+			return &pb.Result{Status: false}, nil
+		} else {
+			db.VMDBStatusUpdate(int(in.GetId()), 1)
+
+		}
 	}
-	return &pb.Result{Status: false}, nil
+	return &pb.Result{Status: true}, nil
 }
 
 func (s *server) DeleteVM(ctx context.Context, in *pb.VMID) (*pb.Result, error) {
-	log.Println("----DeleteVM----")
+	fmt.Println("----------DeleteVM-----")
 	log.Printf("Receive ID: %v", in.GetId())
+
+	result := db.DeleteDBVM(int(in.GetId()))
+	if result {
+		fmt.Println("Delete success!!")
+	} else {
+		fmt.Println("Delete Failed....")
+	}
+
 	return &pb.Result{Status: false}, nil
 }
 
 func (s *server) StartVM(ctx context.Context, in *pb.VMID) (*pb.Result, error) {
-	log.Println("----StartVM----")
+	fmt.Println("----------StartVM-----")
 	log.Printf("Receive ID: %v", in.GetId())
 	return &pb.Result{Status: false}, nil
 }
 
 func (s *server) StopVM(ctx context.Context, in *pb.VMID) (*pb.Result, error) {
-	log.Println("----StopVM----")
+	fmt.Println("----------StopVM-----")
 	result, err := db.VMDBGetData(int(in.GetId()))
 	fmt.Println(result)
 	if err != nil {
 		log.Fatalf("Error!!")
 	}
 
-	if result.Status == 0 { //要修正
+	if result.Status == 1 { //要修正
 		fmt.Println("PowerOn")
 
 		fmt.Println(result.Name)
 		vm.VMStop(result.Name)
+		db.VMDBStatusUpdate(int(in.GetId()), 0)
 	}
 	if err != nil {
-		log.Fatalf("Error!!")
+		fmt.Println("Error!!")
 	}
 	log.Printf("Receive ID: %v", in.GetId())
 	return &pb.Result{Status: false}, nil
+}
+
+func (s *server) GetVM(ctx context.Context, in *pb.VMID) (*pb.VMData, error) {
+	fmt.Println("----------GetVMID-----")
+	log.Printf("Receive ID: %v", in.GetId())
+	result, err := db.VMDBGetData(int(in.GetId()))
+	if err != nil {
+		fmt.Println("Error!!")
+		return &pb.VMData{}, fmt.Errorf("Not Found!!")
+
+	}
+	return &pb.VMData{
+		Id:          int64(result.ID),
+		Vmname:      result.Name,
+		Vcpu:        int64(result.CPU),
+		Vmem:        int64(result.Mem),
+		StoragePath: result.StoragePath,
+		Vnet:        result.Net,
+		Vnc:         int64(result.Vnc),
+		Status:      int32(result.Status),
+	}, nil
+}
+
+func (s *server) GetVMName(ctx context.Context, in *pb.VMName) (*pb.VMData, error) {
+	fmt.Println("----------GetVMName-----")
+	log.Printf("Receive Name: %v", in.GetVmname())
+	id, err := db.VMDBGetVMID(in.GetVmname())
+	if err != nil {
+		fmt.Println("NotFound VMID !!")
+		return &pb.VMData{}, fmt.Errorf("Not Found VMID!!")
+	}
+	result, err := db.VMDBGetData(id)
+	if err != nil {
+		fmt.Println("Not Found!!")
+		return &pb.VMData{}, fmt.Errorf("Not Found!!")
+
+	}
+	return &pb.VMData{
+		Id:          int64(result.ID),
+		Vmname:      result.Name,
+		Vcpu:        int64(result.CPU),
+		Vmem:        int64(result.Mem),
+		StoragePath: result.StoragePath,
+		Vnet:        result.Net,
+		Vnc:         int64(result.Vnc),
+		Status:      int32(result.Status),
+	}, nil
+}
+
+func (s *server) GetAllVM(ctx context.Context, in *pb.VMID) (*pb.Result, error) {
+	log.Println("----GetAllVM----")
+	log.Printf("Receive GetAllVM")
+	fmt.Println(db.GetDBAll())
+	return &pb.Result{Status: true}, nil
 }
 
 func Processgrpc() {

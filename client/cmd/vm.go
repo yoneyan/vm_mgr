@@ -67,13 +67,13 @@ vm create -n test -c 1 -m 1024 -p /home/yoneyan/test.qcow2 -s 1024 -N br100 -v 2
 			resultInt64Array[i] = result
 		}
 
-		change, err := cmd.PersistentFlags().GetBool("change")
+		status, err := cmd.PersistentFlags().GetInt32("status")
 		if err != nil {
 			log.Fatalf("could not greet: %v", err)
 			return nil
 		}
 
-		data.CreateVM(resultStringArray[0], resultInt64Array[0], resultInt64Array[1], resultInt64Array[2], resultStringArray[1], resultStringArray[2], resultStringArray[3], resultInt64Array[3], change)
+		data.CreateVM(resultStringArray[0], resultInt64Array[0], resultInt64Array[1], resultInt64Array[2], resultStringArray[1], resultStringArray[2], resultStringArray[3], resultInt64Array[3], status)
 		fmt.Println("Process End")
 		return nil
 	},
@@ -182,7 +182,7 @@ func init() {
 	vmCreateCmd.PersistentFlags().StringP("cdrom", "C", "", "cdrom path")
 	vmCreateCmd.PersistentFlags().StringP("vnet", "N", "none", "virtual net")
 	vmCreateCmd.PersistentFlags().Int64P("vnc", "v", 0, "vnc port")
-	vmCreateCmd.PersistentFlags().BoolP("change", "M", false, "change spec")
+	vmCreateCmd.PersistentFlags().Int32P("status", "M", 1, "begin status")
 
 	rootCmd.AddCommand(vmCmd)
 	vmCmd.AddCommand(vmCreateCmd)

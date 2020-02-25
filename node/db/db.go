@@ -69,10 +69,10 @@ func AddDBVM(data NodeVM) bool {
 	return true
 }
 
-func DeleteDBVM(name string) bool {
+func DeleteDBVM(id int) bool {
 	db := connectdb()
-	deleteDb := "DELETE FROM nodevm WHERE name = ?"
-	_, err := db.Exec(deleteDb, name)
+	deleteDb := "DELETE FROM nodevm WHERE id = ?"
+	_, err := db.Exec(deleteDb, id)
 	if err != nil {
 		log.Fatalln(err)
 		return false
@@ -150,8 +150,7 @@ func VMDBGetData(id int) (*NodeVM, error) {
 
 }
 
-func VMDBStatusStart(id int) {
-
+func VMDBUpdate(data *NodeVM) {
 }
 
 func VMDBStatusStop(id int) {
