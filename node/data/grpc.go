@@ -29,8 +29,7 @@ func (s *server) CreateVM(ctx context.Context, in *pb.VMData) (*pb.Result, error
 	log.Printf("Receive Storage: %v", in.GetStorage())
 	log.Printf("Receive vnc: %v", in.GetVnc())
 	log.Printf("Receive net: %v", in.GetVnet())
-	log.Printf("Receive change: %v", in.GetStatus())
-
+	log.Printf("Receive change: %v", in.GetAutostart())
 	var r vm.CreateVMInformation
 
 	r.ID = int(in.GetId())
@@ -41,6 +40,7 @@ func (s *server) CreateVM(ctx context.Context, in *pb.VMData) (*pb.Result, error
 	r.CDROM = in.GetCdromPath()
 	r.Net = in.GetVnet()
 	r.VNC = int(in.GetVnc())
+	r.AutoStart = bool(in.GetAutostart())
 
 	if etc.FileExists(in.GetStoragePath()+"/"+in.GetVmname()+".img") == false {
 		fmt.Println("Not storage file exists")
@@ -112,7 +112,7 @@ func (s *server) GetVM(ctx context.Context, in *pb.VMID) (*pb.VMData, error) {
 		StoragePath: result.StoragePath,
 		Vnet:        result.Net,
 		Vnc:         int64(result.Vnc),
-		Status:      int32(result.Status),
+		Autostart:   bool(result.AutoStart),
 	}, nil
 }
 
@@ -138,7 +138,7 @@ func (s *server) GetVMName(ctx context.Context, in *pb.VMName) (*pb.VMData, erro
 		StoragePath: result.StoragePath,
 		Vnet:        result.Net,
 		Vnc:         int64(result.Vnc),
-		Status:      int32(result.Status),
+		Autostart:   bool(result.AutoStart),
 	}, nil
 }
 

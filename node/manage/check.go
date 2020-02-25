@@ -29,6 +29,16 @@ func VMExistsCheck(name string, id int) bool {
 	}
 }
 
+func VMVncExistsCheck(vnc int) bool {
+	result := db.GetDBAll()
+	for a, _ := range result {
+		if result[a].Vnc == vnc {
+			return true
+		}
+	}
+	return false
+}
+
 func VMIDCheck(id int) bool {
 	if id < 0 {
 		fmt.Println("VMID Check NG.")

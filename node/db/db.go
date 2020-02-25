@@ -19,6 +19,7 @@ type NodeVM struct {
 	Vnc         int
 	Socket      string
 	Status      int
+	AutoStart   bool
 }
 
 func connectdb() *sql.DB {
@@ -47,7 +48,7 @@ func createdb(database string) bool {
 
 func Initdb() bool {
 	//nodevm data
-	createdb(`CREATE TABLE IF NOT EXISTS "nodevm" ("id" INTEGER PRIMARY KEY, "name" VARCHAR(255), "cpu" INT,"memory" INT, "storagepath" VARCHAR(255),"net" VARCHAR(255),"vnc" INT, "socket" VARCHAR(255),"status" INT)`)
+	createdb(`CREATE TABLE IF NOT EXISTS "nodevm" ("id" INTEGER PRIMARY KEY, "name" VARCHAR(255), "cpu" INT,"memory" INT, "storagepath" VARCHAR(255),"net" VARCHAR(255),"vnc" INT, "socket" VARCHAR(255),"status" INT,"autostart" boolean)`)
 	return true
 }
 
@@ -56,13 +57,13 @@ func Initdb() bool {
 func AddDBVM(data NodeVM) bool {
 	fmt.Println("add database: " + data.Name)
 	db := *connectdb()
-	addDb, err := db.Prepare(`INSERT INTO "nodevm" ("name","cpu","memory","storagepath","net","vnc","socket","status") VALUES (?,?,?,?,?,?,?,?)`)
+	addDb, err := db.Prepare(`INSERT INTO "nodevm" ("name","cpu","memory","storagepath","net","vnc","socket","status","autostart") VALUES (?,?,?,?,?,?,?,?,?)`)
 	if err != nil {
 		panic(err)
 		return false
 	}
 
-	if _, err := addDb.Exec(data.Name, data.CPU, data.Mem, data.StoragePath, data.Net, data.Vnc, data.Socket, data.Status); err != nil {
+	if _, err := addDb.Exec(data.Name, data.CPU, data.Mem, data.StoragePath, data.Net, data.Vnc, data.Socket, data.Status, data.AutoStart); err != nil {
 		panic(err)
 		return false
 	}
@@ -91,7 +92,7 @@ func GetDBAll() []NodeVM {
 	var bg []NodeVM
 	for rows.Next() {
 		var b NodeVM
-		err := rows.Scan(&b.ID, &b.Name, &b.CPU, &b.Mem, &b.StoragePath, &b.Net, &b.Vnc, &b.Socket, &b.Status)
+		err := rows.Scan(&b.ID, &b.Name, &b.CPU, &b.Mem, &b.StoragePath, &b.Net, &b.Vnc, &b.Socket, &b.Status, &b.AutoStart)
 		if err != nil {
 			log.Println(err)
 		}
@@ -125,7 +126,6 @@ func VMDBGetVMStatus(id int) (int, error) {
 
 func VMDBStatusUpdate(id, status int) bool {
 	db := *connectdb()
-	fmt.Println("status:" + string(status))
 
 	cmd := "UPDATE nodevm SET status = ? WHERE id = ?"
 	_, err := db.Exec(cmd, status, id)
