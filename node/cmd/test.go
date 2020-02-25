@@ -1,6 +1,8 @@
 package cmd
 
 import (
+	"fmt"
+	"github.com/mattn/go-pipeline"
 	"github.com/spf13/cobra"
 	"github.com/yoneyan/vm_mgr/node/manage"
 	"github.com/yoneyan/vm_mgr/node/vm"
@@ -24,16 +26,38 @@ var testRestartCmd = &cobra.Command{
 	Short: "restart qemu (name: test)",
 	Long:  `test1 command`,
 	RunE: func(cmd *cobra.Command, args []string) error {
-		vm.Restart("test")
+		vm.VMRestart("test")
 
 		return nil
 	},
 }
 var testAddCmd = &cobra.Command{
-	Use:   "add",
-	Short: "add test",
-	Long:  "add test",
+	Use:   "1",
+	Short: "1",
+	Long:  "1",
 	RunE: func(cmd *cobra.Command, args []string) error {
+		out, err := pipeline.CombinedOutput(
+			[]string{"ps", "axf"},
+			[]string{"grep", "/" + "a" + ".sock"},
+			[]string{"grep", "qemu"},
+		)
+		if err != nil {
+			fmt.Println(err)
+			return err
+		}
+		fmt.Printf("%s", out)
+
+		fmt.Println("-------")
+		out, err = pipeline.CombinedOutput(
+			[]string{"ps", "axf"},
+			[]string{"grep", "/" + "c" + ".sock"},
+			[]string{"grep", "qemu"},
+		)
+		if err != nil {
+			fmt.Println(false)
+		}
+		fmt.Printf("%s", out)
+
 		return nil
 	},
 }
