@@ -172,6 +172,16 @@ var vmGetNameCmd = &cobra.Command{
 		return nil
 	},
 }
+var vmGetAllCmd = &cobra.Command{
+	Use:   "all",
+	Short: "all",
+	Long:  "get all VM",
+	RunE: func(cmd *cobra.Command, args []string) error {
+		data.GetAllVM(1)
+		fmt.Println("Process End")
+		return nil
+	},
+}
 
 func init() {
 	vmCreateCmd.PersistentFlags().StringP("name", "n", "none", "vm name")
@@ -192,6 +202,7 @@ func init() {
 	vmCmd.AddCommand(vmGetCmd)
 	vmGetCmd.AddCommand(vmGetIDCmd)
 	vmGetCmd.AddCommand(vmGetNameCmd)
+	vmGetCmd.AddCommand(vmGetAllCmd)
 
 	// Here you will define your flags and configuration settings.
 

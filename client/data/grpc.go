@@ -202,3 +202,21 @@ func GetVMName(name string) {
 	log.Printf("VNC: %s", r.GetVnc())
 	log.Printf("Net: %s", r.GetVnet())
 }
+
+func GetAllVM(id int) {
+	conn, err := grpc.Dial(address, grpc.WithInsecure(), grpc.WithBlock())
+	if err != nil {
+		log.Fatalf("Not connect; %v", err)
+	}
+	defer conn.Close()
+	c := pb.NewVMClient(conn)
+
+	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
+	defer cancel()
+	r, err := c.GetAllVM(ctx, &pb.VMID{Id: 1})
+	if err != nil {
+		log.Fatalf("could not greet: %v", err)
+	}
+	log.Printf("ID: ")
+	log.Println(r.Status)
+}
