@@ -25,8 +25,21 @@ vm_mgrはvm+managerを合わせた意味になっています。
 
 `go run . start`
 ### Client
+**VM作成**  
+`go run . vm create -n test -c 1 -m 1024 -p /home/yoneyan/test.qcow2 -s 1024 -N br100 -v 200 -C /home/yoneyan/Downloads/ubuntu-18.04.4-live-server-amd64.iso -M false`  
+**VM削除(dbからも消し去る)**  
+`go run . vm delete 1`  
+**VM起動**  
+`go run . vm start 1`  
+**VM停止**  
+`go run . vm stop 1`  
+**VM取得(name)**  
+`go run . vm get name test`  
+**VM取得(id)**  
+`go run . vm get id 1`  
+**VM取得(all)**  
+`go run . vm get all`  
 
-`go run . vm create -n test -c 1 -m 1024 -p /home/yoneyan/test.qcow2 -s 1024 -N br100 -v 200 -C /home/yoneyan/Downloads/ubuntu-18.04.4-live-server-amd64.iso -M false`
 
 ## 構想
 * Controller
