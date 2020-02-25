@@ -21,7 +21,7 @@ type server struct {
 
 func (s *server) CreateVM(ctx context.Context, in *pb.VMData) (*pb.Result, error) {
 	fmt.Println("----------CreateVM-----")
-	log.Printf("Receive ID: %v", in.GetId())
+	log.Printf("Receive VMID: %v", in.GetId())
 	log.Printf("Receive name: %v", in.GetVmname())
 	log.Printf("Receive cpu: %v", in.GetVcpu())
 	log.Printf("Receive mem: %v", in.GetVmem())
@@ -33,6 +33,7 @@ func (s *server) CreateVM(ctx context.Context, in *pb.VMData) (*pb.Result, error
 
 	var r vm.CreateVMInformation
 
+	r.ID = int(in.GetId())
 	r.Name = in.GetVmname()
 	r.CPU = int(in.GetVcpu())
 	r.Mem = int(in.GetVmem())
@@ -52,69 +53,51 @@ func (s *server) CreateVM(ctx context.Context, in *pb.VMData) (*pb.Result, error
 		manage.CreateStorage(&storage)
 	}
 
-	if manage.VMExistsName(in.GetVmname()) || manage.VMExistsID(int(in.GetId())) {
-		id := int(in.GetId())
-		vm.StartVMProcess(id)
-	} else {
-		fmt.Println("----VMNewCreate")
-		vm.CreateVMDBProcess(&r)
-		err := vm.RunQEMUCmd(vm.CreateGenerateCmd(&r))
-		if err != nil {
-			log.Fatal(err)
-			return &pb.Result{Status: false}, nil
-		} else {
-			db.VMDBStatusUpdate(int(in.GetId()), 1)
-
-		}
+	err := vm.CreateVMProcess(&r)
+	if err != nil {
+		return &pb.Result{Status: false}, nil
 	}
 	return &pb.Result{Status: true}, nil
 }
 
 func (s *server) DeleteVM(ctx context.Context, in *pb.VMID) (*pb.Result, error) {
 	fmt.Println("----------DeleteVM-----")
-	log.Printf("Receive ID: %v", in.GetId())
+	log.Printf("Receive VMID: %v", in.GetId())
 
-	result := db.DeleteDBVM(int(in.GetId()))
+	result := vm.DeleteVMProcess(int(in.GetId()))
 	if result {
 		fmt.Println("Delete success!!")
+		return &pb.Result{Status: true}, nil
 	} else {
 		fmt.Println("Delete Failed....")
+		return &pb.Result{Status: false}, nil
 	}
-
-	return &pb.Result{Status: false}, nil
 }
 
 func (s *server) StartVM(ctx context.Context, in *pb.VMID) (*pb.Result, error) {
 	fmt.Println("----------StartVM-----")
-	log.Printf("Receive ID: %v", in.GetId())
-	return &pb.Result{Status: false}, nil
+	log.Printf("Receive VMID: %v", in.GetId())
+	if vm.StartVMProcess(int(in.GetId())) {
+		return &pb.Result{Status: true}, nil
+	} else {
+		return &pb.Result{Status: false}, nil
+	}
 }
 
 func (s *server) StopVM(ctx context.Context, in *pb.VMID) (*pb.Result, error) {
 	fmt.Println("----------StopVM-----")
-	result, err := db.VMDBGetData(int(in.GetId()))
-	fmt.Println(result)
+	log.Printf("Receive VMID: %v", in.GetId())
+	err := vm.VMStop(int(in.GetId()))
 	if err != nil {
-		log.Fatalf("Error!!")
+		fmt.Println("VMStop Error!!")
 	}
 
-	if result.Status == 1 { //要修正
-		fmt.Println("PowerOn")
-
-		fmt.Println(result.Name)
-		vm.VMStop(result.Name)
-		db.VMDBStatusUpdate(int(in.GetId()), 0)
-	}
-	if err != nil {
-		fmt.Println("Error!!")
-	}
-	log.Printf("Receive ID: %v", in.GetId())
-	return &pb.Result{Status: false}, nil
+	return &pb.Result{Status: true}, nil
 }
 
 func (s *server) GetVM(ctx context.Context, in *pb.VMID) (*pb.VMData, error) {
 	fmt.Println("----------GetVMID-----")
-	log.Printf("Receive ID: %v", in.GetId())
+	log.Printf("Receive VMID: %v", in.GetId())
 	result, err := db.VMDBGetData(int(in.GetId()))
 	if err != nil {
 		fmt.Println("Error!!")
