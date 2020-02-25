@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/mattn/go-pipeline"
 	"github.com/yoneyan/vm_mgr/node/etc"
+	"github.com/yoneyan/vm_mgr/node/manage"
 	"log"
 	"os/exec"
 	"strconv"
@@ -36,6 +37,8 @@ func RunQEMUCmd(cmd []string) error {
 		fmt.Println("Command Error!")
 		return err
 	}
+	go manage.VMLifeCheck(cmd[2])
+
 	return nil
 }
 

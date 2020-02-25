@@ -149,6 +149,13 @@ func (s *server) GetAllVM(ctx context.Context, in *pb.VMID) (*pb.Result, error) 
 	return &pb.Result{Status: true}, nil
 }
 
+func (s *server) ShutdownVM(ctx context.Context, in *pb.VMID) (*pb.Result, error) {
+	log.Println("----GetAllVM----")
+	log.Printf("Receive GetAllVM")
+	fmt.Println(db.GetDBAll())
+	return &pb.Result{Status: true}, nil
+}
+
 func Processgrpc() {
 	lis, err := net.Listen("tcp", port)
 	if err != nil {
