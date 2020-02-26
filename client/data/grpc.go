@@ -114,6 +114,106 @@ func StopVM(id int64) bool {
 	return r.GetStatus()
 }
 
+func ShutdownVM(id int64) bool {
+	if id < 1 {
+		fmt.Println("Value False")
+		fmt.Printf("Debug: value is ")
+		fmt.Println(id)
+		return false
+	}
+
+	conn, err := grpc.Dial(address, grpc.WithInsecure(), grpc.WithBlock())
+	if err != nil {
+		log.Fatalf("Not connect; %v", err)
+	}
+	defer conn.Close()
+	c := pb.NewVMClient(conn)
+
+	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
+	defer cancel()
+	r, err := c.ShutdownVM(ctx, &pb.VMID{Id: id})
+	if err != nil {
+		log.Fatalf("could not greet: %v", err)
+	}
+	log.Printf("Greeting: %s", r.GetStatus())
+	return r.GetStatus()
+}
+
+func ResetVM(id int64) bool {
+	if id < 1 {
+		fmt.Println("Value False")
+		fmt.Printf("Debug: value is ")
+		fmt.Println(id)
+		return false
+	}
+
+	conn, err := grpc.Dial(address, grpc.WithInsecure(), grpc.WithBlock())
+	if err != nil {
+		log.Fatalf("Not connect; %v", err)
+	}
+	defer conn.Close()
+	c := pb.NewVMClient(conn)
+
+	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
+	defer cancel()
+	r, err := c.StopVM(ctx, &pb.VMID{Id: id})
+	if err != nil {
+		log.Fatalf("could not greet: %v", err)
+	}
+	log.Printf("Greeting: %s", r.GetStatus())
+	return r.GetStatus()
+}
+
+func PauseVM(id int64) bool {
+	if id < 1 {
+		fmt.Println("Value False")
+		fmt.Printf("Debug: value is ")
+		fmt.Println(id)
+		return false
+	}
+
+	conn, err := grpc.Dial(address, grpc.WithInsecure(), grpc.WithBlock())
+	if err != nil {
+		log.Fatalf("Not connect; %v", err)
+	}
+	defer conn.Close()
+	c := pb.NewVMClient(conn)
+
+	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
+	defer cancel()
+	r, err := c.PauseVM(ctx, &pb.VMID{Id: id})
+	if err != nil {
+		log.Fatalf("could not greet: %v", err)
+	}
+	log.Printf("Greeting: %s", r.GetStatus())
+	return r.GetStatus()
+}
+
+func ResumeVM(id int64) bool {
+	if id < 1 {
+		fmt.Println("Value False")
+		fmt.Printf("Debug: value is ")
+		fmt.Println(id)
+		return false
+	}
+
+	conn, err := grpc.Dial(address, grpc.WithInsecure(), grpc.WithBlock())
+	if err != nil {
+		log.Fatalf("Not connect; %v", err)
+	}
+	defer conn.Close()
+	c := pb.NewVMClient(conn)
+
+	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
+	defer cancel()
+	r, err := c.ResumeVM(ctx, &pb.VMID{Id: id})
+	if err != nil {
+		log.Fatalf("could not greet: %v", err)
+	}
+	log.Printf("Greeting: %s", r.GetStatus())
+	return r.GetStatus()
+}
+
 func GetVM(id int64) {
 	if id < 1 {
 		fmt.Println("Value False")
@@ -183,6 +283,24 @@ func GetAllVM(id int) {
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
 	defer cancel()
 	r, err := c.GetAllVM(ctx, &pb.VMID{Id: 1})
+	if err != nil {
+		log.Fatalf("could not greet: %v", err)
+	}
+	log.Printf("ID: ")
+	log.Println(r.Status)
+}
+
+func NodeStopVM(timer int) {
+	conn, err := grpc.Dial(address, grpc.WithInsecure(), grpc.WithBlock())
+	if err != nil {
+		log.Fatalf("Not connect; %v", err)
+	}
+	defer conn.Close()
+	c := pb.NewVMClient(conn)
+
+	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
+	defer cancel()
+	r, err := c.StopNode(ctx, &pb.Timer{Time: int32(timer)})
 	if err != nil {
 		log.Fatalf("could not greet: %v", err)
 	}
