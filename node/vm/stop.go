@@ -5,7 +5,6 @@ import (
 	"github.com/mattn/go-pipeline"
 	"github.com/yoneyan/vm_mgr/node/db"
 	"github.com/yoneyan/vm_mgr/node/manage"
-	"log"
 )
 
 func VMStop(id int) error {
@@ -26,7 +25,7 @@ func VMStop(id int) error {
 
 	fmt.Println(result)
 	if err != nil {
-		log.Fatalf("Error!!")
+		fmt.Println("Error!!")
 	}
 
 	fmt.Println(result.Name)
@@ -53,4 +52,30 @@ func VMStop(id int) error {
 		fmt.Println("state Error!!")
 	}
 	return nil
+}
+
+func StopProcess() {
+	data := db.GetDBAll()
+	var status []int
+	for i, _ := range data {
+		fmt.Printf("Status 0  VMID: %d", data[i].ID)
+		if data[i].Status == 1 {
+			status = append(status, data[i].ID)
+		}
+	}
+	fmt.Printf("AutoStartVMID: ")
+	fmt.Println(status)
+
+	for i, _ := range status {
+		err := VMStop(status[i])
+		{
+			if err != nil {
+				fmt.Printf("Failed stop VMID: %d", i)
+			}
+			fmt.Printf("Start VMID: %d", i)
+		}
+		fmt.Println()
+
+		fmt.Println("Start process is end!!")
+	}
 }

@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"github.com/spf13/cobra"
 	"github.com/yoneyan/vm_mgr/controller/db"
-	"log"
 )
 
 // nodeCmd represents the node command
@@ -27,32 +26,32 @@ var nodeAddCmd = &cobra.Command{
 	RunE: func(cmd *cobra.Command, args []string) error {
 		hostname, err := cmd.PersistentFlags().GetString("hostname")
 		if err != nil {
-			log.Fatalf("could not greet: %v", err)
+			fmt.Println("could not greet: %v", err)
 			return nil
 		}
 		ip, err := cmd.PersistentFlags().GetString("ip")
 		if err != nil {
-			log.Fatalf("could not greet: %v", err)
+			fmt.Println("could not greet: %v", err)
 			return nil
 		}
 		grpc_port, err := cmd.PersistentFlags().GetInt("grpc_port")
 		if err != nil {
-			log.Fatalf("could not greet: %v", err)
+			fmt.Println("could not greet: %v", err)
 			return nil
 		}
 		ssh_port, err := cmd.PersistentFlags().GetInt("ssh_port")
 		if err != nil {
-			log.Fatalf("could not greet: %v", err)
+			fmt.Println("could not greet: %v", err)
 			return nil
 		}
 		user, err := cmd.PersistentFlags().GetString("user")
 		if err != nil {
-			log.Fatalf("could not greet: %v", err)
+			fmt.Println("could not greet: %v", err)
 			return nil
 		}
 		pass, err := cmd.PersistentFlags().GetString("pass")
 		if err != nil {
-			log.Fatalf("could not greet: %v", err)
+			fmt.Println("could not greet: %v", err)
 			return nil
 		}
 

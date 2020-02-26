@@ -147,6 +147,78 @@ var vmStopCmd = &cobra.Command{
 	},
 }
 
+var vmShutdownCmd = &cobra.Command{
+	Use:   "shutdown",
+	Short: "vm shutdown",
+	Long:  "VM shutdown tool",
+	RunE: func(cmd *cobra.Command, args []string) error {
+		if len(args) < 1 {
+			return errors.New("requires id")
+		}
+		result, _ := strconv.Atoi(args[0])
+		if result < 0 {
+			return errors.New("value failed")
+		}
+		data.ShutdownVM(int64(result))
+		fmt.Println("Process End")
+		return nil
+	},
+}
+
+var vmResetCmd = &cobra.Command{
+	Use:   "reset",
+	Short: "vm reset",
+	Long:  "VM reset tool",
+	RunE: func(cmd *cobra.Command, args []string) error {
+		if len(args) < 1 {
+			return errors.New("requires id")
+		}
+		result, _ := strconv.Atoi(args[0])
+		if result < 0 {
+			return errors.New("value failed")
+		}
+		data.ResetVM(int64(result))
+		fmt.Println("Process End")
+		return nil
+	},
+}
+
+var vmResumeCmd = &cobra.Command{
+	Use:   "resume",
+	Short: "vm resume",
+	Long:  "VM resume tool",
+	RunE: func(cmd *cobra.Command, args []string) error {
+		if len(args) < 1 {
+			return errors.New("requires id")
+		}
+		result, _ := strconv.Atoi(args[0])
+		if result < 0 {
+			return errors.New("value failed")
+		}
+		data.ResumeVM(int64(result))
+		fmt.Println("Process End")
+		return nil
+	},
+}
+
+var vmPauseCmd = &cobra.Command{
+	Use:   "pause",
+	Short: "vm pause",
+	Long:  "VM pause tool",
+	RunE: func(cmd *cobra.Command, args []string) error {
+		if len(args) < 1 {
+			return errors.New("requires id")
+		}
+		result, _ := strconv.Atoi(args[0])
+		if result < 0 {
+			return errors.New("value failed")
+		}
+		data.PauseVM(int64(result))
+		fmt.Println("Process End")
+		return nil
+	},
+}
+
 var vmGetCmd = &cobra.Command{
 	Use:   "get",
 	Short: "vm get",
@@ -214,7 +286,12 @@ func init() {
 	vmCmd.AddCommand(vmDeleteCmd)
 	vmCmd.AddCommand(vmStartCmd)
 	vmCmd.AddCommand(vmStopCmd)
+	vmCmd.AddCommand(vmShutdownCmd)
+	vmCmd.AddCommand(vmResetCmd)
+	vmCmd.AddCommand(vmPauseCmd)
+	vmCmd.AddCommand(vmResumeCmd)
 	vmCmd.AddCommand(vmGetCmd)
+
 	vmGetCmd.AddCommand(vmGetIDCmd)
 	vmGetCmd.AddCommand(vmGetNameCmd)
 	vmGetCmd.AddCommand(vmGetAllCmd)

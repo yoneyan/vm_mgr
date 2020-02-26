@@ -13,21 +13,24 @@ service VM {
     }
     rpc ShutdownVM (VMID) returns (Result) {
     }
-    rpc ResetVN (VMID) returns (Result) {
+    rpc ResetVM (VMID) returns (Result) {
     }
-    rpc PauseVN (VMID) returns (Result) {
+    rpc PauseVM (VMID) returns (Result) {
     }
     rpc ResumeVM (VMID) returns (Result) {
     }
     rpc GetSnapshotVM (VMID) returns (stream SnapshotData) {
     }
-    rpc SnapshotOperationVM (SnapshotOperationData) returns (Result){
+    rpc SnapshotOperationVM (SnapshotOperationData) returns (Result) {
     }
     rpc GetVM (VMID) returns (VMData) {
     }
     rpc GetVMName (VMName) returns (VMData) {
     }
     rpc GetAllVM (VMID) returns (Result) {
+    }
+    rpc StopNode (Timer) returns (Result) {
+
     }
 }
 
@@ -74,4 +77,8 @@ message VMID {
 
 message Result {
     bool status = 1;
+}
+
+message Timer{
+    int32 time = 1;
 }
