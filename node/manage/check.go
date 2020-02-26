@@ -67,6 +67,7 @@ func VMLifeCheck(name string) bool {
 	}
 	sc := make(chan os.Signal, 1)
 	signal.Notify(sc, os.Interrupt)
+	count := 0
 loop:
 	for {
 		select {
@@ -80,8 +81,12 @@ loop:
 				fmt.Println(false)
 			}
 			if status == 0 {
-				fmt.Println("VMID: " + strconv.Itoa(data.ID) + " End  Stop1")
-				return true
+				count++
+				fmt.Println("VMID: " + strconv.Itoa(data.ID) + " Count: " + strconv.Itoa(data.Status))
+				if count == 2 {
+					fmt.Println("VMID: " + strconv.Itoa(data.ID) + " End  Stop1")
+					return true
+				}
 			}
 			out, err := pipeline.CombinedOutput(
 				[]string{"ps", "axf"},
@@ -93,6 +98,7 @@ loop:
 				db.VMDBStatusUpdate(data.ID, 0)
 				return true
 			}
+			count = 0
 			fmt.Printf("%s", out)
 		}
 	}
