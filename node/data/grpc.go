@@ -11,6 +11,7 @@ import (
 	"google.golang.org/grpc"
 	"log"
 	"net"
+	"time"
 )
 
 const port = ":50100"
@@ -150,20 +151,79 @@ func (s *server) GetAllVM(ctx context.Context, in *pb.VMID) (*pb.Result, error) 
 }
 
 func (s *server) ShutdownVM(ctx context.Context, in *pb.VMID) (*pb.Result, error) {
-	log.Println("----GetAllVM----")
-	log.Printf("Receive GetAllVM")
-	fmt.Println(db.GetDBAll())
+	log.Println("----ShutdownVM----")
+	log.Printf("Receive ShutdownVM")
+	data, err := db.VMDBGetData(int(in.GetId()))
+	if err != nil {
+		fmt.Println("ID Not Found !!")
+	}
+	if vm.VMShutdown(data.Name) {
+		return &pb.Result{Status: true}, nil
+	} else {
+		return &pb.Result{Status: false}, nil
+	}
+}
+
+func (s *server) ResetVM(ctx context.Context, in *pb.VMID) (*pb.Result, error) {
+	log.Println("----RebootVM----")
+	log.Printf("Receive RebootVM")
+	data, err := db.VMDBGetData(int(in.GetId()))
+	if err != nil {
+		fmt.Println("ID Not Found !!")
+	}
+	if vm.VMRestart(data.Name) {
+		return &pb.Result{Status: true}, nil
+	} else {
+		return &pb.Result{Status: false}, nil
+	}
+}
+
+func (s *server) PauseVM(ctx context.Context, in *pb.VMID) (*pb.Result, error) {
+	log.Println("----PauseVM----")
+	log.Printf("Receive PauseVM")
+	data, err := db.VMDBGetData(int(in.GetId()))
+	if err != nil {
+		fmt.Println("ID Not Found !!")
+	}
+	if vm.VMPause(data.Name) {
+		db.VMDBStatusUpdate(data.ID, 2)
+		return &pb.Result{Status: true}, nil
+	} else {
+		return &pb.Result{Status: false}, nil
+	}
+}
+
+func (s *server) ResumeVM(ctx context.Context, in *pb.VMID) (*pb.Result, error) {
+	log.Println("----ResumeVM----")
+	log.Printf("Receive ResumeVM")
+	data, err := db.VMDBGetData(int(in.GetId()))
+	if err != nil {
+		fmt.Println("ID Not Found !!")
+	}
+	if vm.VMResume(data.Name) {
+		return &pb.Result{Status: true}, nil
+	} else {
+		return &pb.Result{Status: false}, nil
+	}
+}
+
+func (s *server) StopNode(ctx context.Context, in *pb.Timer) (*pb.Result, error) {
+	log.Println("----StopNode----")
+	vm.StopProcess()
+	timer := time.NewTimer(time.Second * 1)
+	<-timer.C
+	log.Fatalf("Node End! ")
 	return &pb.Result{Status: true}, nil
 }
 
 func Processgrpc() {
 	lis, err := net.Listen("tcp", port)
 	if err != nil {
-		log.Fatalf("failed to listen: %v", err)
+		fmt.Println("failed to listen: %v", err)
 	}
 	s := grpc.NewServer()
 	pb.RegisterVMServer(s, &server{})
 	if err := s.Serve(lis); err != nil {
-		log.Fatalf("failed to serve: %v", err)
+		fmt.Println("failed to serve: %v", err)
 	}
 }

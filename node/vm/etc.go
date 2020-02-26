@@ -1,42 +1,46 @@
 package vm
 
 import (
+	"fmt"
 	"github.com/yoneyan/vm_mgr/node/etc"
-	"log"
 )
 
-func VMShutdown(name string) error {
+func VMShutdown(name string) bool {
+	fmt.Println("Shutdown VM: " + name)
 	err := RunQEMUMonitor("system_powerdown", etc.SocketConnectionPath(name))
 	if err != nil {
-		log.Fatal(err)
-		return err
+		fmt.Println("Shutdown Error!!")
+		return false
 	}
-	return nil
+	return true
 }
 
-func VMRestart(name string) error {
+func VMRestart(name string) bool {
+	fmt.Println("Reset VM: " + name)
 	err := RunQEMUMonitor("system_reset", etc.SocketConnectionPath(name))
 	if err != nil {
-		log.Fatal(err)
-		return err
+		fmt.Println("Restart Error!!")
+		return false
 	}
-	return nil
+	return true
 }
 
-func VMPause(name string) error {
-	err := RunQEMUMonitor("system_reset", etc.SocketConnectionPath(name))
+func VMPause(name string) bool {
+	fmt.Println("Pause VM: " + name)
+	err := RunQEMUMonitor("stop", etc.SocketConnectionPath(name))
 	if err != nil {
-		log.Fatal(err)
-		return err
+		fmt.Println("Pause Error!!")
+		return false
 	}
-	return nil
+	return true
 }
 
-func VMResume(name string) error {
-	err := RunQEMUMonitor("system_reset", etc.SocketConnectionPath(name))
+func VMResume(name string) bool {
+	fmt.Println("Resume VM: " + name)
+	err := RunQEMUMonitor("cont", etc.SocketConnectionPath(name))
 	if err != nil {
-		log.Fatal(err)
-		return err
+		fmt.Println("Resume Error!!")
+		return false
 	}
-	return nil
+	return true
 }
