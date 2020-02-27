@@ -114,12 +114,14 @@ message NodeData {
     string port = 3;
     bool status = 4;
     bool enable = 5;
+    SpecData sepc = 6;
 }
 
 message UserData {
     int64 id = 1;
     string user = 2;
     string pass = 3;
+    SpecData sepc = 4;
 }
 
 message GroupData {
@@ -129,4 +131,11 @@ message GroupData {
     string admin = 4;
     string user = 5;
     bool team = 6;
+    SpecData sepc = 7;
+}
+
+message SpecData {
+    int32 maxcpu = 1;
+    int32 maxmem = 2;
+    int32 maxstorage = 3;
 }
