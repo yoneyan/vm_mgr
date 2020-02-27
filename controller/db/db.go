@@ -18,14 +18,18 @@ type Node struct {
 	Auth     int
 	MaxCPU   int
 	MaxMem   int
+	Status   int
 }
 
 type VmUser struct {
+	ID   int
 	Name string
 	Pass string
+	Auth int
 }
 
 type VmGroup struct {
+	ID         int
 	Name       string
 	Admin      string
 	User       string
@@ -60,11 +64,11 @@ func createdb(database string) bool {
 
 func Initdb() bool {
 	//Node data
-	createdb(`CREATE TABLE IF NOT EXISTS "node" ("id" INT, "hostname" VARCHAR(255), "ip" VARCHAR(255), "port" INT, "auth" INT,"maxcpu" INT "maxmem" INT`)
+	createdb(`CREATE TABLE IF NOT EXISTS "node" ("id" INTEGER PRIMARY KEY, "hostname" VARCHAR(255), "ip" VARCHAR(255), "port" INT, "auth" INT,"maxcpu" INT "maxmem" INT "status" INT`)
 	//user data
 	createdb(`CREATE TABLE IF NOT EXISTS "user" ("id" INTEGER PRIMARY KEY, "name" VARCHAR(255), "pass" VARCHAR(255),"auth" INT`)
 	//group data
-	createdb(`CREATE TABLE IF NOT EXISTS "group" ("id" INTEGER PRIMARY Key, "name" VARCHAR(255),"user" VARCHAR(10000),"admin" VARCHAR(1000),"maxcpu" INT,"maxmem" INT,"maxstorage" INT`)
+	createdb(`CREATE TABLE IF NOT EXISTS "group" ("id" INTEGER PRIMARY KEY, "name" VARCHAR(255),"user" VARCHAR(10000),"admin" VARCHAR(1000),"maxcpu" INT,"maxmem" INT,"maxstorage" INT`)
 	return true
 }
 
@@ -72,13 +76,13 @@ func Initdb() bool {
 
 func AddDBNode(data Node) bool {
 	db := *connectdb()
-	addDb, err := db.Prepare(`INSERT INTO "node" ("id","hostname","ip","port","auth","maxcpu","maxmem") VALUES (?,?,?,?,?,?,?)`)
+	addDb, err := db.Prepare(`INSERT INTO "node" ("id","hostname","ip","port","auth","maxcpu","maxmem","status") VALUES (?,?,?,?,?,?,?,?)`)
 	if err != nil {
 		fmt.Println("DBError!!")
 		return false
 	}
 
-	if _, err := addDb.Exec(data.ID, data.HostName, data.IP, data.Port, data.Auth, data.MaxCPU, data.MaxMem); err != nil {
+	if _, err := addDb.Exec(data.ID, data.HostName, data.IP, data.Port, data.Auth, data.MaxCPU, data.MaxMem, data.Status); err != nil {
 		fmt.Println("Add Error!!")
 		return false
 	}
@@ -86,7 +90,7 @@ func AddDBNode(data Node) bool {
 }
 
 func DeleteDBNode(id int) bool {
-	db := connectdb()
+	db := *connectdb()
 	deleteDb := "DELETE FROM node WHERE id = ?"
 	_, err := db.Exec(deleteDb, id)
 	if err != nil {
@@ -96,7 +100,19 @@ func DeleteDBNode(id int) bool {
 	return true
 }
 
-func GetDBNodeID(id int) Node {
+func NodeDBStatusUpdate(id, status int) bool {
+	db := *connectdb()
+
+	cmd := "UPDATE node SET status = ? WHERE id = ?"
+	_, err := db.Exec(cmd, status, id)
+	if err != nil {
+		log.Fatalln(err)
+		return false
+	}
+	return true
+}
+
+func GetDBNodeID(id int) (Node, bool) {
 	db := *connectdb()
 
 	rows, err := db.Query("SELECT * FROM node WHERE id = ?", id)
@@ -106,20 +122,21 @@ func GetDBNodeID(id int) Node {
 	defer rows.Close()
 
 	var b Node
-	err = rows.Scan(b.ID, b.HostName, b.IP, b.Port, b.Auth, b.MaxCPU, b.MaxMem)
+	err = rows.Scan(b.ID, b.HostName, b.IP, b.Port, b.Auth, b.MaxCPU, b.MaxMem, b.Status)
 
 	if err != nil {
 		fmt.Println(err)
+		return b, false
 	}
 
-	return b
+	return b, true
 }
 
-func GetDBNodeName(name string) []Node {
+func GetDBAllNode() []Node {
 
 	db := *connectdb()
 
-	rows, err := db.Query("SELECT * FROM node WHERE name = ?", name)
+	rows, err := db.Query("SELECT * FROM node")
 	if err != nil {
 		fmt.Println(err)
 	}
@@ -128,7 +145,7 @@ func GetDBNodeName(name string) []Node {
 	var bg []Node
 	for rows.Next() {
 		var b Node
-		err := rows.Scan(b.ID, b.HostName, b.IP, b.Port, b.Auth, b.MaxCPU, b.MaxMem)
+		err := rows.Scan(b.ID, b.HostName, b.IP, b.Port, b.Auth, b.MaxCPU, b.MaxMem, b.Status)
 		if err != nil {
 			log.Println(err)
 		}
