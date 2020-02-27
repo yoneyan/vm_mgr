@@ -3,7 +3,7 @@ package data
 import (
 	"context"
 	"fmt"
-	pb "github.com/yoneyan/vm_mgr/proto/proto-go"
+	pb "github.com/yoneyan/vm_mgr/proto/proto-go/node"
 	"google.golang.org/grpc"
 	"log"
 	_ "os"
