@@ -1,0 +1,132 @@
+syntax = "proto3";
+
+//import "google/protobuf/timestamp.proto-go";
+
+service VM {
+    rpc CreateVM (VMData) returns (Result) {
+    }
+    rpc DeleteVM (VMID) returns (Result) {
+    }
+    rpc StartVM (VMID) returns (Result) {
+    }
+    rpc StopVM (VMID) returns (Result) {
+    }
+    rpc ShutdownVM (VMID) returns (Result) {
+    }
+    rpc ResetVM (VMID) returns (Result) {
+    }
+    rpc PauseVM (VMID) returns (Result) {
+    }
+    rpc ResumeVM (VMID) returns (Result) {
+    }
+    rpc GetSnapshotVM (VMID) returns (stream SnapshotData) {
+    }
+    rpc SnapshotOperationVM (SnapshotOperationData) returns (Result) {
+    }
+    rpc GetVM (VMID) returns (VMData) {
+    }
+    rpc GetVMName (VMName) returns (VMData) {
+    }
+    rpc GetGroupVM (Base) returns (stream VMData) {
+    }
+    rpc GetAllVM (VMID) returns (Result) {
+    }
+    rpc GetNode (Base) returns (NodeData) {
+    }
+    rpc StopNode (NodeID) returns (Result) {
+    }
+    rpc AddGroup (GroupData) returns (Result) {
+    }
+    rpc DeleteGroup (GroupData) returns (Result) {
+    }
+    rpc GetGroup (GroupData) returns (GroupData) {
+    }
+}
+
+message Base {
+    string user = 1;
+    string pass = 2;
+    string group = 3;
+}
+
+message VMData {
+    Base base = 1;
+    int32 node = 2;
+    string vmname = 3;
+    int64 vcpu = 4;
+    int64 vmem = 5;
+    int32 storagetype = 6; //1: Normal Disk 2: SSD 3: NVMe 4: iSCSI
+    int64 storage = 7;
+    string cdrom = 8;
+    string vnet = 9;
+    Option option = 10;
+}
+
+message Option {
+    string storage_path = 1;
+    string cdrom_path = 2;
+    int32 vnc = 3;
+}
+
+message SnapshotOperationData {
+    Base base = 1;
+    int64 vmid = 2;
+    int32 operation = 3; //0: Create ,1: Load ,2: Delete
+    string tag = 4;
+}
+
+message SnapshotData {
+    int64 id = 1;
+    string tag = 2;
+    string size = 3;
+    string date = 4;
+    string vmclock = 5;
+}
+
+message VMName {
+    Base base = 1;
+    string vmname = 2;
+}
+
+message VMDataResponse {
+    repeated VMData VMDatas = 1;
+}
+
+message VMID {
+    Base base = 1;
+    int64 id = 2;
+}
+
+
+message Result {
+    bool status = 1;
+    string info = 2;
+}
+
+message NodeID {
+    bool status = 1;
+    int32 NodeID = 2;
+}
+
+message NodeData {
+    int32 NodeID = 1;
+    string IP = 2;
+    string port = 3;
+    bool status = 4;
+    bool enable = 5;
+}
+
+message UserData {
+    int64 id = 1;
+    string user = 2;
+    string pass = 3;
+}
+
+message GroupData {
+    Base base = 1;
+    int32 id = 2;
+    string name = 3;
+    string admin = 4;
+    string user = 5;
+    bool team = 6;
+}
