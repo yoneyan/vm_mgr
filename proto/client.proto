@@ -115,11 +115,12 @@ message NodeID {
 message NodeData {
     Base base = 1;
     int32 NodeID = 2;
-    string IP = 3;
-    string port = 4;
-    bool status = 5;
-    bool enable = 6;
-    SpecData sepc = 7;
+    string hostname = 3;
+    string IP = 4;
+    string port = 5;
+    bool status = 6;
+    bool enable = 7;
+    SpecData sepc = 8;
 }
 
 message UserData {
@@ -127,7 +128,7 @@ message UserData {
     int64 id = 2;
     string user = 3;
     string pass = 4;
-    SpecData sepc    = 5;
+    SpecData sepc = 5;
 }
 
 message GroupData {
