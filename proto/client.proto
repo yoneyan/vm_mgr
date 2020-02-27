@@ -37,6 +37,8 @@ service VM {
     }
     rpc DeleteNode (NodeID) returns (Result) {
     }
+    rpc StartNode (NodeID) returns (Result) {
+    }
     rpc StopNode (NodeID) returns (Result) {
     }
     rpc AddGroup (GroupData) returns (Result) {
