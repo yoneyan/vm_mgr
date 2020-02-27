@@ -33,7 +33,9 @@ service VM {
     }
     rpc AddNode (NodeID) returns (Result) {
     }
-    rpc GetNode (Base) returns (NodeData) {
+    rpc GetNode (Base) returns (stream NodeData) {
+    }
+    rpc DeleteNode (NodeID) returns (Result) {
     }
     rpc StopNode (NodeID) returns (Result) {
     }
