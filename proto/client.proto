@@ -117,10 +117,11 @@ message NodeData {
     int32 NodeID = 2;
     string hostname = 3;
     string IP = 4;
-    string port = 5;
-    bool status = 6;
-    bool enable = 7;
-    SpecData sepc = 8;
+    int32 port = 5;
+    int32 auth = 6;
+    bool status = 7;
+    bool enable = 8;
+    SpecData sepc = 9;
 }
 
 message UserData {
