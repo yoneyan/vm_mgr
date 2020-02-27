@@ -26,7 +26,7 @@ import (
 	"fmt"
 	"github.com/spf13/cobra"
 	"github.com/yoneyan/vm_mgr/client/data"
-	pb "github.com/yoneyan/vm_mgr/proto/proto-go"
+	"github.com/yoneyan/vm_mgr/proto/proto-go/node"
 	"log"
 	"strconv"
 )
@@ -74,7 +74,7 @@ vm create -n test -c 1 -m 1024 -p /home/yoneyan/test.qcow2 -s 1024 -N br100 -v 2
 			return nil
 		}
 
-		c := pb.VMData{
+		c := node.VMData{
 			Vmname:      resultStringArray[0],
 			Vcpu:        resultInt64Array[0],
 			Vmem:        resultInt64Array[1],
