@@ -31,6 +31,8 @@ service VM {
     }
     rpc GetAllVM (VMID) returns (Result) {
     }
+    rpc AddNode (NodeID) returns (Result) {
+    }
     rpc GetNode (Base) returns (NodeData) {
     }
     rpc StopNode (NodeID) returns (Result) {
@@ -104,24 +106,26 @@ message Result {
 }
 
 message NodeID {
-    bool status = 1;
+    Base base = 1;
     int32 NodeID = 2;
 }
 
 message NodeData {
-    int32 NodeID = 1;
-    string IP = 2;
-    string port = 3;
-    bool status = 4;
-    bool enable = 5;
-    SpecData sepc = 6;
+    Base base = 1;
+    int32 NodeID = 2;
+    string IP = 3;
+    string port = 4;
+    bool status = 5;
+    bool enable = 6;
+    SpecData sepc = 7;
 }
 
 message UserData {
-    int64 id = 1;
-    string user = 2;
-    string pass = 3;
-    SpecData sepc = 4;
+    Base base = 1;
+    int64 id = 2;
+    string user = 3;
+    string pass = 4;
+    SpecData sepc    = 5;
 }
 
 message GroupData {
