@@ -1,8 +1,11 @@
-package data
+package node
+
+//Node gRPC Client
 
 import (
 	"context"
 	"fmt"
+	"github.com/yoneyan/vm_mgr/controller/data"
 	pb "github.com/yoneyan/vm_mgr/proto/proto-go/node"
 	"google.golang.org/grpc"
 	"log"
@@ -15,8 +18,8 @@ const (
 )
 
 //name string, vcpu, vmem, storage int64, storage_path string, cdrom string, vnet string, vnc int64, autostart bool
-func CreateVM(d *pb.VMData) bool {
-	if CreateVMCheck(d) == false {
+func CreateVM(address string, d *pb.VMData) bool {
+	if data.CreateVMCheck(d) == false {
 		fmt.Println("Valid value!!")
 		return false
 	}
@@ -290,7 +293,7 @@ func GetAllVM(id int) {
 	log.Println(r.Status)
 }
 
-func NodeStopVM(timer int) {
+func NodeAllStop(address string) {
 	conn, err := grpc.Dial(address, grpc.WithInsecure(), grpc.WithBlock())
 	if err != nil {
 		log.Fatalf("Not connect; %v", err)
@@ -300,7 +303,7 @@ func NodeStopVM(timer int) {
 
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
 	defer cancel()
-	r, err := c.StopNode(ctx, &pb.Timer{Time: int32(timer)})
+	r, err := c.StopNode(ctx, &pb.Timer{Time: 1}) //Timer do not work.
 	if err != nil {
 		log.Fatalf("could not greet: %v", err)
 	}

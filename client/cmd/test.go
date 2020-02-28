@@ -31,15 +31,15 @@ import (
 	"strconv"
 )
 
-// vmCmd represents the vm command
-var vmCmd = &cobra.Command{
-	Use:   "vm",
-	Short: "create: vm create ,delete: vm delete",
-	Long: `This is vm create and delete command.
-create is vm create. Also, delete is vm delete.`,
+// testCmd represents the test command
+var testCmd = &cobra.Command{
+	Use:   "test",
+	Short: "create: test create ,delete: test delete",
+	Long: `This is test create and delete command.
+create is test create. Also, delete is test delete.`,
 }
 
-var vmCreateCmd = &cobra.Command{
+var testCreateCmd = &cobra.Command{
 	Use:   "create",
 	Short: "create vm",
 	Long: `VM create tool
@@ -68,22 +68,19 @@ vm create -n test -c 1 -m 1024 -p /home/yoneyan/test.qcow2 -s 1024 -N br100 -v 2
 			resultInt64Array[i] = result
 		}
 
-		autostart, err := cmd.PersistentFlags().GetBool("autostart")
+		_, err := cmd.PersistentFlags().GetBool("autostart")
 		if err != nil {
 			log.Fatalf("could not greet: %v", err)
 			return nil
 		}
 
 		c := node.VMData{
-			Vmname:      resultStringArray[0],
-			Vcpu:        resultInt64Array[0],
-			Vmem:        resultInt64Array[1],
-			Storage:     resultInt64Array[2],
-			StoragePath: resultStringArray[1],
-			CdromPath:   resultStringArray[2],
-			Vnet:        resultStringArray[3],
-			Vnc:         resultInt64Array[3],
-			Autostart:   autostart,
+			Vmname:  resultStringArray[0],
+			Vcpu:    resultInt64Array[0],
+			Vmem:    resultInt64Array[1],
+			Storage: resultInt64Array[2],
+
+			Vnet: resultStringArray[3],
 		}
 		if data.CreateVM(&c) {
 			fmt.Println("Process End")
@@ -93,7 +90,7 @@ vm create -n test -c 1 -m 1024 -p /home/yoneyan/test.qcow2 -s 1024 -N br100 -v 2
 		return nil
 	},
 }
-var vmDeleteCmd = &cobra.Command{
+var testDeleteCmd = &cobra.Command{
 	Use:   "delete",
 	Short: "delete vm",
 	Long:  "VM Delete tool",
@@ -111,7 +108,7 @@ var vmDeleteCmd = &cobra.Command{
 	},
 }
 
-var vmStartCmd = &cobra.Command{
+var testStartCmd = &cobra.Command{
 	Use:   "start",
 	Short: "vm start",
 	Long:  "VM start tool",
@@ -129,7 +126,7 @@ var vmStartCmd = &cobra.Command{
 	},
 }
 
-var vmStopCmd = &cobra.Command{
+var testStopCmd = &cobra.Command{
 	Use:   "stop",
 	Short: "vm stop",
 	Long:  "VM stop tool",
@@ -147,7 +144,7 @@ var vmStopCmd = &cobra.Command{
 	},
 }
 
-var vmShutdownCmd = &cobra.Command{
+var testShutdownCmd = &cobra.Command{
 	Use:   "shutdown",
 	Short: "vm shutdown",
 	Long:  "VM shutdown tool",
@@ -165,7 +162,7 @@ var vmShutdownCmd = &cobra.Command{
 	},
 }
 
-var vmResetCmd = &cobra.Command{
+var testResetCmd = &cobra.Command{
 	Use:   "reset",
 	Short: "vm reset",
 	Long:  "VM reset tool",
@@ -183,7 +180,7 @@ var vmResetCmd = &cobra.Command{
 	},
 }
 
-var vmResumeCmd = &cobra.Command{
+var testResumeCmd = &cobra.Command{
 	Use:   "resume",
 	Short: "vm resume",
 	Long:  "VM resume tool",
@@ -201,7 +198,7 @@ var vmResumeCmd = &cobra.Command{
 	},
 }
 
-var vmPauseCmd = &cobra.Command{
+var testPauseCmd = &cobra.Command{
 	Use:   "pause",
 	Short: "vm pause",
 	Long:  "VM pause tool",
@@ -219,7 +216,7 @@ var vmPauseCmd = &cobra.Command{
 	},
 }
 
-var vmGetCmd = &cobra.Command{
+var testGetCmd = &cobra.Command{
 	Use:   "get",
 	Short: "vm get",
 	Long:  "VM get tool",
@@ -228,7 +225,7 @@ var vmGetCmd = &cobra.Command{
 	},
 }
 
-var vmGetIDCmd = &cobra.Command{
+var testGetIDCmd = &cobra.Command{
 	Use:   "id",
 	Short: "get id",
 	Long:  "VM get tool from vmid",
@@ -245,7 +242,7 @@ var vmGetIDCmd = &cobra.Command{
 		return nil
 	},
 }
-var vmGetNameCmd = &cobra.Command{
+var testGetNameCmd = &cobra.Command{
 	Use:   "name",
 	Short: "get name",
 	Long:  "VM get tool from name.",
@@ -259,7 +256,7 @@ var vmGetNameCmd = &cobra.Command{
 		return nil
 	},
 }
-var vmGetAllCmd = &cobra.Command{
+var testGetAllCmd = &cobra.Command{
 	Use:   "all",
 	Short: "all",
 	Long:  "get all VM",
@@ -271,38 +268,38 @@ var vmGetAllCmd = &cobra.Command{
 }
 
 func init() {
-	vmCreateCmd.PersistentFlags().StringP("name", "n", "none", "vm name")
-	vmCreateCmd.PersistentFlags().Int64P("cpu", "c", 0, "virtual cpu")
-	vmCreateCmd.PersistentFlags().Int64P("mem", "m", 0, "virtual memory")
-	vmCreateCmd.PersistentFlags().StringP("storage_path", "p", "none", "storage path")
-	vmCreateCmd.PersistentFlags().Int64P("storage", "s", 0, "storage capacity")
-	vmCreateCmd.PersistentFlags().StringP("cdrom", "C", "", "cdrom path")
-	vmCreateCmd.PersistentFlags().StringP("vnet", "N", "none", "virtual net")
-	vmCreateCmd.PersistentFlags().Int64P("vnc", "v", 0, "vnc port")
-	vmCreateCmd.PersistentFlags().BoolP("autostart", "a", false, "autostart")
+	testCreateCmd.PersistentFlags().StringP("name", "n", "none", "vm name")
+	testCreateCmd.PersistentFlags().Int64P("cpu", "c", 0, "virtual cpu")
+	testCreateCmd.PersistentFlags().Int64P("mem", "m", 0, "virtual memory")
+	testCreateCmd.PersistentFlags().StringP("storage_path", "p", "none", "storage path")
+	testCreateCmd.PersistentFlags().Int64P("storage", "s", 0, "storage capacity")
+	testCreateCmd.PersistentFlags().StringP("cdrom", "C", "", "cdrom path")
+	testCreateCmd.PersistentFlags().StringP("vnet", "N", "none", "virtual net")
+	testCreateCmd.PersistentFlags().Int64P("vnc", "v", 0, "vnc port")
+	testCreateCmd.PersistentFlags().BoolP("autostart", "a", false, "autostart")
 
-	rootCmd.AddCommand(vmCmd)
-	vmCmd.AddCommand(vmCreateCmd)
-	vmCmd.AddCommand(vmDeleteCmd)
-	vmCmd.AddCommand(vmStartCmd)
-	vmCmd.AddCommand(vmStopCmd)
-	vmCmd.AddCommand(vmShutdownCmd)
-	vmCmd.AddCommand(vmResetCmd)
-	vmCmd.AddCommand(vmPauseCmd)
-	vmCmd.AddCommand(vmResumeCmd)
-	vmCmd.AddCommand(vmGetCmd)
+	rootCmd.AddCommand(testCmd)
+	testCmd.AddCommand(testCreateCmd)
+	testCmd.AddCommand(testDeleteCmd)
+	testCmd.AddCommand(testStartCmd)
+	testCmd.AddCommand(testStopCmd)
+	testCmd.AddCommand(testShutdownCmd)
+	testCmd.AddCommand(testResetCmd)
+	testCmd.AddCommand(testPauseCmd)
+	testCmd.AddCommand(testResumeCmd)
+	testCmd.AddCommand(testGetCmd)
 
-	vmGetCmd.AddCommand(vmGetIDCmd)
-	vmGetCmd.AddCommand(vmGetNameCmd)
-	vmGetCmd.AddCommand(vmGetAllCmd)
+	testGetCmd.AddCommand(testGetIDCmd)
+	testGetCmd.AddCommand(testGetNameCmd)
+	testGetCmd.AddCommand(testGetAllCmd)
 
 	// Here you will define your flags and configuration settings.
 
 	// Cobra supports Persistent Flags which will work for this command
 	// and all subcommands, e.g.:
-	// vmCmd.PersistentFlags().String("foo", "", "A help for foo")
+	// testCmd.PersistentFlags().String("foo", "", "A help for foo")
 
 	// Cobra supports local flags which will only run when this command
 	// is called directly, e.g.:
-	// vmCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
+	// testCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
 }

@@ -10,21 +10,26 @@ import (
 
 const db_name = "./main.sql"
 
-type Controller struct {
+type Node struct {
+	ID       int
 	HostName string
 	IP       string
-	GRPCPort int
-	SSHPort  int
-	User     string
-	Pass     string
+	Port     int
+	Auth     int
+	MaxCPU   int
+	MaxMem   int
+	Status   int
 }
 
 type VmUser struct {
+	ID   int
 	Name string
 	Pass string
+	Auth int
 }
 
 type VmGroup struct {
+	ID         int
 	Name       string
 	Admin      string
 	User       string
@@ -58,43 +63,96 @@ func createdb(database string) bool {
 }
 
 func Initdb() bool {
-	//controller data
-	createdb(`CREATE TABLE IF NOT EXISTS "controller" ("id" INTEGER PRIMARY KEY, "hostname" VARCHAR(255), "ip" VARCHAR(255), "grpcport" INT,"sshport" INT, "user" VARCHAR(255),"password" VARCHAR(255))`)
+	//Node data
+	createdb(`CREATE TABLE IF NOT EXISTS "node" ("id" INTEGER PRIMARY KEY, "hostname" VARCHAR(255), "ip" VARCHAR(255), "port" INT, "auth" INT,"maxcpu" INT "maxmem" INT "status" INT`)
 	//user data
-	createdb(`CREATE TABLE IF NOT EXISTS "user" ("id" INTEGER PRIMARY KEY, "name" VARCHAR(255), "pass" VARCHAR(255)`)
+	createdb(`CREATE TABLE IF NOT EXISTS "user" ("id" INTEGER PRIMARY KEY, "name" VARCHAR(255), "pass" VARCHAR(255),"auth" INT`)
 	//group data
-	createdb(`CREATE TABLE IF NOT EXISTS "group" ("id" INTEGER PRIMARY Key, "name" VARCHAR(255),"user" VARCHAR(10000),"admin" VARCHAR(1000),"maxcpu" INT,"maxmem" INT,"maxstorage" INT`)
-	//vm data
-	createdb(`CREATE TABLE IF NOT EXISTS "vm" ("id" INTEGER PRIMARY KEY, "name" VARCHAR(255),"vcpu" INT,"vram" INT,"vstorage" integer,"vnc" INT,"net" VARCHAR(255))`)
+	createdb(`CREATE TABLE IF NOT EXISTS "group" ("id" INTEGER PRIMARY KEY, "name" VARCHAR(255),"user" VARCHAR(10000),"admin" VARCHAR(1000),"maxcpu" INT,"maxmem" INT,"maxstorage" INT`)
 	return true
 }
 
-//Controller
+//Node
 
-func AddDBController(data Controller) bool {
+func AddDBNode(data Node) bool {
 	db := *connectdb()
-	addDb, err := db.Prepare(`INSERT INTO "controller" ("hostname","ip","grpcport","sshport","user","password") VALUES (?,?,?,?,?,?)`)
+	addDb, err := db.Prepare(`INSERT INTO "node" ("id","hostname","ip","port","auth","maxcpu","maxmem","status") VALUES (?,?,?,?,?,?,?,?)`)
 	if err != nil {
-		panic(err)
+		fmt.Println("DBError!!")
 		return false
 	}
 
-	if _, err := addDb.Exec(data.HostName, data.IP, data.GRPCPort, data.SSHPort, data.User, data.Pass); err != nil {
-		panic(err)
+	if _, err := addDb.Exec(data.ID, data.HostName, data.IP, data.Port, data.Auth, data.MaxCPU, data.MaxMem, data.Status); err != nil {
+		fmt.Println("Add Error!!")
 		return false
 	}
 	return true
 }
 
-func DeleteDBController(hostname string) bool {
-	db := connectdb()
-	deleteDb := "DELETE FROM controller WHERE hostname = ?"
-	_, err := db.Exec(deleteDb, hostname)
+func DeleteDBNode(id int) bool {
+	db := *connectdb()
+	deleteDb := "DELETE FROM node WHERE id = ?"
+	_, err := db.Exec(deleteDb, id)
+	if err != nil {
+		fmt.Println("Delete Failed!!")
+		return false
+	}
+	return true
+}
+
+func NodeDBStatusUpdate(id, status int) bool {
+	db := *connectdb()
+
+	cmd := "UPDATE node SET status = ? WHERE id = ?"
+	_, err := db.Exec(cmd, status, id)
 	if err != nil {
 		log.Fatalln(err)
 		return false
 	}
 	return true
+}
+
+func GetDBNodeID(id int) (Node, bool) {
+	db := *connectdb()
+
+	rows, err := db.Query("SELECT * FROM node WHERE id = ?", id)
+	if err != nil {
+		fmt.Println(err)
+	}
+	defer rows.Close()
+
+	var b Node
+	err = rows.Scan(b.ID, b.HostName, b.IP, b.Port, b.Auth, b.MaxCPU, b.MaxMem, b.Status)
+
+	if err != nil {
+		fmt.Println(err)
+		return b, false
+	}
+
+	return b, true
+}
+
+func GetDBAllNode() []Node {
+
+	db := *connectdb()
+
+	rows, err := db.Query("SELECT * FROM node")
+	if err != nil {
+		fmt.Println(err)
+	}
+	defer rows.Close()
+
+	var bg []Node
+	for rows.Next() {
+		var b Node
+		err := rows.Scan(b.ID, b.HostName, b.IP, b.Port, b.Auth, b.MaxCPU, b.MaxMem, b.Status)
+		if err != nil {
+			log.Println(err)
+		}
+		bg = append(bg, b)
+	}
+	return bg
+
 }
 
 //User

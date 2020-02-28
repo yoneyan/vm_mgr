@@ -7,7 +7,7 @@ import (
 	"github.com/yoneyan/vm_mgr/node/etc"
 	"github.com/yoneyan/vm_mgr/node/manage"
 	"github.com/yoneyan/vm_mgr/node/vm"
-	pb "github.com/yoneyan/vm_mgr/proto/proto-go"
+	pb "github.com/yoneyan/vm_mgr/proto/proto-go/node"
 	"google.golang.org/grpc"
 	"log"
 	"net"

@@ -22,32 +22,32 @@ THE SOFTWARE.
 package cmd
 
 import (
+	"fmt"
 	"github.com/spf13/cobra"
+	"github.com/yoneyan/vm_mgr/controller/client"
 )
 
-// vmCmd represents the vm command
-var vmCmd = &cobra.Command{
-	Use:   "vm",
-	Short: "vm command",
-	Long: `vm command.
-For example:
-
-`,
-	RunE: func(cmd *cobra.Command, args []string) error {
-		return nil
+// startCmd represents the start command
+var startCmd = &cobra.Command{
+	Use:   "start",
+	Short: "start node server",
+	Long:  ``,
+	Run: func(cmd *cobra.Command, args []string) {
+		client.ProcessClient()
+		fmt.Println("end")
 	},
 }
 
 func init() {
-	rootCmd.AddCommand(vmCmd)
+	rootCmd.AddCommand(startCmd)
 
 	// Here you will define your flags and configuration settings.
 
 	// Cobra supports Persistent Flags which will work for this command
 	// and all subcommands, e.g.:
-	// vmCmd.PersistentFlags().String("foo", "", "A help for foo")
+	// startCmd.PersistentFlags().String("foo", "", "A help for foo")
 
 	// Cobra supports local flags which will only run when this command
 	// is called directly, e.g.:
-	// vmCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
+	// startCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
 }
