@@ -23,7 +23,16 @@ var initdbCmd = &cobra.Command{
 	Short: "db init",
 	Long:  "db init cmd",
 	RunE: func(cmd *cobra.Command, args []string) error {
-		fmt.Println(db.Initdb())
+		fmt.Println(db.InitDB())
+		db.AddDBGroup(db.Group{
+			Name:       "admin",
+			Admin:      "test",
+			User:       "test",
+			MaxCPU:     100,
+			MaxMem:     10240000,
+			MaxStorage: 1000000000,
+		})
+		db.AddDBUser(db.User{Name: "test", Pass: "test"})
 		return nil
 	},
 }

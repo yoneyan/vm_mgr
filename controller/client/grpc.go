@@ -31,7 +31,7 @@ func (s *server) AddNode(ctx context.Context, in *pb.NodeData) (*pb.Result, erro
 	log.Printf("Receive NodeAuth  : %v", in.GetAuth())
 	log.Printf("Receive NodeSpec  : %v", in.GetSepc())
 
-	if data.AdminUserCertification(in.GetBase().User, in.GetBase().Pass, in.GetBase().Group) {
+	if data.AdminUserCertification(in.GetBase().User, in.GetBase().Pass) {
 		if db.AddDBNode(db.Node{
 			ID:       int(in.GetNodeID()),
 			HostName: in.GetHostname(),
@@ -51,7 +51,7 @@ func (s *server) AddNode(ctx context.Context, in *pb.NodeData) (*pb.Result, erro
 func (s *server) DeleteNode(ctx context.Context, in *pb.NodeID) (*pb.Result, error) {
 	fmt.Println("----------StopNode-----")
 	log.Printf("Receive NodeID: %v", in.GetNodeID())
-	if data.AdminUserCertification(in.GetBase().User, in.GetBase().Pass, in.GetBase().Group) {
+	if data.AdminUserCertification(in.GetBase().User, in.GetBase().Pass) {
 		db.NodeDBStatusUpdate(int(in.GetNodeID()), 0)
 		if db.DeleteDBNode(int(in.GetNodeID())) {
 			d, r := db.GetDBNodeID(int(in.GetNodeID()))
@@ -70,7 +70,7 @@ func (s *server) DeleteNode(ctx context.Context, in *pb.NodeID) (*pb.Result, err
 func (s *server) StartNode(ctx context.Context, in *pb.NodeID) (*pb.Result, error) {
 	log.Println("----StartNode----")
 	log.Printf("Receive NodeID: %v", in.GetNodeID())
-	if data.AdminUserCertification(in.GetBase().User, in.GetBase().Pass, in.GetBase().Group) {
+	if data.AdminUserCertification(in.GetBase().User, in.GetBase().Pass) {
 		if db.NodeDBStatusUpdate(int(in.GetNodeID()), 1) {
 			return &pb.Result{Status: true}, nil
 		}
