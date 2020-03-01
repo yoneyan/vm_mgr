@@ -24,16 +24,16 @@ package cmd
 import (
 	"fmt"
 	"github.com/spf13/cobra"
-	"github.com/yoneyan/vm_mgr/controller/client"
+	"github.com/yoneyan/vm_mgr/controller/server"
 )
 
 // startCmd represents the start command
 var startCmd = &cobra.Command{
 	Use:   "start",
-	Short: "start node server",
+	Short: "start client server",
 	Long:  ``,
 	Run: func(cmd *cobra.Command, args []string) {
-		client.ProcessClient()
+		server.Server()
 		fmt.Println("end")
 	},
 }

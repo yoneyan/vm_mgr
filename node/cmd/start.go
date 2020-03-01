@@ -32,11 +32,11 @@ import (
 // startCmd represents the start command
 var startCmd = &cobra.Command{
 	Use:   "start",
-	Short: "start node server",
+	Short: "start client server",
 	Long:  ``,
 	Run: func(cmd *cobra.Command, args []string) {
 		vm.StartupProcess()
-		data.Processgrpc()
+		data.Server()
 		fmt.Println("end")
 	},
 }

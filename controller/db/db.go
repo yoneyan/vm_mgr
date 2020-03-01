@@ -64,7 +64,7 @@ func createdb(database string) bool {
 
 func InitDB() bool {
 	//Node data
-	createdb(`CREATE TABLE IF NOT EXISTS "node" ("id" INTEGER PRIMARY KEY, "hostname" VARCHAR(255), "ip" VARCHAR(255), "port" INT, "auth" INT,"maxcpu" INT "maxmem" INT "status" INT`)
+	createdb(`CREATE TABLE IF NOT EXISTS "client" ("id" INTEGER PRIMARY KEY, "hostname" VARCHAR(255), "ip" VARCHAR(255), "port" INT, "auth" INT,"maxcpu" INT "maxmem" INT "status" INT`)
 	//user data
 	createdb(`CREATE TABLE IF NOT EXISTS "user" ("id" INTEGER PRIMARY KEY, "name" VARCHAR(255), "pass" VARCHAR(255)`)
 	//group data
@@ -76,7 +76,7 @@ func InitDB() bool {
 
 func AddDBNode(data Node) bool {
 	db := *connectdb()
-	addDb, err := db.Prepare(`INSERT INTO "node" ("id","hostname","ip","port","auth","maxcpu","maxmem","status") VALUES (?,?,?,?,?,?,?,?)`)
+	addDb, err := db.Prepare(`INSERT INTO "client" ("id","hostname","ip","port","auth","maxcpu","maxmem","status") VALUES (?,?,?,?,?,?,?,?)`)
 	if err != nil {
 		fmt.Println("DBError!!")
 		return false
@@ -89,9 +89,9 @@ func AddDBNode(data Node) bool {
 	return true
 }
 
-func DeleteDBNode(id int) bool {
+func RemoveDBNode(id int) bool {
 	db := *connectdb()
-	deleteDb := "DELETE FROM node WHERE id = ?"
+	deleteDb := "DELETE FROM client WHERE id = ?"
 	_, err := db.Exec(deleteDb, id)
 	if err != nil {
 		fmt.Println("Delete Failed!!")
@@ -103,7 +103,7 @@ func DeleteDBNode(id int) bool {
 func NodeDBStatusUpdate(id, status int) bool {
 	db := *connectdb()
 
-	cmd := "UPDATE node SET status = ? WHERE id = ?"
+	cmd := "UPDATE client SET status = ? WHERE id = ?"
 	_, err := db.Exec(cmd, status, id)
 	if err != nil {
 		log.Fatalln(err)
@@ -115,7 +115,7 @@ func NodeDBStatusUpdate(id, status int) bool {
 func GetDBNodeID(id int) (Node, bool) {
 	db := *connectdb()
 
-	rows, err := db.Query("SELECT * FROM node WHERE id = ?", id)
+	rows, err := db.Query("SELECT * FROM client WHERE id = ?", id)
 	if err != nil {
 		fmt.Println(err)
 	}
@@ -136,7 +136,7 @@ func GetDBAllNode() []Node {
 
 	db := *connectdb()
 
-	rows, err := db.Query("SELECT * FROM node")
+	rows, err := db.Query("SELECT * FROM client")
 	if err != nil {
 		fmt.Println(err)
 	}
@@ -172,7 +172,7 @@ func AddDBUser(data User) bool {
 	return true
 }
 
-func DeleteDBUser(name string) bool {
+func RemoveDBUser(name string) bool {
 	db := connectdb()
 	deleteDb := "DELETE FROM user WHERE name = ?"
 	_, err := db.Exec(deleteDb, name)
@@ -281,7 +281,7 @@ func AddDBGroup(data Group) bool {
 	return true
 }
 
-func DeleteDBGroup(id int) bool {
+func RemoveDBGroup(id int) bool {
 	db := connectdb()
 	deletedb := "DELETE FROM group WHERE id = ?"
 	_, err := db.Exec(deletedb, id)
