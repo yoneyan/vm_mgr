@@ -14,16 +14,16 @@ var initCmd = &cobra.Command{
 
 database init: init database
 client init:     init client`,
-	RunE: func(cmd *cobra.Command, args []string) error {
-		return nil
-	},
 }
 var initdbCmd = &cobra.Command{
 	Use:   "db",
 	Short: "db init",
 	Long:  "db init cmd",
 	RunE: func(cmd *cobra.Command, args []string) error {
-		fmt.Println(db.InitDB())
+		fmt.Println("----Initalize Database----")
+		result := db.InitDB()
+		fmt.Println(result)
+		db.AddDBUser(db.User{Name: "test", Pass: "test"})
 		db.AddDBGroup(db.Group{
 			Name:       "admin",
 			Admin:      "test",
@@ -32,7 +32,6 @@ var initdbCmd = &cobra.Command{
 			MaxMem:     10240000,
 			MaxStorage: 1000000000,
 		})
-		db.AddDBUser(db.User{Name: "test", Pass: "test"})
 		return nil
 	},
 }
