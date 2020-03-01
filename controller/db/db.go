@@ -8,7 +8,7 @@ import (
 	"log"
 )
 
-const DBName = "./main.sql"
+const DBPath = "./main.db"
 
 type Node struct {
 	ID       int
@@ -39,15 +39,14 @@ type Group struct {
 }
 
 func connectdb() *sql.DB {
-	db, err := sql.Open("sqlite3", DBName)
+	db, err := sql.Open("sqlite3", DBPath)
 	if err != nil {
-		log.Fatalln(err)
 		fmt.Println("SQL open error")
-		panic(err)
+		log.Fatalln(err)
+		//panic(err)
 	}
 
 	//defer db.Close()
-
 	return db
 }
 
@@ -64,19 +63,19 @@ func createdb(database string) bool {
 
 func InitDB() bool {
 	//Node data
-	createdb(`CREATE TABLE IF NOT EXISTS "client" ("id" INTEGER PRIMARY KEY, "hostname" VARCHAR(255), "ip" VARCHAR(255), "port" INT, "auth" INT,"maxcpu" INT "maxmem" INT "status" INT`)
+	createdb(`CREATE TABLE IF NOT EXISTS "node" ("id" INTEGER PRIMARY KEY, "hostname" VARCHAR(255), "ip" VARCHAR(255), "port" INT, "auth" INT,"maxcpu" INT "maxmem" INT "status" INT)`)
 	//user data
-	createdb(`CREATE TABLE IF NOT EXISTS "user" ("id" INTEGER PRIMARY KEY, "name" VARCHAR(255), "pass" VARCHAR(255)`)
+	createdb(`CREATE TABLE IF NOT EXISTS "user" ("id" INTEGER PRIMARY KEY, "name" VARCHAR(255), "pass" VARCHAR(255))`)
 	//group data
-	createdb(`CREATE TABLE IF NOT EXISTS "group" ("id" INTEGER PRIMARY KEY, "name" VARCHAR(255),"user" VARCHAR(10000),"admin" VARCHAR(1000),"maxcpu" INT,"maxmem" INT,"maxstorage" INT`)
+	createdb(`CREATE TABLE IF NOT EXISTS "group" ("id" INTEGER PRIMARY KEY, "name" VARCHAR(255),"user" VARCHAR(10000),"admin" VARCHAR(1000),"maxcpu" INT,"maxmem" INT,"maxstorage" INT)`)
+
 	return true
 }
 
 //Node
-
 func AddDBNode(data Node) bool {
 	db := *connectdb()
-	addDb, err := db.Prepare(`INSERT INTO "client" ("id","hostname","ip","port","auth","maxcpu","maxmem","status") VALUES (?,?,?,?,?,?,?,?)`)
+	addDb, err := db.Prepare(`INSERT INTO "node" ("id","hostname","ip","port","auth","maxcpu","maxmem","status") VALUES (?,?,?,?,?,?,?,?)`)
 	if err != nil {
 		fmt.Println("DBError!!")
 		return false
@@ -91,7 +90,7 @@ func AddDBNode(data Node) bool {
 
 func RemoveDBNode(id int) bool {
 	db := *connectdb()
-	deleteDb := "DELETE FROM client WHERE id = ?"
+	deleteDb := "DELETE FROM node WHERE id = ?"
 	_, err := db.Exec(deleteDb, id)
 	if err != nil {
 		fmt.Println("Delete Failed!!")
@@ -103,7 +102,7 @@ func RemoveDBNode(id int) bool {
 func NodeDBStatusUpdate(id, status int) bool {
 	db := *connectdb()
 
-	cmd := "UPDATE client SET status = ? WHERE id = ?"
+	cmd := "UPDATE node SET status = ? WHERE id = ?"
 	_, err := db.Exec(cmd, status, id)
 	if err != nil {
 		log.Fatalln(err)
@@ -115,7 +114,7 @@ func NodeDBStatusUpdate(id, status int) bool {
 func GetDBNodeID(id int) (Node, bool) {
 	db := *connectdb()
 
-	rows, err := db.Query("SELECT * FROM client WHERE id = ?", id)
+	rows, err := db.Query("SELECT * FROM node WHERE id = ?", id)
 	if err != nil {
 		fmt.Println(err)
 	}
@@ -136,7 +135,7 @@ func GetDBAllNode() []Node {
 
 	db := *connectdb()
 
-	rows, err := db.Query("SELECT * FROM client")
+	rows, err := db.Query("SELECT * FROM node")
 	if err != nil {
 		fmt.Println(err)
 	}
