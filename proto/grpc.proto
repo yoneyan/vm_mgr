@@ -2,7 +2,7 @@ syntax = "proto3";
 
 //import "google/protobuf/timestamp.proto-go";
 
-service VM {
+service grpc   {
     rpc CreateVM (VMData) returns (Result) {
     }
     rpc DeleteVM (VMID) returns (Result) {
@@ -41,11 +41,23 @@ service VM {
     }
     rpc StopNode (NodeID) returns (Result) {
     }
+    rpc AddUser (UserData) returns (Result) {
+    }
+    rpc RemoveUser (UserData) returns (Result) {
+    }
+    rpc GetUser (UserData) returns (Result) {
+    }
+    rpc TestUserPass (UserData) returns (Result) {
+    }
     rpc AddGroup (GroupData) returns (Result) {
     }
-    rpc DeleteGroup (GroupData) returns (Result) {
+    rpc RemoveGroup (GroupData) returns (Result) {
     }
     rpc GetGroup (GroupData) returns (GroupData) {
+    }
+    rpc UserAddGroup (GroupData) returns (GroupData) {
+    }
+    rpc UserRemoveGroup (GroupData) returns (GroupData) {
     }
 }
 
@@ -72,6 +84,8 @@ message Option {
     string storage_path = 1;
     string cdrom_path = 2;
     int32 vnc = 3;
+    int64 id = 4;
+    bool autostart = 5;
 }
 
 message SnapshotOperationData {
@@ -140,8 +154,9 @@ message GroupData {
     string name = 3;
     string admin = 4;
     string user = 5;
-    bool team = 6;
-    SpecData sepc = 7;
+    int32 mode = 6;
+    bool team = 7;
+    SpecData sepc = 8;
 }
 
 message SpecData {
