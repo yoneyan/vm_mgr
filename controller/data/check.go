@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/yoneyan/vm_mgr/controller/db"
 	"github.com/yoneyan/vm_mgr/proto/proto-go"
+	"strconv"
 )
 
 func CreateVMCheck(d *grpc.VMData) bool {
@@ -28,8 +29,10 @@ func ExistGroupCheck(name string) bool {
 
 func ExistUserCheck(name string) bool {
 	data := db.GetDBAllUser()
+	fmt.Println("UserCount: " + strconv.Itoa(len(data)))
 	for _, a := range data {
 		if a.Name == name {
+			fmt.Println("Check OK(Exists User)")
 			return true
 		}
 	}
@@ -39,9 +42,11 @@ func ExistUserCheck(name string) bool {
 func GroupAllUserCheck(name string) bool {
 	data := db.GetDBAllGroup()
 	for i, _ := range data {
-		if SearchAllGroupUser(data[i].Admin, name) == false && SearchAllGroupUser(data[i].User, name) == false {
-			fmt.Println("Error: Exists group user.")
-			return false
+		if SearchAllGroupUser(data[i].Admin, name) {
+			if SearchAllGroupUser(data[i].User, name) {
+				fmt.Println("Error: Exists group user.(Admin,User)")
+				return false
+			}
 		}
 	}
 	return true

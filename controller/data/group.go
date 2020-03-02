@@ -3,6 +3,7 @@ package data
 import (
 	"fmt"
 	"github.com/yoneyan/vm_mgr/controller/db"
+	"strconv"
 	"strings"
 )
 
@@ -126,6 +127,8 @@ func ProcessStringToArray(basedata, data string, mode int) (string, bool) {
 //basedata: group admin and user data
 func SearchAllGroupUser(basedata, searchnamedata string) bool {
 	dataarray := strings.Split(basedata, ",")
+	fmt.Printf("groupuser&admin: ")
+	fmt.Println(dataarray)
 	for _, d := range dataarray {
 		if d == searchnamedata {
 			return true
@@ -140,6 +143,7 @@ func SearchGroupUser(searchnamedata, group string, mode int) bool {
 	if result == false {
 		fmt.Println("Error: Not found group")
 	}
+	fmt.Println("GroupID: " + strconv.Itoa(id))
 	data, result := db.GetDBGroup(id)
 	if result == false {
 		fmt.Println("Error: Not found group")

@@ -36,40 +36,36 @@ var usercmd = &cobra.Command{
 	Long: `user command. For example:
 user add test
 user remove test`,
-	//Run: func(cmd *cobra.Command, args []string) {
-	//	fmt.Println("user called")
-	//},
 }
 
 var useraddcmd = &cobra.Command{
 	Use:   "add",
 	Short: "user add",
-	Long:  "user add tool",
+	Long: `user add tool
+for example:
+
+user add admin test -H 127.0.0.1:50200 -u admin -p `,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		if len(args) < 1 {
 			return errors.New("false")
 		}
-		host, err := cmd.PersistentFlags().GetString("host")
-		if err == nil {
+		host, err := cmd.Flags().GetString("host")
+		if err != nil {
 			log.Fatalf("could not greet: %v", err)
 			return nil
 		}
 		fmt.Println(host)
-		authuser, err := cmd.PersistentFlags().GetString("authuser")
-		if err == nil {
-			log.Fatalf("could not greet: %v", err)
-			return nil
-		}
-		authpass, err := cmd.PersistentFlags().GetString("authpass")
-		if err == nil {
-			log.Fatalf("could not greet: %v", err)
-			return nil
-		}
 		fmt.Println(host)
-		fmt.Println(authuser)
-		fmt.Println(authpass)
-		fmt.Println(args[0])
-		fmt.Println(args[1])
+		authuser, err := cmd.Flags().GetString("authuser")
+		if err != nil {
+			log.Fatalf("could not greet: %v", err)
+			return nil
+		}
+		authpass, err := cmd.Flags().GetString("authpass")
+		if err != nil {
+			log.Fatalf("could not greet: %v", err)
+			return nil
+		}
 
 		pb.AddUser(&pb.AuthData{Name: authuser, Pass1: authpass}, host, args[0], args[1])
 
@@ -83,21 +79,22 @@ var userremovecmd = &cobra.Command{
 	Short: "user remove",
 	Long:  "user remove tool",
 	RunE: func(cmd *cobra.Command, args []string) error {
-		if len(args) < 1 {
-			return errors.New("false")
-		}
-		host, err := cmd.PersistentFlags().GetString("host")
-		if err == nil {
+		//if len(args) < 1 {
+		//	return errors.New("false")
+		//}
+		host, err := cmd.Flags().GetString("host")
+		if err != nil {
 			log.Fatalf("could not greet: %v", err)
 			return nil
 		}
-		authuser, err := cmd.PersistentFlags().GetString("authuser")
-		if err == nil {
+		fmt.Println("sa")
+		authuser, err := cmd.Flags().GetString("authuser")
+		if err != nil {
 			log.Fatalf("could not greet: %v", err)
 			return nil
 		}
-		authpass, err := cmd.PersistentFlags().GetString("authpass")
-		if err == nil {
+		authpass, err := cmd.Flags().GetString("authpass")
+		if err != nil {
 			log.Fatalf("could not greet: %v", err)
 			return nil
 		}

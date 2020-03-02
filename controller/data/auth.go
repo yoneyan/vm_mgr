@@ -7,9 +7,12 @@ import (
 
 //User Certification Tool is testing now !!
 func AdminUserCertification(name, pass string) bool {
-	if db.PassAuthDBUser(name, pass) && SearchGroupUser(name, "admin", 0) {
-		fmt.Println("Certification OK!! (Administrator)")
-		return true
+	if db.PassAuthDBUser(name, pass) {
+		SearchGroupUser(name, "admin", 0)
+		{
+			fmt.Println("Certification OK!! (Administrator)")
+			return true
+		}
 	}
 	return false
 }
