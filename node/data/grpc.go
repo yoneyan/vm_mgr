@@ -7,7 +7,7 @@ import (
 	"github.com/yoneyan/vm_mgr/node/etc"
 	"github.com/yoneyan/vm_mgr/node/manage"
 	"github.com/yoneyan/vm_mgr/node/vm"
-	pb "github.com/yoneyan/vm_mgr/proto/proto-go/node"
+	pb "github.com/yoneyan/vm_mgr/proto/proto-go"
 	"google.golang.org/grpc"
 	"log"
 	"net"
@@ -17,36 +17,36 @@ import (
 const port = ":50100"
 
 type server struct {
-	pb.UnimplementedVMServer
+	pb.UnimplementedGrpcServer
 }
 
 func (s *server) CreateVM(ctx context.Context, in *pb.VMData) (*pb.Result, error) {
 	fmt.Println("----------CreateVM-----")
-	log.Printf("Receive VMID: %v", in.GetId())
+	log.Printf("Receive VMID: %v", in.GetOption().GetId())
 	log.Printf("Receive name: %v", in.GetVmname())
 	log.Printf("Receive cpu: %v", in.GetVcpu())
 	log.Printf("Receive mem: %v", in.GetVmem())
-	log.Printf("Receive StoragePath: %v", in.GetStoragePath())
+	log.Printf("Receive StoragePath: %v", in.GetOption().StoragePath)
 	log.Printf("Receive Storage: %v", in.GetStorage())
-	log.Printf("Receive vnc: %v", in.GetVnc())
+	log.Printf("Receive vnc: %v", in.GetOption().Vnc)
 	log.Printf("Receive net: %v", in.GetVnet())
-	log.Printf("Receive change: %v", in.GetAutostart())
+	log.Printf("Receive change: %v", in.GetOption().Autostart)
 	var r vm.CreateVMInformation
 
-	r.ID = int(in.GetId())
+	r.ID = int(in.GetOption().Id)
 	r.Name = in.GetVmname()
 	r.CPU = int(in.GetVcpu())
 	r.Mem = int(in.GetVmem())
-	r.StoragePath = in.GetStoragePath()
-	r.CDROM = in.GetCdromPath()
+	r.StoragePath = in.GetOption().StoragePath
+	r.CDROM = in.GetOption().CdromPath
 	r.Net = in.GetVnet()
-	r.VNC = int(in.GetVnc())
-	r.AutoStart = bool(in.GetAutostart())
+	r.VNC = int(in.GetOption().Vnc)
+	r.AutoStart = bool(in.GetOption().Autostart)
 
-	if etc.FileExists(in.GetStoragePath()+"/"+in.GetVmname()+".img") == false {
+	if etc.FileExists(in.GetOption().StoragePath+"/"+in.GetVmname()+".img") == false {
 		fmt.Println("Not storage file exists")
 		storage := manage.Storage{
-			Path:   in.GetStoragePath(),
+			Path:   in.GetOption().StoragePath,
 			Name:   in.GetVmname(),
 			Format: "qcow2",
 			Size:   int(in.GetStorage()),
@@ -106,14 +106,16 @@ func (s *server) GetVM(ctx context.Context, in *pb.VMID) (*pb.VMData, error) {
 
 	}
 	return &pb.VMData{
-		Id:          int64(result.ID),
-		Vmname:      result.Name,
-		Vcpu:        int64(result.CPU),
-		Vmem:        int64(result.Mem),
-		StoragePath: result.StoragePath,
-		Vnet:        result.Net,
-		Vnc:         int64(result.Vnc),
-		Autostart:   bool(result.AutoStart),
+		Option: &pb.Option{
+			StoragePath: result.StoragePath,
+			Vnc:         int32(result.Vnc),
+			Id:          int64(result.ID),
+			Autostart:   bool(result.AutoStart),
+		},
+		Vmname: result.Name,
+		Vcpu:   int64(result.CPU),
+		Vmem:   int64(result.Mem),
+		Vnet:   result.Net,
 	}, nil
 }
 
@@ -132,14 +134,16 @@ func (s *server) GetVMName(ctx context.Context, in *pb.VMName) (*pb.VMData, erro
 
 	}
 	return &pb.VMData{
-		Id:          int64(result.ID),
-		Vmname:      result.Name,
-		Vcpu:        int64(result.CPU),
-		Vmem:        int64(result.Mem),
-		StoragePath: result.StoragePath,
-		Vnet:        result.Net,
-		Vnc:         int64(result.Vnc),
-		Autostart:   bool(result.AutoStart),
+		Option: &pb.Option{
+			StoragePath: result.StoragePath,
+			Vnc:         int32(result.Vnc),
+			Id:          int64(result.ID),
+			Autostart:   bool(result.AutoStart),
+		},
+		Vmname: result.Name,
+		Vcpu:   int64(result.CPU),
+		Vmem:   int64(result.Mem),
+		Vnet:   result.Net,
 	}, nil
 }
 
@@ -207,7 +211,7 @@ func (s *server) ResumeVM(ctx context.Context, in *pb.VMID) (*pb.Result, error) 
 	}
 }
 
-func (s *server) StopNode(ctx context.Context, in *pb.Timer) (*pb.Result, error) {
+func (s *server) StopNode(ctx context.Context, in *pb.NodeID) (*pb.Result, error) {
 	log.Println("----StopNode----")
 	vm.StopProcess()
 	timer := time.NewTimer(time.Second * 1)
@@ -216,13 +220,13 @@ func (s *server) StopNode(ctx context.Context, in *pb.Timer) (*pb.Result, error)
 	return &pb.Result{Status: true}, nil
 }
 
-func Processgrpc() {
+func Server() {
 	lis, err := net.Listen("tcp", port)
 	if err != nil {
 		fmt.Println("failed to listen: %v", err)
 	}
 	s := grpc.NewServer()
-	pb.RegisterVMServer(s, &server{})
+	pb.RegisterGrpcServer(s, &server{})
 	if err := s.Serve(lis); err != nil {
 		fmt.Println("failed to serve: %v", err)
 	}

@@ -28,9 +28,9 @@ var initdbCmd = &cobra.Command{
 	},
 }
 var initNodeCmd = &cobra.Command{
-	Use:   "node",
-	Short: "node init",
-	Long:  "node init cmd",
+	Use:   "client",
+	Short: "client init",
+	Long:  "client init cmd",
 	RunE: func(cmd *cobra.Command, args []string) error {
 		fmt.Println("Not implemented")
 		return nil

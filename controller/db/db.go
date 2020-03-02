@@ -8,7 +8,7 @@ import (
 	"log"
 )
 
-const db_name = "./main.sql"
+const DBPath = "./main.db"
 
 type Node struct {
 	ID       int
@@ -21,14 +21,14 @@ type Node struct {
 	Status   int
 }
 
-type VmUser struct {
+type User struct {
 	ID   int
 	Name string
 	Pass string
 	Auth int
 }
 
-type VmGroup struct {
+type Group struct {
 	ID         int
 	Name       string
 	Admin      string
@@ -39,15 +39,14 @@ type VmGroup struct {
 }
 
 func connectdb() *sql.DB {
-	db, err := sql.Open("sqlite3", db_name)
+	db, err := sql.Open("sqlite3", DBPath)
 	if err != nil {
-		log.Fatalln(err)
 		fmt.Println("SQL open error")
-		panic(err)
+		log.Fatalln(err)
+		//panic(err)
 	}
 
 	//defer db.Close()
-
 	return db
 }
 
@@ -62,18 +61,18 @@ func createdb(database string) bool {
 	return true
 }
 
-func Initdb() bool {
+func InitDB() bool {
 	//Node data
-	createdb(`CREATE TABLE IF NOT EXISTS "node" ("id" INTEGER PRIMARY KEY, "hostname" VARCHAR(255), "ip" VARCHAR(255), "port" INT, "auth" INT,"maxcpu" INT "maxmem" INT "status" INT`)
+	createdb(`CREATE TABLE IF NOT EXISTS "node" ("id" INTEGER PRIMARY KEY, "hostname" VARCHAR(255), "ip" VARCHAR(255), "port" INT, "auth" INT,"maxcpu" INT "maxmem" INT "status" INT)`)
 	//user data
-	createdb(`CREATE TABLE IF NOT EXISTS "user" ("id" INTEGER PRIMARY KEY, "name" VARCHAR(255), "pass" VARCHAR(255),"auth" INT`)
+	createdb(`CREATE TABLE IF NOT EXISTS "userdata" ("id" INTEGER PRIMARY KEY, "name" VARCHAR(255), "pass" VARCHAR(255))`)
 	//group data
-	createdb(`CREATE TABLE IF NOT EXISTS "group" ("id" INTEGER PRIMARY KEY, "name" VARCHAR(255),"user" VARCHAR(10000),"admin" VARCHAR(1000),"maxcpu" INT,"maxmem" INT,"maxstorage" INT`)
+	createdb(`CREATE TABLE IF NOT EXISTS "groupdata" ("id" INTEGER PRIMARY KEY, "name" VARCHAR(255),"admin" VARCHAR(500),"user" VARCHAR(2000),"maxcpu" INT,"maxmem" INT,"maxstorage" INT)`)
+
 	return true
 }
 
 //Node
-
 func AddDBNode(data Node) bool {
 	db := *connectdb()
 	addDb, err := db.Prepare(`INSERT INTO "node" ("id","hostname","ip","port","auth","maxcpu","maxmem","status") VALUES (?,?,?,?,?,?,?,?)`)
@@ -89,7 +88,7 @@ func AddDBNode(data Node) bool {
 	return true
 }
 
-func DeleteDBNode(id int) bool {
+func RemoveDBNode(id int) bool {
 	db := *connectdb()
 	deleteDb := "DELETE FROM node WHERE id = ?"
 	_, err := db.Exec(deleteDb, id)
@@ -152,14 +151,13 @@ func GetDBAllNode() []Node {
 		bg = append(bg, b)
 	}
 	return bg
-
 }
 
-//User
+//userdata
 
-func AddDBUser(data VmUser) bool {
+func AddDBUser(data User) bool {
 	db := connectdb()
-	addDb, err := db.Prepare(`INSERT INTO "user" ("name","pass") VALUES (?,?)`)
+	addDb, err := db.Prepare(`INSERT INTO "userdata" ("name","pass") VALUES (?,?)`)
 	if err != nil {
 		panic(err)
 		return false
@@ -173,9 +171,9 @@ func AddDBUser(data VmUser) bool {
 	return true
 }
 
-func DeleteDBUser(name string) bool {
+func RemoveDBUser(name string) bool {
 	db := connectdb()
-	deleteDb := "DELETE FROM user WHERE name = ?"
+	deleteDb := "DELETE FROM userdata WHERE name = ?"
 	_, err := db.Exec(deleteDb, name)
 	if err != nil {
 		log.Fatalln(err)
@@ -184,20 +182,84 @@ func DeleteDBUser(name string) bool {
 	return true
 }
 
-func TestPassDBUser(name, pass string) bool {
+func PassAuthDBUser(name, pass string) bool {
 	db := connectdb()
 	var hash string
-	if err := db.QueryRow("SELECT pass FROM user WHERE name = ?", name).Scan(&hash); err != nil {
+	if err := db.QueryRow("SELECT pass FROM userdata WHERE name = ?", name).Scan(&hash); err != nil {
 		log.Fatal(err)
 	}
+	fmt.Println("User Auth Success")
 
 	return etc.Verifyhashdata(pass, hash)
 }
 
-//group
-func AddDBGroup(data VmGroup) bool {
+func GetDBUserID(name string) (int, bool) {
 	db := connectdb()
-	addDb, err := db.Prepare(`INSERT INTO "group" ("name","user","admin","maxcpu","maxmem","maxstorage") VALUES (?,?,?,?,?,?)`)
+
+	var id int
+
+	if err := db.QueryRow("SELECT id FROM userdata WHERE name = ?", name).Scan(&id); err != nil {
+		fmt.Println(err)
+		return 0, false
+	}
+
+	return id, true
+}
+
+func GetDBAllUser() []User {
+
+	db := *connectdb()
+
+	rows, err := db.Query("SELECT * FROM userdata")
+	if err != nil {
+		fmt.Println(err)
+	}
+	defer rows.Close()
+
+	var bg []User
+	for rows.Next() {
+		var b User
+		err := rows.Scan(&b.ID, &b.Name, &b.Pass)
+		if err != nil {
+			log.Println(err)
+		}
+		bg = append(bg, b)
+	}
+	return bg
+}
+
+func ChangeDBUserName(id int, data string) bool {
+	db := connectdb()
+
+	dbdata := "UPDATE userdata SET user = ? WHERE id = ?"
+	_, err := db.Exec(dbdata, data, id)
+
+	if err != nil {
+		fmt.Println("Error: DBUpdate Error (User Name)")
+		return false
+	}
+
+	return true
+}
+
+func ChangeDBUserPassword(id int, data string) bool {
+	db := connectdb()
+
+	dbdata := "UPDATE userdata SET pass = ? WHERE id = ?"
+	_, err := db.Exec(dbdata, etc.Hashgenerate(data), id)
+
+	if err != nil {
+		fmt.Println("Error: DBUpdate Error (User Pass)")
+		return false
+	}
+
+	return true
+}
+
+//groupdata
+func AddDBGroup(data Group) bool {
+	db := connectdb()
+	addDb, err := db.Prepare(`INSERT INTO "groupdata" ("name","user","admin","maxcpu","maxmem","maxstorage") VALUES (?,?,?,?,?,?)`)
 	if err != nil {
 		panic(err)
 		return false
@@ -211,13 +273,109 @@ func AddDBGroup(data VmGroup) bool {
 	return true
 }
 
-func DeleteDBGroup(name string) bool {
+func RemoveDBGroup(id int) bool {
 	db := connectdb()
-	deleteDb := "DELETE FROM group WHERE name = ?"
-	_, err := db.Exec(deleteDb, name)
+	deletedb := "DELETE FROM groupdata WHERE id = ?"
+	_, err := db.Exec(deletedb, id)
 	if err != nil {
 		log.Fatalln(err)
 		return false
 	}
+	return true
+}
+
+func GetDBAllGroup() []Group {
+	db := *connectdb()
+	rows, err := db.Query("SELECT * FROM groupdata")
+	if err != nil {
+		fmt.Println(err)
+	}
+	defer rows.Close()
+
+	var bg []Group
+	for rows.Next() {
+		var b Group
+		err := rows.Scan(&b.ID, &b.Name, &b.User, &b.Admin, &b.MaxCPU, &b.MaxMem, &b.MaxStorage)
+		if err != nil {
+			log.Println(err)
+		}
+		bg = append(bg, b)
+	}
+	return bg
+}
+
+func GetDBGroup(id int) (Group, bool) {
+	db := connectdb()
+	rows := db.QueryRow("SELECT * FROM groupdata WHERE id = ?", id)
+
+	var b Group
+	err := rows.Scan(&b.ID, &b.Name, &b.Admin, &b.User, &b.MaxCPU, &b.MaxMem, &b.MaxStorage)
+
+	switch {
+	case err == sql.ErrNoRows:
+		fmt.Printf("Not found")
+		return b, false
+	case err != nil:
+		fmt.Println(err)
+		fmt.Println("Error: DBError")
+		return b, false
+	default:
+		return b, true
+	}
+}
+
+func GetDBGroupID(name string) (int, bool) {
+	db := connectdb()
+
+	var id int
+	fmt.Println(name)
+	if err := db.QueryRow("SELECT id FROM groupdata WHERE name = ?", name).Scan(&id); err != nil {
+		log.Fatal(err)
+		return -1, false
+	}
+
+	return id, true
+
+}
+
+func ChangeDBGroupName(id int, data string) bool {
+	db := connectdb()
+
+	dbdata := "UPDATE groupdata SET name = ? WHERE id = ?"
+	_, err := db.Exec(dbdata, data, id)
+
+	if err != nil {
+		fmt.Println("Error: DBUpdate Error (Group Name)")
+		return false
+	}
+
+	return true
+}
+
+func ChangeDBGroupAdmin(id int, data string) bool {
+	db := connectdb()
+
+	dbdata := "UPDATE groupdata SET admin = ? WHERE id = ?"
+	_, err := db.Exec(dbdata, data, id)
+
+	if err != nil {
+		fmt.Println("Error: DBUpdate Error (Group Admin)")
+		return false
+	}
+
+	return true
+}
+
+func ChangeDBGroupUser(id int, data string) bool {
+	db := connectdb()
+
+	dbdata := "UPDATE groupdata SET user = ? WHERE id = ?"
+	_, err := db.Exec(dbdata, data, id)
+
+	if err != nil {
+		fmt.Println("Error: DBUpdate Error (Group User)")
+		return false
+	}
+
 	return true
 }

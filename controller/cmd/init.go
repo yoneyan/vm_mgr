@@ -13,24 +13,32 @@ var initCmd = &cobra.Command{
 	Long: `initialize command. For example:
 
 database init: init database
-node init:     init node`,
-	RunE: func(cmd *cobra.Command, args []string) error {
-		return nil
-	},
+client init:     init client`,
 }
 var initdbCmd = &cobra.Command{
 	Use:   "db",
 	Short: "db init",
 	Long:  "db init cmd",
 	RunE: func(cmd *cobra.Command, args []string) error {
-		fmt.Println(db.Initdb())
+		fmt.Println("----Initalize Database----")
+		result := db.InitDB()
+		fmt.Println(result)
+		db.AddDBUser(db.User{Name: "test", Pass: "test"})
+		db.AddDBGroup(db.Group{
+			Name:       "admin",
+			Admin:      "test",
+			User:       "test",
+			MaxCPU:     100,
+			MaxMem:     10240000,
+			MaxStorage: 1000000000,
+		})
 		return nil
 	},
 }
 var initNodeCmd = &cobra.Command{
-	Use:   "node",
-	Short: "node init",
-	Long:  "node init cmd",
+	Use:   "client",
+	Short: "client init",
+	Long:  "client init cmd",
 	RunE: func(cmd *cobra.Command, args []string) error {
 		fmt.Println("Not implemented")
 		return nil

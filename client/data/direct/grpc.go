@@ -1,12 +1,10 @@
-package node
-
-//Node gRPC Client
+package direct
 
 import (
 	"context"
 	"fmt"
-	"github.com/yoneyan/vm_mgr/controller/data"
-	pb "github.com/yoneyan/vm_mgr/proto/proto-go/node"
+	"github.com/yoneyan/vm_mgr/client/data"
+	pb "github.com/yoneyan/vm_mgr/proto/proto-go"
 	"google.golang.org/grpc"
 	"log"
 	_ "os"
@@ -18,7 +16,7 @@ const (
 )
 
 //name string, vcpu, vmem, storage int64, storage_path string, cdrom string, vnet string, vnc int64, autostart bool
-func CreateVM(address string, d *pb.VMData) bool {
+func CreateVM(d *pb.VMData) bool {
 	if data.CreateVMCheck(d) == false {
 		fmt.Println("Valid value!!")
 		return false
@@ -29,7 +27,7 @@ func CreateVM(address string, d *pb.VMData) bool {
 		log.Fatalf("Not connect: %v", err)
 	}
 	defer conn.Close()
-	c := pb.NewVMClient(conn)
+	c := pb.NewGrpcClient(conn)
 
 	// Contact the server and print out its response.
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
@@ -55,7 +53,7 @@ func DeleteVM(id int64) bool {
 		log.Fatalf("Not connect; %v", err)
 	}
 	defer conn.Close()
-	c := pb.NewVMClient(conn)
+	c := pb.NewGrpcClient(conn)
 
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
 	defer cancel()
@@ -80,7 +78,7 @@ func StartVM(id int64) bool {
 		log.Fatalf("Not connect; %v", err)
 	}
 	defer conn.Close()
-	c := pb.NewVMClient(conn)
+	c := pb.NewGrpcClient(conn)
 
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
 	defer cancel()
@@ -105,7 +103,7 @@ func StopVM(id int64) bool {
 		log.Fatalf("Not connect; %v", err)
 	}
 	defer conn.Close()
-	c := pb.NewVMClient(conn)
+	c := pb.NewGrpcClient(conn)
 
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
 	defer cancel()
@@ -130,7 +128,7 @@ func ShutdownVM(id int64) bool {
 		log.Fatalf("Not connect; %v", err)
 	}
 	defer conn.Close()
-	c := pb.NewVMClient(conn)
+	c := pb.NewGrpcClient(conn)
 
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
 	defer cancel()
@@ -155,7 +153,7 @@ func ResetVM(id int64) bool {
 		log.Fatalf("Not connect; %v", err)
 	}
 	defer conn.Close()
-	c := pb.NewVMClient(conn)
+	c := pb.NewGrpcClient(conn)
 
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
 	defer cancel()
@@ -180,7 +178,7 @@ func PauseVM(id int64) bool {
 		log.Fatalf("Not connect; %v", err)
 	}
 	defer conn.Close()
-	c := pb.NewVMClient(conn)
+	c := pb.NewGrpcClient(conn)
 
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
 	defer cancel()
@@ -205,7 +203,7 @@ func ResumeVM(id int64) bool {
 		log.Fatalf("Not connect; %v", err)
 	}
 	defer conn.Close()
-	c := pb.NewVMClient(conn)
+	c := pb.NewGrpcClient(conn)
 
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
 	defer cancel()
@@ -229,7 +227,7 @@ func GetVM(id int64) {
 		log.Fatalf("Not connect; %v", err)
 	}
 	defer conn.Close()
-	c := pb.NewVMClient(conn)
+	c := pb.NewGrpcClient(conn)
 
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
 	defer cancel()
@@ -240,14 +238,14 @@ func GetVM(id int64) {
 	if r.GetVmname() == "" {
 		fmt.Println("None")
 	}
-	log.Printf("ID:        %d", r.GetId())
+	log.Printf("ID:        %d", r.Option.GetId())
 	log.Printf("VMName:    %s", r.GetVmname())
 	log.Printf("cpu:       %d", r.GetVcpu())
 	log.Printf("memory:    %d", r.GetVmem())
-	log.Printf("Storage:   %s", r.GetStoragePath())
-	log.Printf("VNC:       %d", r.GetVnc())
+	log.Printf("Storage:   %s", r.Option.GetStoragePath())
+	log.Printf("VNC:       %d", r.Option.GetVnc())
 	log.Printf("Net:       %s", r.GetVnet())
-	log.Printf("AutoStart: %t", r.GetAutostart())
+	log.Printf("AutoStart: %t", r.Option.GetAutostart())
 }
 
 func GetVMName(name string) {
@@ -256,7 +254,7 @@ func GetVMName(name string) {
 		log.Fatalf("Not connect; %v", err)
 	}
 	defer conn.Close()
-	c := pb.NewVMClient(conn)
+	c := pb.NewGrpcClient(conn)
 
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
 	defer cancel()
@@ -264,14 +262,14 @@ func GetVMName(name string) {
 	if err != nil {
 		log.Fatalf("could not greet: %v", err)
 	}
-	log.Printf("ID:        %d", r.GetId())
+	log.Printf("ID:        %d", r.Option.GetId())
 	log.Printf("VMName:    %s", r.GetVmname())
 	log.Printf("cpu:       %d", r.GetVcpu())
 	log.Printf("memory:    %d", r.GetVmem())
-	log.Printf("Storage:   %s", r.GetStoragePath())
-	log.Printf("VNC:       %d", r.GetVnc())
+	log.Printf("Storage:   %s", r.Option.GetStoragePath())
+	log.Printf("VNC:       %d", r.Option.GetVnc())
 	log.Printf("Net:       %s", r.GetVnet())
-	log.Printf("AutoStart: %t", r.GetAutostart())
+	log.Printf("AutoStart: %t", r.Option.GetAutostart())
 
 }
 
@@ -281,7 +279,7 @@ func GetAllVM(id int) {
 		log.Fatalf("Not connect; %v", err)
 	}
 	defer conn.Close()
-	c := pb.NewVMClient(conn)
+	c := pb.NewGrpcClient(conn)
 
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
 	defer cancel()
@@ -293,17 +291,17 @@ func GetAllVM(id int) {
 	log.Println(r.Status)
 }
 
-func NodeAllStop(address string) {
+func NodeStopVM(node int) {
 	conn, err := grpc.Dial(address, grpc.WithInsecure(), grpc.WithBlock())
 	if err != nil {
 		log.Fatalf("Not connect; %v", err)
 	}
 	defer conn.Close()
-	c := pb.NewVMClient(conn)
+	c := pb.NewGrpcClient(conn)
 
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
 	defer cancel()
-	r, err := c.StopNode(ctx, &pb.Timer{Time: 1}) //Timer do not work.
+	r, err := c.StopNode(ctx, &pb.NodeID{})
 	if err != nil {
 		log.Fatalf("could not greet: %v", err)
 	}

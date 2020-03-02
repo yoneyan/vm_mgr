@@ -25,8 +25,8 @@ import (
 	"errors"
 	"fmt"
 	"github.com/spf13/cobra"
-	"github.com/yoneyan/vm_mgr/client/data"
-	"github.com/yoneyan/vm_mgr/proto/proto-go/node"
+	"github.com/yoneyan/vm_mgr/client/data/direct"
+	pb "github.com/yoneyan/vm_mgr/proto/proto-go"
 	"log"
 	"strconv"
 )
@@ -74,15 +74,14 @@ vm create -n test -c 1 -m 1024 -p /home/yoneyan/test.qcow2 -s 1024 -N br100 -v 2
 			return nil
 		}
 
-		c := node.VMData{
+		c := pb.VMData{
 			Vmname:  resultStringArray[0],
 			Vcpu:    resultInt64Array[0],
 			Vmem:    resultInt64Array[1],
 			Storage: resultInt64Array[2],
-
-			Vnet: resultStringArray[3],
+			Vnet:    resultStringArray[3],
 		}
-		if data.CreateVM(&c) {
+		if direct.CreateVM(&c) {
 			fmt.Println("Process End")
 		} else {
 			fmt.Println("Process Failed")
@@ -102,7 +101,7 @@ var testDeleteCmd = &cobra.Command{
 		if result < 0 {
 			return errors.New("value failed")
 		}
-		data.DeleteVM(int64(result))
+		direct.DeleteVM(int64(result))
 		fmt.Println("Process End")
 		return nil
 	},
@@ -120,7 +119,7 @@ var testStartCmd = &cobra.Command{
 		if result < 0 {
 			return errors.New("value failed")
 		}
-		data.StartVM(int64(result))
+		direct.StartVM(int64(result))
 		fmt.Println("Process End")
 		return nil
 	},
@@ -138,7 +137,7 @@ var testStopCmd = &cobra.Command{
 		if result < 0 {
 			return errors.New("value failed")
 		}
-		data.StopVM(int64(result))
+		direct.StopVM(int64(result))
 		fmt.Println("Process End")
 		return nil
 	},
@@ -156,7 +155,7 @@ var testShutdownCmd = &cobra.Command{
 		if result < 0 {
 			return errors.New("value failed")
 		}
-		data.ShutdownVM(int64(result))
+		direct.ShutdownVM(int64(result))
 		fmt.Println("Process End")
 		return nil
 	},
@@ -174,7 +173,7 @@ var testResetCmd = &cobra.Command{
 		if result < 0 {
 			return errors.New("value failed")
 		}
-		data.ResetVM(int64(result))
+		direct.ResetVM(int64(result))
 		fmt.Println("Process End")
 		return nil
 	},
@@ -192,7 +191,7 @@ var testResumeCmd = &cobra.Command{
 		if result < 0 {
 			return errors.New("value failed")
 		}
-		data.ResumeVM(int64(result))
+		direct.ResumeVM(int64(result))
 		fmt.Println("Process End")
 		return nil
 	},
@@ -210,7 +209,7 @@ var testPauseCmd = &cobra.Command{
 		if result < 0 {
 			return errors.New("value failed")
 		}
-		data.PauseVM(int64(result))
+		direct.PauseVM(int64(result))
 		fmt.Println("Process End")
 		return nil
 	},
@@ -237,7 +236,7 @@ var testGetIDCmd = &cobra.Command{
 		if result < 0 {
 			return errors.New("value failed")
 		}
-		data.GetVM(int64(result))
+		direct.GetVM(int64(result))
 		fmt.Println("Process End")
 		return nil
 	},
@@ -251,7 +250,7 @@ var testGetNameCmd = &cobra.Command{
 			return errors.New("requires id")
 		}
 		result := args[0]
-		data.GetVMName(result)
+		direct.GetVMName(result)
 		fmt.Println("Process End")
 		return nil
 	},
@@ -261,7 +260,7 @@ var testGetAllCmd = &cobra.Command{
 	Short: "all",
 	Long:  "get all VM",
 	RunE: func(cmd *cobra.Command, args []string) error {
-		data.GetAllVM(1)
+		direct.GetAllVM(1)
 		fmt.Println("Process End")
 		return nil
 	},

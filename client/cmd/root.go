@@ -34,9 +34,9 @@ var cfgFile string
 
 // rootCmd represents the base command when called without any subcommands
 var rootCmd = &cobra.Command{
-	Use:   "client",
+	Use:   "controller",
 	Short: "Client comman",
-	Long:  `This tool is client command tool.`,
+	Long:  `This tool is controller command tool.`,
 	// Uncomment the following line if your bare application
 	// has an action associated with it:
 	//	Run: func(cmd *cobra.Command, args []string) { },
@@ -58,7 +58,7 @@ func init() {
 	// Cobra supports persistent flags, which, if defined here,
 	// will be global for your application.
 
-	rootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file (default is $HOME/.client.yaml)")
+	rootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file (default is $HOME/.controller.yaml)")
 
 	// Cobra also supports local flags, which will only run
 	// when this action is called directly.
@@ -78,9 +78,9 @@ func initConfig() {
 			os.Exit(1)
 		}
 
-		// Search config in home directory with name ".client" (without extension).
+		// Search config in home directory with name ".controller" (without extension).
 		viper.AddConfigPath(home)
-		viper.SetConfigName(".client")
+		viper.SetConfigName(".controller")
 	}
 
 	viper.AutomaticEnv() // read in environment variables that match

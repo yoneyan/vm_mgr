@@ -24,29 +24,26 @@ package cmd
 import (
 	"fmt"
 	"github.com/spf13/cobra"
-	"github.com/yoneyan/vm_mgr/client/data"
+	"github.com/yoneyan/vm_mgr/client/data/direct"
 )
 
-// nodeCmd represents the node command
+// nodeCmd represents the client command
 var nodeCmd = &cobra.Command{
-	Use:   "node",
-	Short: "node",
-	Long: `node command. For example:
+	Use:   "client",
+	Short: "client",
+	Long: `client command. For example:
 
 Cobra is a CLI library for Go that empowers applications.
 This application is a tool to generate the needed files
 to quickly create a Cobra application.`,
-	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println("node called")
-	},
 }
 
 var nodeStopCmd = &cobra.Command{
 	Use:   "stop",
-	Short: "node stop",
-	Long:  "node stop tool",
+	Short: "client stop",
+	Long:  "client stop tool",
 	RunE: func(cmd *cobra.Command, args []string) error {
-		data.NodeStopVM(0)
+		direct.NodeStopVM(0)
 		fmt.Println("Process End")
 		return nil
 	},
