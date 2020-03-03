@@ -1,48 +1,30 @@
 # vm_mgr
+Master->
 ![https://github.com/yoneyan/vm_mgr/workflows/Go-node/badge.svg](https://github.com/yoneyan/vm_mgr/workflows/Go-controller/badge.svg)
 ![https://github.com/yoneyan/vm_mgr/workflows/Go-node/badge.svg](https://github.com/yoneyan/vm_mgr/workflows/Go-node/badge.svg)
 ![https://github.com/yoneyan/vm_mgr/workflows/Go-node/badge.svg](https://github.com/yoneyan/vm_mgr/workflows/Go-client/badge.svg)  
 
 kvm management tool :computer:
 
-vm_mgrはvm+managerを合わせた意味になっています。   
+VMを管理するという意味を込めてvm_mgrとしています。   
 
 ## 状況
 |機能|状況|
 |---|---|
 |controller|NG|
-|node|NG|
-|client|NG|
+|node|OK(一部NG)|
+|client|OK(一部NG)|
 
-### 現時点（2020/2/26 3:10）
-実装予定の内容が多すぎるため、完了したタスクのみを挙げています。  
-**完了タスク**
-* gRPCによるデータのやり取り client -> node controller -> nodeはまだダメ
-* cliライブラリをurfave/cliからspf13/cobraへ移行
-* VM停止、開始
-* VM死活監視
-* node側DBの完成
+## 特徴
+* ユーザ認証が可能（未実装）
+* gRPCを使用
+* cliライブラリとしてspf13/cobraの使用
 
-## 実行テスト
-### Node
-
-`go run . start`
-### Client
-**VM作成**  
-`go run . vm create -n test -c 1 -m 1024 -p /home/yoneyan/test.qcow2 -s 1024 -N br100 -v 200 -C /home/yoneyan/Downloads/ubuntu-18.04.4-live-server-amd64.iso -M false`  
-**VM削除(dbからも消し去る)**  
-`go run . vm delete 1`  
-**VM起動**  
-`go run . vm start 1`  
-**VM停止**  
-`go run . vm stop 1`  
-**VM取得(name)**  
-`go run . vm get name test`  
-**VM取得(id)**  
-`go run . vm get id 1`  
-**VM取得(all)**  
-`go run . vm get all`  
-
+## 使用Port
+|機能|ポート|
+|---|---|
+|Controller|50200/tcp|
+|Node| 50100/tcp|
 
 ## 構想
 * Controller
@@ -55,11 +37,38 @@ ControllerとNode間はgRPCにてデータのやり取りを行います。
 
 **実装予定はGithubのProjectに載せています。**
 
-#### 対処法
-**authentication unavailable: no polkit agent available to authenticate action 'org.libvirt.unix.manage''**
-```
-usermod --append --groups libvirt `username`
-```
 
-### gRPCで使用するポート
-Port: 50100/tcp  
+## 実行テスト
+### Node
+
+**起動**
+`go build .`  
+`sudo ./node start`  
+*qemuコマンドを使用するため、root権限必須*
+
+### Client -> Node
+現状ではホストIPなしでもアクセス可能であるが、最終的にはホストIP必須になる予定  
+**VM作成**  
+例として teという名前のcore:1,memory:1024のVMを作成  
+`go run . vm create -n te -c 1 -m 1024 -P /home/yoneyan -s 10240 -N br0 -v 200 -C /home/yoneyan/Downloads/ubuntu-18.04.4-live-server-amd64.iso -a false -H 127.0.0.1`  
+**VM削除(dbからも消し去る)**  
+`go run . vm delete 1 -H 127.0.0.1`  
+**VM起動**  
+`go run . vm start 1 -H 127.0.0.1`  
+**VM停止**  
+`go run . vm stop 1 -H 127.0.0.1`  
+**VM取得(name)**  
+`go run . vm get name test -H 127.0.0.1`  
+**VM取得(id)**  
+`go run . vm get id 1 -H 127.0.0.1`  
+**VM取得(all)**  
+`go run . vm get all -H 127.0.0.1`  
+**Node停止**
+`go run . node stop -H 127.0.0.1:50100`
+
+### Client -> Controller
+**ユーザ作成**
+aというユーザにaというパスワード  
+`go run . user add a a -H 127.0.0.1:50200 -u test -p test`
+**ユーザ削除**
+`go run . user remove a -H 127.0.0.1:50200 -u test -p test`

@@ -7,7 +7,7 @@ import (
 	"log"
 )
 
-const db_name = "./main.sql"
+const db_name = "./main.db"
 
 type NodeVM struct {
 	ID          int
