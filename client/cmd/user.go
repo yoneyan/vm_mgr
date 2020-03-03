@@ -111,9 +111,6 @@ func init() {
 	usercmd.AddCommand(useraddcmd)
 	usercmd.AddCommand(userremovecmd)
 
-	usercmd.PersistentFlags().StringP("host", "H", "127.0.0.1:50200", "host example: 127.0.0.1:50001")
-	usercmd.PersistentFlags().StringP("authuser", "u", "test", "username")
-	usercmd.PersistentFlags().StringP("authpass", "p", "test", "password")
 	// Here you will define your flags and configuration settings.
 
 	// Cobra supports Persistent Flags which will work for this command

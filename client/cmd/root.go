@@ -63,6 +63,10 @@ func init() {
 	// Cobra also supports local flags, which will only run
 	// when this action is called directly.
 	rootCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
+	rootCmd.PersistentFlags().StringP("host", "H", "127.0.0.1:50200", "host example: 127.0.0.1:50001")
+	rootCmd.PersistentFlags().StringP("authuser", "u", "test", "username")
+	rootCmd.PersistentFlags().StringP("authpass", "p", "test", "password")
+	rootCmd.PersistentFlags().BoolP("direct", "D", false, "direct connection to node")
 }
 
 // initConfig reads in config file and ENV variables if set.

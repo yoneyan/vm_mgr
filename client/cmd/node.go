@@ -25,17 +25,14 @@ import (
 	"fmt"
 	"github.com/spf13/cobra"
 	"github.com/yoneyan/vm_mgr/client/data/direct"
+	"log"
 )
 
 // nodeCmd represents the client command
 var nodeCmd = &cobra.Command{
-	Use:   "client",
-	Short: "client",
-	Long: `client command. For example:
-
-Cobra is a CLI library for Go that empowers applications.
-This application is a tool to generate the needed files
-to quickly create a Cobra application.`,
+	Use:   "node",
+	Short: "node",
+	Long:  `node tool.`,
 }
 
 var nodeStopCmd = &cobra.Command{
@@ -43,7 +40,12 @@ var nodeStopCmd = &cobra.Command{
 	Short: "client stop",
 	Long:  "client stop tool",
 	RunE: func(cmd *cobra.Command, args []string) error {
-		direct.NodeStopVM(0)
+		address, err := cmd.Flags().GetString("host")
+		if err != nil {
+			log.Fatalf("could not greet: %v", err)
+			return nil
+		}
+		direct.NodeStopVM(address)
 		fmt.Println("Process End")
 		return nil
 	},
