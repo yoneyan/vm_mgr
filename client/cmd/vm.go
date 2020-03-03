@@ -31,7 +31,7 @@ import (
 	"strconv"
 )
 
-// vmCmd represents the vm command
+// vmDirectCmd represents the vm command
 var vmCmd = &cobra.Command{
 	Use:   "vm",
 	Short: "create: vm create ,delete: vm delete",
@@ -81,17 +81,14 @@ vm create -n test -c 1 -m 1024 -p /home/yoneyan/test.qcow2 -s 1024 -N br100 -v 2
 			Storage: resultInt64Array[2],
 			Vnet:    resultStringArray[3],
 			Option: &grpc.Option{
-				CdromPath:   resultStringArray[1],
-				StoragePath: resultStringArray[2],
+				StoragePath: resultStringArray[1],
+				CdromPath:   resultStringArray[2],
 				Vnc:         int32(resultInt64Array[3]),
 				Autostart:   autostart,
 			},
 		}
-		if direct.CreateVM(&c) {
-			fmt.Println("Process End")
-		} else {
-			fmt.Println("Process Failed")
-		}
+		direct.CreateVM(&c)
+		fmt.Println("Process End")
 		return nil
 	},
 }
@@ -225,9 +222,6 @@ var vmGetCmd = &cobra.Command{
 	Use:   "get",
 	Short: "vm get",
 	Long:  "VM get tool",
-	RunE: func(cmd *cobra.Command, args []string) error {
-		return nil
-	},
 }
 
 var vmGetIDCmd = &cobra.Command{
@@ -273,13 +267,13 @@ var vmGetAllCmd = &cobra.Command{
 }
 
 func init() {
-	vmCreateCmd.PersistentFlags().StringP("name", "n", "none", "vm name")
+	vmCreateCmd.PersistentFlags().StringP("name", "n", "", "vm name")
 	vmCreateCmd.PersistentFlags().Int64P("cpu", "c", 0, "virtual cpu")
 	vmCreateCmd.PersistentFlags().Int64P("mem", "m", 0, "virtual memory")
-	vmCreateCmd.PersistentFlags().StringP("storage_path", "p", "none", "storage path")
+	vmCreateCmd.PersistentFlags().StringP("storage_path", "P", "", "storage path")
 	vmCreateCmd.PersistentFlags().Int64P("storage", "s", 0, "storage capacity")
 	vmCreateCmd.PersistentFlags().StringP("cdrom", "C", "", "cdrom path")
-	vmCreateCmd.PersistentFlags().StringP("vnet", "N", "none", "virtual net")
+	vmCreateCmd.PersistentFlags().StringP("vnet", "N", "", "virtual net")
 	vmCreateCmd.PersistentFlags().Int64P("vnc", "v", 0, "vnc port")
 	vmCreateCmd.PersistentFlags().BoolP("autostart", "a", false, "autostart")
 
@@ -302,9 +296,9 @@ func init() {
 
 	// Cobra supports Persistent Flags which will work for this command
 	// and all subcommands, e.g.:
-	// vmCmd.PersistentFlags().String("foo", "", "A help for foo")
+	// vmDirectCmd.PersistentFlags().String("foo", "", "A help for foo")
 
 	// Cobra supports local flags which will only run when this command
 	// is called directly, e.g.:
-	// vmCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
+	// vmDirectCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
 }

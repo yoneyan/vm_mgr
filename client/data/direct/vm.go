@@ -16,10 +16,9 @@ const (
 )
 
 //name string, vcpu, vmem, storage int64, storage_path string, cdrom string, vnet string, vnc int64, autostart bool
-func CreateVM(d *pb.VMData) bool {
+func CreateVM(d *pb.VMData) {
 	if data.CreateVMCheck(d) == false {
-		fmt.Println("Valid value!!")
-		return false
+		log.Fatal("Valid value!!")
 	}
 	// Set up a connection to the server.
 	conn, err := grpc.Dial(address, grpc.WithInsecure(), grpc.WithBlock())
@@ -37,15 +36,18 @@ func CreateVM(d *pb.VMData) bool {
 		log.Fatalf("could not greet: %v", err)
 	}
 	log.Printf("Greeting: %s", r.GetStatus())
-	return r.GetStatus()
+	log.Printf("Status: ")
+	log.Println(r.Status)
+
+	log.Printf("Info: ")
+	log.Println(r.Info)
 }
 
-func DeleteVM(id int64) bool {
+func DeleteVM(id int64) {
 	if id < 1 {
 		fmt.Println("Value False")
 		fmt.Printf("Debug: value is ")
 		fmt.Println(id)
-		return false
 	}
 
 	conn, err := grpc.Dial(address, grpc.WithInsecure(), grpc.WithBlock())
@@ -62,7 +64,11 @@ func DeleteVM(id int64) bool {
 		log.Fatalf("could not greet: %v", err)
 	}
 	log.Printf("Greeting: %s", r.GetStatus())
-	return r.GetStatus()
+	log.Printf("Status: ")
+	log.Println(r.Status)
+
+	log.Printf("Info: ")
+	log.Println(r.Info)
 }
 
 func StartVM(id int64) bool {
@@ -291,7 +297,7 @@ func GetAllVM(id int) {
 	log.Println(r.Status)
 }
 
-func NodeStopVM(node int) {
+func NodeStopVM(address string) {
 	conn, err := grpc.Dial(address, grpc.WithInsecure(), grpc.WithBlock())
 	if err != nil {
 		log.Fatalf("Not connect; %v", err)
