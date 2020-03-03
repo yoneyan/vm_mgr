@@ -44,10 +44,10 @@ func GroupAllUserCheck(name string) bool {
 	for i, _ := range data {
 		if SearchAllGroupUser(data[i].Admin, name) {
 			if SearchAllGroupUser(data[i].User, name) {
-				fmt.Println("Error: Exists group user.(Admin,User)")
-				return false
+				fmt.Println("Exists group user.(Admin,User)")
+				return true
 			}
 		}
 	}
-	return true
+	return false
 }
