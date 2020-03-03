@@ -7,6 +7,7 @@ import (
 	"github.com/yoneyan/vm_mgr/node/etc"
 	"github.com/yoneyan/vm_mgr/node/manage"
 	"log"
+	"strings"
 )
 
 type CreateVMInformation struct {
@@ -21,7 +22,7 @@ type CreateVMInformation struct {
 	AutoStart   bool
 }
 
-func CreateVMProcess(c *CreateVMInformation) error {
+func CreateVMProcess(c *CreateVMInformation) (bool, string) {
 	fmt.Println("----VMNewCreate")
 
 	if manage.VMVncExistsCheck(c.VNC) {
@@ -30,19 +31,32 @@ func CreateVMProcess(c *CreateVMInformation) error {
 		if manage.VMExistsName(c.Name) {
 			fmt.Println("A VM with the same name exists. So, change the name of the VM.")
 		} else {
+			d := strings.Split(c.Net, ",")
+			fmt.Println(d)
+			var net []string
+			fmt.Println(net)
+			net = append(net, "0")
+			for _, a := range d {
+				net = append(net, a)
+				net = append(net, manage.GenerateMacAddresss())
+			}
+			fmt.Println(net)
+			c.Net = strings.Join(net, ",")
+			fmt.Println(c.Net)
+
 			CreateVMDBProcess(c)
 			err := RunQEMUCmd(CreateGenerateCmd(c))
 			if err != nil {
-				log.Fatal(err)
-				return fmt.Errorf("VMNewCreate Error!!")
+				fmt.Println(err)
+				log.Fatal("VMNewCreate Error!!")
+				return false, "Error: RunQEMUCmd"
 			} else {
 				db.VMDBStatusUpdate(c.ID, 1)
 			}
-			return nil
 		}
 	}
 
-	return nil
+	return true, "ok"
 }
 
 func CreateVMDBProcess(c *CreateVMInformation) {
@@ -57,5 +71,7 @@ func CreateVMDBProcess(c *CreateVMInformation) {
 		Status:      0,
 		AutoStart:   c.AutoStart,
 	}
-	db.AddDBVM(dbdata)
+	if db.AddDBVM(dbdata) == false {
+		fmt.Println("Error: Failed add vm database")
+	}
 }
