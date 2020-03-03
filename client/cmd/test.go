@@ -81,11 +81,7 @@ vm create -n test -c 1 -m 1024 -p /home/yoneyan/test.qcow2 -s 1024 -N br100 -v 2
 			Storage: resultInt64Array[2],
 			Vnet:    resultStringArray[3],
 		}
-		if direct.CreateVM(&c) {
-			fmt.Println("Process End")
-		} else {
-			fmt.Println("Process Failed")
-		}
+		direct.CreateVM(&c)
 		return nil
 	},
 }

@@ -28,6 +28,7 @@ func (s *server) CreateVM(ctx context.Context, in *pb.VMData) (*pb.Result, error
 	log.Printf("Receive mem: %v", in.GetVmem())
 	log.Printf("Receive StoragePath: %v", in.GetOption().StoragePath)
 	log.Printf("Receive Storage: %v", in.GetStorage())
+	log.Printf("Receive CDROM: %v", in.GetCdrom())
 	log.Printf("Receive vnc: %v", in.GetOption().Vnc)
 	log.Printf("Receive net: %v", in.GetVnet())
 	log.Printf("Receive change: %v", in.GetOption().Autostart)
@@ -41,7 +42,7 @@ func (s *server) CreateVM(ctx context.Context, in *pb.VMData) (*pb.Result, error
 	r.CDROM = in.GetOption().CdromPath
 	r.Net = in.GetVnet()
 	r.VNC = int(in.GetOption().Vnc)
-	r.AutoStart = bool(in.GetOption().Autostart)
+	r.AutoStart = in.GetOption().Autostart
 
 	if etc.FileExists(in.GetOption().StoragePath+"/"+in.GetVmname()+".img") == false {
 		fmt.Println("Not storage file exists")
@@ -54,11 +55,11 @@ func (s *server) CreateVM(ctx context.Context, in *pb.VMData) (*pb.Result, error
 		manage.CreateStorage(&storage)
 	}
 
-	err := vm.CreateVMProcess(&r)
-	if err != nil {
-		return &pb.Result{Status: false}, nil
+	result, info := vm.CreateVMProcess(&r)
+	if result {
+		return &pb.Result{Status: true, Info: "ok!!"}, nil
 	}
-	return &pb.Result{Status: true}, nil
+	return &pb.Result{Status: false, Info: info}, nil
 }
 
 func (s *server) DeleteVM(ctx context.Context, in *pb.VMID) (*pb.Result, error) {
@@ -71,7 +72,7 @@ func (s *server) DeleteVM(ctx context.Context, in *pb.VMID) (*pb.Result, error) 
 		return &pb.Result{Status: true}, nil
 	} else {
 		fmt.Println("Delete Failed....")
-		return &pb.Result{Status: false}, nil
+		return &pb.Result{Status: false, Info: "Delete failed!"}, nil
 	}
 }
 
@@ -110,7 +111,7 @@ func (s *server) GetVM(ctx context.Context, in *pb.VMID) (*pb.VMData, error) {
 			StoragePath: result.StoragePath,
 			Vnc:         int32(result.Vnc),
 			Id:          int64(result.ID),
-			Autostart:   bool(result.AutoStart),
+			Autostart:   result.AutoStart,
 		},
 		Vmname: result.Name,
 		Vcpu:   int64(result.CPU),
@@ -138,7 +139,7 @@ func (s *server) GetVMName(ctx context.Context, in *pb.VMName) (*pb.VMData, erro
 			StoragePath: result.StoragePath,
 			Vnc:         int32(result.Vnc),
 			Id:          int64(result.ID),
-			Autostart:   bool(result.AutoStart),
+			Autostart:   result.AutoStart,
 		},
 		Vmname: result.Name,
 		Vcpu:   int64(result.CPU),

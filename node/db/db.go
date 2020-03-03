@@ -7,7 +7,7 @@ import (
 	"log"
 )
 
-const db_name = "./main.sql"
+const db_name = "./main.db"
 
 type NodeVM struct {
 	ID          int
@@ -25,9 +25,8 @@ type NodeVM struct {
 func connectdb() *sql.DB {
 	db, err := sql.Open("sqlite3", db_name)
 	if err != nil {
-		log.Fatalln(err)
+		fmt.Println(err)
 		fmt.Println("SQL open error")
-		panic(err)
 	}
 
 	//defer db.Close()
@@ -40,7 +39,8 @@ func createdb(database string) bool {
 
 	_, err := db.Exec(database)
 	if err != nil {
-		log.Fatalln(err)
+		fmt.Println(err)
+		fmt.Println("Error: SQL open Error")
 		return false
 	}
 	return true
@@ -59,12 +59,14 @@ func AddDBVM(data NodeVM) bool {
 	db := *connectdb()
 	addDb, err := db.Prepare(`INSERT INTO "nodevm" ("name","cpu","memory","storagepath","net","vnc","socket","status","autostart") VALUES (?,?,?,?,?,?,?,?,?)`)
 	if err != nil {
-		panic(err)
+		fmt.Println(err)
+		fmt.Println("Error: SQL Prepare Error")
 		return false
 	}
 
 	if _, err := addDb.Exec(data.Name, data.CPU, data.Mem, data.StoragePath, data.Net, data.Vnc, data.Socket, data.Status, data.AutoStart); err != nil {
-		panic(err)
+		fmt.Println(err)
+		fmt.Println("Error: SQL Exec Error")
 		return false
 	}
 	return true
@@ -75,7 +77,8 @@ func DeleteDBVM(id int) bool {
 	deleteDb := "DELETE FROM nodevm WHERE id = ?"
 	_, err := db.Exec(deleteDb, id)
 	if err != nil {
-		log.Fatalln(err)
+		fmt.Println(err)
+		fmt.Println("Error: SQL open Error")
 		return false
 	}
 	return true

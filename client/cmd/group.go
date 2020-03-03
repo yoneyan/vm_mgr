@@ -29,19 +29,20 @@ import (
 	"log"
 )
 
-// userCmd represents the user command
-var usercmd = &cobra.Command{
-	Use:   "user",
-	Short: "user",
-	Long: `user command. For example:
-user add test
-user remove test`,
+// groupCmd represents the group command
+var groupCmd = &cobra.Command{
+	Use:   "group",
+	Short: "group command",
+	Long: `group command
+For example:
+
+`,
 }
 
-var useraddcmd = &cobra.Command{
+var groupaddCmd = &cobra.Command{
 	Use:   "add",
-	Short: "user add",
-	Long: `user add tool
+	Short: "group add",
+	Long: `group add tool
 for example:
 
 user add admin test -H 127.0.0.1:50200 -u admin -p `,
@@ -67,27 +68,31 @@ user add admin test -H 127.0.0.1:50200 -u admin -p `,
 			return nil
 		}
 
-		pb.AddUser(&pb.AuthData{Name: authuser, Pass1: authpass}, host, args[0], args[1])
+		pb.AddGroup(&pb.AuthData{Name: authuser, Pass1: authpass}, host, args[0], args[1])
 
 		fmt.Println("Process End")
 		return nil
 	},
 }
 
-var userremovecmd = &cobra.Command{
+var groupremoveCmd = &cobra.Command{
 	Use:   "remove",
-	Short: "user remove",
-	Long:  "user remove tool",
+	Short: "group remove",
+	Long: `group remove tool
+for example:
+
+user add remove test -H 127.0.0.1:50200 -u admin -p `,
 	RunE: func(cmd *cobra.Command, args []string) error {
-		//if len(args) < 1 {
-		//	return errors.New("false")
-		//}
+		if len(args) < 1 {
+			return errors.New("false")
+		}
 		host, err := cmd.Flags().GetString("host")
 		if err != nil {
 			log.Fatalf("could not greet: %v", err)
 			return nil
 		}
-		fmt.Println("sa")
+		fmt.Println(host)
+		fmt.Println(host)
 		authuser, err := cmd.Flags().GetString("authuser")
 		if err != nil {
 			log.Fatalf("could not greet: %v", err)
@@ -99,7 +104,7 @@ var userremovecmd = &cobra.Command{
 			return nil
 		}
 
-		pb.RemoveUser(&pb.AuthData{Name: authuser, Pass1: authpass}, host, args[0])
+		pb.AddGroup(&pb.AuthData{Name: authuser, Pass1: authpass}, host, args[0], args[1])
 
 		fmt.Println("Process End")
 		return nil
@@ -107,17 +112,20 @@ var userremovecmd = &cobra.Command{
 }
 
 func init() {
-	rootCmd.AddCommand(usercmd)
-	usercmd.AddCommand(useraddcmd)
-	usercmd.AddCommand(userremovecmd)
+	rootCmd.AddCommand(groupCmd)
+	groupCmd.AddCommand(groupaddCmd)
+	groupCmd.AddCommand(groupremoveCmd)
 
+	//groupCmd.PersistentFlags().StringP("host", "H", "127.0.0.1:50200", "host example: 127.0.0.1:50001")
+	//groupCmd.PersistentFlags().StringP("authuser", "u", "test", "username")
+	//groupCmd.PersistentFlags().StringP("authpass", "p", "test", "password")
 	// Here you will define your flags and configuration settings.
 
 	// Cobra supports Persistent Flags which will work for this command
 	// and all subcommands, e.g.:
-	// userCmd.PersistentFlags().String("foo", "", "A help for foo")
+	// groupCmd.PersistentFlags().String("foo", "", "A help for foo")
 
 	// Cobra supports local flags which will only run when this command
 	// is called directly, e.g.:
-	// userCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
+	// groupCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
 }
