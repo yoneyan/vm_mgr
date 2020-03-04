@@ -95,8 +95,6 @@ func GenerateNetworkCmd(net string) []string {
 	}
 
 	var cmd []string
-	cmd = append(cmd, "-net")
-
 	///etc/qemu/bridge.conf <- allow br0
 	//1 Network
 	//-net nic,macaddr=52:54:01:11:22:33 -net bridge,br=br0
@@ -105,6 +103,7 @@ func GenerateNetworkCmd(net string) []string {
 	if mode == 0 {
 		//default Network
 		for i, _ := range mac {
+			cmd = append(cmd, "-net")
 			cmd = append(cmd, "nic,macaddr="+mac[i])
 			cmd = append(cmd, "-net")
 			cmd = append(cmd, "bridge,br="+bridge[i])
