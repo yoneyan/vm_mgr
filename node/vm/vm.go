@@ -102,11 +102,17 @@ func GenerateNetworkCmd(net string) []string {
 	//-net nic,macaddr=52:54:01:11:22:33 -net bridge,br=br0 -net nic,macaddr=52:54:02:11:22:33 -net bridge,br=br0
 	if mode == 0 {
 		//default Network
+		cmd = append(cmd, "-net")
+		cmd = append(cmd, "nic,macaddr="+mac[0])
+		cmd = append(cmd, "-net")
+		cmd = append(cmd, "bridge,br="+bridge[0])
 		for i, _ := range mac {
-			cmd = append(cmd, "-net")
-			cmd = append(cmd, "nic,macaddr="+mac[i])
-			cmd = append(cmd, "-net")
-			cmd = append(cmd, "bridge,br="+bridge[i])
+			if i > 0 {
+				cmd = append(cmd, "-net")
+				cmd = append(cmd, "nic,macaddr="+mac[i])
+				cmd = append(cmd, "-net")
+				cmd = append(cmd, "bridge,br="+bridge[i]+",vlan="+strconv.Itoa(i))
+			}
 		}
 	} else if mode == 1 {
 		//rtl8139
