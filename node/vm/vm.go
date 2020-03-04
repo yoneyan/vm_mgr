@@ -111,7 +111,7 @@ func GenerateNetworkCmd(net string) []string {
 				cmd = append(cmd, "-net")
 				cmd = append(cmd, "nic,macaddr="+mac[i])
 				cmd = append(cmd, "-net")
-				cmd = append(cmd, "bridge,br="+bridge[i]+"vlan="+strconv.Itoa(i))
+				cmd = append(cmd, "bridge,br="+bridge[i]+",vlan="+strconv.Itoa(i))
 			}
 		}
 	} else if mode == 1 {
