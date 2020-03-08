@@ -77,6 +77,7 @@ loop:
 			break loop
 		case <-time.After(10 * time.Second):
 			fmt.Println("-----VMLIFECheck-----")
+			fmt.Println("VMID: " + strconv.Itoa(data.ID))
 			status, err := db.VMDBGetVMStatus(id)
 			if err != nil {
 				fmt.Println(false)

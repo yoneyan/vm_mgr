@@ -7,7 +7,7 @@ import (
 	"log"
 )
 
-const db_name = "./main.db"
+const dbName = "./main.db"
 
 type NodeVM struct {
 	ID          int
@@ -23,7 +23,7 @@ type NodeVM struct {
 }
 
 func connectdb() *sql.DB {
-	db, err := sql.Open("sqlite3", db_name)
+	db, err := sql.Open("sqlite3", dbName)
 	if err != nil {
 		fmt.Println(err)
 		fmt.Println("SQL open error")
@@ -34,10 +34,10 @@ func connectdb() *sql.DB {
 	return db
 }
 
-func createdb(database string) bool {
+func Createdb() bool {
 	db := *connectdb()
 
-	_, err := db.Exec(database)
+	_, err := db.Exec(`CREATE TABLE IF NOT EXISTS "nodevm" ("id" INTEGER PRIMARY KEY, "name" VARCHAR(255), "cpu" INT,"memory" INT, "storagepath" VARCHAR(255),"net" VARCHAR(255),"vnc" INT, "socket" VARCHAR(255),"status" INT,"autostart" boolean)`)
 	if err != nil {
 		fmt.Println(err)
 		fmt.Println("Error: SQL open Error")
@@ -46,11 +46,11 @@ func createdb(database string) bool {
 	return true
 }
 
-func Initdb() bool {
-	//nodevm data
-	createdb(`CREATE TABLE IF NOT EXISTS "nodevm" ("id" INTEGER PRIMARY KEY, "name" VARCHAR(255), "cpu" INT,"memory" INT, "storagepath" VARCHAR(255),"net" VARCHAR(255),"vnc" INT, "socket" VARCHAR(255),"status" INT,"autostart" boolean)`)
-	return true
-}
+//func Initdb() bool {
+//	//nodevm data
+//	createdb(`CREATE TABLE IF NOT EXISTS "nodevm" ("id" INTEGER PRIMARY KEY, "name" VARCHAR(255), "cpu" INT,"memory" INT, "storagepath" VARCHAR(255),"net" VARCHAR(255),"vnc" INT, "socket" VARCHAR(255),"status" INT,"autostart" boolean)`)
+//	return true
+//}
 
 //NodeVM
 
