@@ -67,7 +67,8 @@ func VMLifeCheck(name string) bool {
 	}
 	sc := make(chan os.Signal, 1)
 	signal.Notify(sc, os.Interrupt)
-	count := 0
+	count1 := 0
+	count2 := 0
 loop:
 	for {
 		select {
@@ -80,26 +81,35 @@ loop:
 			if err != nil {
 				fmt.Println(false)
 			}
+			//stop status 1
 			if status == 0 {
-				count++
+				count1++
+				fmt.Println("-->vm stop process")
 				fmt.Println("VMID: " + strconv.Itoa(data.ID) + " Count: " + strconv.Itoa(data.Status))
-				if count == 2 {
-					fmt.Println("VMID: " + strconv.Itoa(data.ID) + " End  Stop1")
+				if count1 == 2 {
+					fmt.Println("VMID: " + strconv.Itoa(data.ID) + "stop vm process")
 					return true
 				}
 			}
-			out, err := pipeline.CombinedOutput(
+
+			_, err = pipeline.CombinedOutput(
 				[]string{"ps", "axf"},
 				[]string{"grep", "/" + name + ".sock"},
-				[]string{"grep", "qemu"},
 			)
+			//stop status 2
 			if err != nil {
-				fmt.Println("VMID: " + strconv.Itoa(data.ID) + " End  Stop2")
-				db.VMDBStatusUpdate(data.ID, 0)
-				return true
+				count2++
+				fmt.Println("-->grep error")
+				fmt.Println("VMID: " + strconv.Itoa(data.ID) + " Count: " + strconv.Itoa(data.Status))
+				if count2 == 2 {
+					db.VMDBStatusUpdate(data.ID, 0)
+					fmt.Println("VMID: " + strconv.Itoa(data.ID) + "grep error!!")
+					return true
+				}
 			}
-			count = 0
-			fmt.Printf("%s", out)
+
+			count1 = 0
+			count2 = 0
 		}
 	}
 	return true
