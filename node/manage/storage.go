@@ -49,7 +49,7 @@ func DeleteStorage(s *Storage) error {
 	var cmd []string
 
 	filepath := etc.GeneratePath(s.Path, s.Name)
-	if etc.FileExists(filepath) {
+	if FileExistsCheck(filepath) {
 		cmd = append(cmd, "info")
 		cmd = append(cmd, filepath+".img")
 

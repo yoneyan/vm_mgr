@@ -97,7 +97,7 @@ func GetDBAll() []NodeVM {
 		var b NodeVM
 		err := rows.Scan(&b.ID, &b.Name, &b.CPU, &b.Mem, &b.StoragePath, &b.Net, &b.Vnc, &b.Socket, &b.Status, &b.AutoStart)
 		if err != nil {
-			log.Println(err)
+			fmt.Println(err)
 		}
 		bg = append(bg, b)
 	}

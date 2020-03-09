@@ -15,9 +15,7 @@ func StartupProcess() {
 			autostart = append(autostart, data[i].ID)
 		}
 	}
-	fmt.Printf("AutoStartVMID: ")
-	fmt.Println(autostart)
-
+	fmt.Printf(" AutoStartVMID: ")
 	for i, _ := range autostart {
 		if StartVMProcess(autostart[i]) {
 			fmt.Printf("Start VMID: %d", i)
@@ -27,6 +25,5 @@ func StartupProcess() {
 
 	}
 	fmt.Println()
-
 	fmt.Println("Start process is end!!")
 }

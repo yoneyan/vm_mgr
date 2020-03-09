@@ -25,6 +25,7 @@ func StartVMProcess(id int) bool {
 	c.StoragePath = data.StoragePath
 
 	cmd := CreateGenerateCmd(&c)
+
 	err = RunQEMUCmd(cmd)
 	if err != nil {
 		fmt.Println(err)

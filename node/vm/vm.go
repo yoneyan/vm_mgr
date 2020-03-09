@@ -21,7 +21,7 @@ func RunQEMUMonitor(command, socket string) error {
 		[]string{"sudo", "socat", "-", socket},
 	)
 	if err != nil {
-		log.Fatal(err)
+		fmt.Println(err)
 		return err
 	}
 	fmt.Println(string(out))
@@ -45,18 +45,20 @@ func RunQEMUCmd(cmd []string) error {
 
 func CreateGenerateCmd(c *CreateVMInformation) []string {
 	var cmd []string
-	netdata := GenerateNetworkCmd(c.Net)
 	begin := []string{"-enable-kvm", "-name", c.Name, "-smp", strconv.Itoa(c.CPU), "-m", strconv.Itoa(c.Mem), "-monitor", etc.SocketGenerate(c.Name), "-hda", c.StoragePath + "/" + c.Name + ".img", "-vnc", ":" + strconv.Itoa(c.VNC)}
 	cmdarray := []string{"-boot"}
 
 	cmd = append(cmd, begin...)
+
 	if c.CDROM != "" {
 		cmd = append(cmd, cmdarray[0])
 		cmd = append(cmd, "order=d")
 		cmd = append(cmd, "-cdrom")
 		cmd = append(cmd, c.CDROM)
 	}
-	if c.Net != "" {
+	if len(c.Net) != 0 {
+		netdata := GenerateNetworkCmd(c.Net)
+		fmt.Println("safa")
 		//add qemu network command
 		for _, a := range netdata {
 			cmd = append(cmd, a)

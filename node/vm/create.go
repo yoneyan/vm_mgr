@@ -31,19 +31,22 @@ func CreateVMProcess(c *CreateVMInformation) (bool, string) {
 		if manage.VMExistsName(c.Name) {
 			fmt.Println("A VM with the same name exists. So, change the name of the VM.")
 		} else {
-			d := strings.Split(c.Net, ",")
-			fmt.Println(d)
-			var net []string
-			fmt.Println(net)
-			net = append(net, "0")
-			for _, a := range d {
-				net = append(net, a)
-				net = append(net, manage.GenerateMacAddresss())
+			if len(c.Net) != 0 {
+				d := strings.Split(c.Net, ",")
+				fmt.Println(d)
+				var net []string
+				fmt.Println(net)
+				net = append(net, "0")
+				for _, a := range d {
+					net = append(net, a)
+					net = append(net, manage.GenerateMacAddresss())
+				}
+				fmt.Println(net)
+				c.Net = strings.Join(net, ",")
+				fmt.Println(c.Net)
+			} else {
+				c.Net = ""
 			}
-			fmt.Println(net)
-			c.Net = strings.Join(net, ",")
-			fmt.Println(c.Net)
-
 			CreateVMDBProcess(c)
 			err := RunQEMUCmd(CreateGenerateCmd(c))
 			if err != nil {
