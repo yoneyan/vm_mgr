@@ -54,7 +54,7 @@ func VMStop(id int) error {
 }
 
 func StopProcess() {
-	data := db.GetDBAll()
+	data := db.VMDBGetAll()
 	var status []int
 	for i, _ := range data {
 		fmt.Printf("Status 0  VMID: %d", data[i].ID)

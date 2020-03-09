@@ -256,7 +256,7 @@ var testGetAllCmd = &cobra.Command{
 	Short: "all",
 	Long:  "get all VM",
 	RunE: func(cmd *cobra.Command, args []string) error {
-		direct.GetAllVM(1)
+		direct.GetAllVM()
 		fmt.Println("Process End")
 		return nil
 	},

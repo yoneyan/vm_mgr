@@ -6,7 +6,7 @@ import (
 )
 
 func StartupProcess() {
-	data := db.GetDBAll()
+	data := db.VMDBGetAll()
 	var autostart []int
 	for i, _ := range data {
 		db.VMDBStatusUpdate(data[i].ID, 0)

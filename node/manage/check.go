@@ -31,7 +31,7 @@ func VMExistsCheck(name string, id int) bool {
 }
 
 func VMVncExistsCheck(vnc int) bool {
-	result := db.GetDBAll()
+	result := db.VMDBGetAll()
 	for a, _ := range result {
 		if result[a].Vnc == vnc {
 			return true

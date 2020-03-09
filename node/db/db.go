@@ -84,7 +84,7 @@ func DeleteDBVM(id int) bool {
 	return true
 }
 
-func GetDBAll() []NodeVM {
+func VMDBGetAll() []NodeVM {
 	db := *connectdb()
 
 	cmd := "SELECT * FROM nodevm"
@@ -105,7 +105,7 @@ func GetDBAll() []NodeVM {
 }
 
 func VMDBGetVMID(name string) (int, error) {
-	data := GetDBAll()
+	data := VMDBGetAll()
 	for i, _ := range data {
 		if data[i].Name == name {
 			return data[i].ID, nil
@@ -117,7 +117,7 @@ func VMDBGetVMID(name string) (int, error) {
 
 func VMDBGetVMStatus(id int) (int, error) {
 	//0: PowerOff 1: PowerOn 2:Suspend 3: TmpStop 4: busy
-	data := GetDBAll()
+	data := VMDBGetAll()
 	for i, _ := range data {
 		if data[i].ID == id {
 			return data[i].Status, nil
@@ -141,7 +141,7 @@ func VMDBStatusUpdate(id, status int) bool {
 }
 
 func VMDBGetData(id int) (*NodeVM, error) {
-	data := GetDBAll()
+	data := VMDBGetAll()
 	var result NodeVM
 	for i, _ := range data {
 		if data[i].ID == id {

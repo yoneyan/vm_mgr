@@ -147,11 +147,24 @@ func (s *server) GetVMName(ctx context.Context, in *pb.VMName) (*pb.VMData, erro
 	}, nil
 }
 
-func (s *server) GetAllVM(ctx context.Context, in *pb.VMID) (*pb.Result, error) {
+//func (s *server) GetAllVM(ctx context.Context, in *pb.VMID)  error {
+//	log.Println("----GetAllVM----")
+//	log.Printf("Receive GetAllVM")
+//	fmt.Println(db.VMDBGetAll())
+//	return nil
+//}
+
+func (s *server) GetAllVM(base *pb.Base, stream pb.Grpc_GetAllVMServer) error {
 	log.Println("----GetAllVM----")
 	log.Printf("Receive GetAllVM")
-	fmt.Println(db.GetDBAll())
-	return &pb.Result{Status: true}, nil
+	fmt.Println(db.VMDBGetAll())
+	result := db.VMDBGetAll()
+	for _, a := range result {
+		if err := stream.Send(&pb.VMData{Option: &pb.Option{Id: int64(a.ID), Autostart: a.AutoStart, Status: int32(a.Status)}, Vmname: a.Name, Vcpu: int64(a.CPU), Vmem: int64(a.Mem), Vnet: a.Net}); err != nil {
+			return err
+		}
+	}
+	return nil
 }
 
 func (s *server) ShutdownVM(ctx context.Context, in *pb.VMID) (*pb.Result, error) {

@@ -6,8 +6,10 @@ import (
 	"github.com/yoneyan/vm_mgr/client/data"
 	pb "github.com/yoneyan/vm_mgr/proto/proto-go"
 	"google.golang.org/grpc"
+	"io"
 	"log"
 	_ "os"
+	"strconv"
 	"time"
 )
 
@@ -279,22 +281,41 @@ func GetVMName(name string) {
 
 }
 
-func GetAllVM(id int) {
+func GetAllVM() {
 	conn, err := grpc.Dial(address, grpc.WithInsecure(), grpc.WithBlock())
 	if err != nil {
 		log.Fatalf("Not connect; %v", err)
 	}
 	defer conn.Close()
-	c := pb.NewGrpcClient(conn)
 
+	c := pb.NewGrpcClient(conn)
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
 	defer cancel()
-	r, err := c.GetAllVM(ctx, &pb.VMID{Id: 1})
+	stream, err := c.GetAllVM(ctx, &pb.Base{User: "test", Pass: "test"})
 	if err != nil {
-		log.Fatalf("could not greet: %v", err)
+		log.Fatal(err)
 	}
-	log.Printf("ID: ")
-	log.Println(r.Status)
+
+	for {
+		article, err := stream.Recv()
+		if err == io.EOF {
+			break
+		}
+		if err != nil {
+			log.Fatal(err)
+		}
+		fmt.Printf("ID: " + strconv.Itoa(int(article.Option.Id)) + " Name: " + article.Vmname + " CPU: " + strconv.Itoa(int(article.Vcpu)) + " Mem: " + strconv.Itoa(int(article.Vmem)))
+		fmt.Println(" Net: " + article.Vnet + " AutoStart: " + strconv.FormatBool(article.Option.Autostart) + " status: " + strconv.Itoa(int(article.Option.Status)))
+	}
+
+	//ctx, cancel := context.WithTimeout(context.Background(), time.Second)
+	//defer cancel()
+	//r, err := c.GetAllVM(ctx, &pb.VMID{Id: 1})
+	//if err != nil {
+	//	log.Fatalf("could not greet: %v", err)
+	//}
+	//log.Printf("ID: ")
+	//log.Println(r.Status)
 }
 
 func NodeStopVM(address string) {
