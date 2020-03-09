@@ -2,8 +2,8 @@ package vm
 
 import (
 	"fmt"
-	"github.com/mattn/go-pipeline"
 	"github.com/yoneyan/vm_mgr/node/db"
+	"github.com/yoneyan/vm_mgr/node/etc"
 	"github.com/yoneyan/vm_mgr/node/manage"
 )
 
@@ -32,19 +32,10 @@ func VMStop(id int) error {
 
 	//ps axf | grep test|grep qemu  | grep -v grep | awk '{print "kill -9 " $1}' | sudo sh
 	fmt.Println("-----VMStop Command-----")
-	out, err := pipeline.CombinedOutput(
-		[]string{"ps", "axf"},
-		[]string{"grep", result.Name + ".sock"},
-		[]string{"grep", "qemu"},
-		[]string{"grep", "-v", "grep"},
-		[]string{"awk", "{print \"kill -9 \" $1}"},
-		[]string{"sudo", "sh"},
-	)
+	err = RunQEMUMonitor("q", etc.SocketConnectionPath(result.Name))
 	if err != nil {
-		fmt.Println(err)
-		return err
+		fmt.Println("Error: Stop Error!!")
 	}
-	fmt.Printf("%s", out)
 
 	if db.VMDBStatusUpdate(id, 0) {
 		fmt.Println("Power Off state")
