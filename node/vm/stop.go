@@ -34,7 +34,7 @@ func VMStop(id int) error {
 	fmt.Println("-----VMStop Command-----")
 	err = RunQEMUMonitor("q", etc.SocketConnectionPath(result.Name))
 	if err != nil {
-		fmt.Println("Error: Stop Error!!")
+		fmt.Println("already stopped")
 	}
 
 	if db.VMDBStatusUpdate(id, 0) {

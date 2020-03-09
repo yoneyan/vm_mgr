@@ -4,7 +4,6 @@ import (
 	"context"
 	"fmt"
 	"github.com/yoneyan/vm_mgr/node/db"
-	"github.com/yoneyan/vm_mgr/node/etc"
 	"github.com/yoneyan/vm_mgr/node/manage"
 	"github.com/yoneyan/vm_mgr/node/vm"
 	pb "github.com/yoneyan/vm_mgr/proto/proto-go"
@@ -44,7 +43,7 @@ func (s *server) CreateVM(ctx context.Context, in *pb.VMData) (*pb.Result, error
 	r.VNC = int(in.GetOption().Vnc)
 	r.AutoStart = in.GetOption().Autostart
 
-	if etc.FileExists(in.GetOption().StoragePath+"/"+in.GetVmname()+".img") == false {
+	if manage.FileExistsCheck(in.GetOption().StoragePath+"/"+in.GetVmname()+".img") == false {
 		fmt.Println("Not storage file exists")
 		storage := manage.Storage{
 			Path:   in.GetOption().StoragePath,
