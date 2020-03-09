@@ -3,12 +3,13 @@ package vm
 import (
 	"fmt"
 	"github.com/mattn/go-pipeline"
+	"github.com/yoneyan/vm_mgr/node/db"
 	"github.com/yoneyan/vm_mgr/node/etc"
-	"github.com/yoneyan/vm_mgr/node/manage"
 	"log"
 	"os/exec"
 	"strconv"
 	"strings"
+	"time"
 )
 
 func RunQEMUMonitor(command, socket string) error {
@@ -27,19 +28,26 @@ func RunQEMUMonitor(command, socket string) error {
 	fmt.Println(string(out))
 	return nil
 }
-func RunQEMUCmd(cmd []string) error {
+func RunQEMUCmd(command []string) error {
 	fmt.Println("----CommandRun")
-
+	time.Sleep(time.Second * 1)
 	//cmd = append(cmd,"-") //Intel VT-d support enable
+	cmd := exec.Command("qemu-system-x86_64", command...)
 
-	err := exec.Command("qemu-system-x86_64", cmd...).Start()
+	id, err := db.VMDBGetVMID(command[2])
 	if err != nil {
-		fmt.Println(err)
-		fmt.Println("Command Error!")
-		return err
+		fmt.Println("DB Read Error")
 	}
-	go manage.VMLifeCheck(cmd[2])
+	db.VMDBStatusUpdate(id, 1)
 
+	//go manage.VMLifeCheck(command[2], cmd)
+	go func() {
+		cmd.Start()
+		fmt.Println("VMName: "+command[2]+" StartTime: ", time.Now().Format("15:04:05"))
+		cmd.Wait()
+		db.VMDBStatusUpdate(id, 0)
+		fmt.Println("VMName: "+command[2]+" EndTime: ", time.Now().Format("15:04:05"))
+	}()
 	return nil
 }
 

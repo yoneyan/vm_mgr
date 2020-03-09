@@ -4,9 +4,11 @@ import (
 	"fmt"
 	"github.com/yoneyan/vm_mgr/node/db"
 	"github.com/yoneyan/vm_mgr/node/manage"
+	"strconv"
 )
 
 func StartVMProcess(id int) bool {
+	fmt.Println("-----StartVMProcess-----")
 	if manage.VMExistsID(id) == false {
 		fmt.Println("VM Not Found!!")
 		return false
@@ -14,6 +16,14 @@ func StartVMProcess(id int) bool {
 	data, err := db.VMDBGetData(id)
 	if err != nil {
 		fmt.Println("VM Data Not Found!!")
+		return false
+	}
+	status, err := db.VMDBGetVMStatus(id)
+	if status == 1 {
+		fmt.Println("VM is power on!!")
+		return false
+	} else if status > 1 || status < 0 {
+		fmt.Println("VM status is error!! status: " + strconv.Itoa(status))
 		return false
 	}
 	var c CreateVMInformation
