@@ -22,10 +22,12 @@ THE SOFTWARE.
 package cmd
 
 import (
+	"errors"
 	"fmt"
 	"github.com/spf13/cobra"
 	"github.com/yoneyan/vm_mgr/client/data"
-	"log"
+	grpc "github.com/yoneyan/vm_mgr/proto/proto-go"
+	"strconv"
 )
 
 // nodeCmd represents the client command
@@ -40,12 +42,24 @@ var nodeStopCmd = &cobra.Command{
 	Short: "client stop",
 	Long:  "client stop tool",
 	RunE: func(cmd *cobra.Command, args []string) error {
-		address, err := cmd.Flags().GetString("host")
-		if err != nil {
-			log.Fatalf("could not greet: %v", err)
-			return nil
+		if len(args) < 1 {
+			return errors.New("requires id")
 		}
-		data.NodeStopVM(address)
+		result, _ := strconv.Atoi(args[0])
+		if result < 0 {
+			return errors.New("value failed")
+		}
+
+		d := Base(cmd)
+		c := grpc.NodeID{
+			Base: &grpc.Base{
+				User:  d[1],
+				Pass:  d[2],
+				Group: d[3],
+			},
+			NodeID: int32(result),
+		}
+		data.NodeStopVM(&c, d[0])
 		fmt.Println("Process End")
 		return nil
 	},

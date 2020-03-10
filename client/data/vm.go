@@ -17,7 +17,7 @@ const (
 )
 
 //name string, vcpu, vmem, storage int64, storage_path string, cdrom string, vnet string, vnc int64, autostart bool
-func CreateVM(d *pb.VMData) {
+func CreateVM(d *pb.VMData, address string) {
 	if CreateVMCheck(d) == false {
 		log.Fatal("Valid value!!")
 	}
@@ -44,11 +44,11 @@ func CreateVM(d *pb.VMData) {
 	log.Println(r.Info)
 }
 
-func DeleteVM(id int64) {
-	if id < 1 {
+func DeleteVM(d *pb.VMID, address string) {
+	if d.Id < 1 {
 		fmt.Println("Value False")
 		fmt.Printf("Debug: value is ")
-		fmt.Println(id)
+		fmt.Println(d.Id)
 	}
 
 	conn, err := grpc.Dial(address, grpc.WithInsecure(), grpc.WithBlock())
@@ -60,7 +60,7 @@ func DeleteVM(id int64) {
 
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
 	defer cancel()
-	r, err := c.DeleteVM(ctx, &pb.VMID{Id: id})
+	r, err := c.DeleteVM(ctx, d)
 	if err != nil {
 		log.Fatalf("could not greet: %v", err)
 	}
@@ -72,11 +72,11 @@ func DeleteVM(id int64) {
 	log.Println(r.Info)
 }
 
-func StartVM(id int64) bool {
-	if id < 1 {
+func StartVM(d *pb.VMID, address string) bool {
+	if d.Id < 1 {
 		fmt.Println("Value False")
 		fmt.Printf("Debug: value is ")
-		fmt.Println(id)
+		fmt.Println(d.Id)
 		return false
 	}
 
@@ -89,7 +89,7 @@ func StartVM(id int64) bool {
 
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
 	defer cancel()
-	r, err := c.StartVM(ctx, &pb.VMID{Id: id})
+	r, err := c.StartVM(ctx, d)
 	if err != nil {
 		log.Fatalf("could not greet: %v", err)
 	}
@@ -97,11 +97,11 @@ func StartVM(id int64) bool {
 	return r.GetStatus()
 }
 
-func StopVM(id int64) bool {
-	if id < 1 {
+func StopVM(d *pb.VMID, address string) bool {
+	if d.Id < 1 {
 		fmt.Println("Value False")
 		fmt.Printf("Debug: value is ")
-		fmt.Println(id)
+		fmt.Println(d.Id)
 		return false
 	}
 
@@ -114,7 +114,7 @@ func StopVM(id int64) bool {
 
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
 	defer cancel()
-	r, err := c.StopVM(ctx, &pb.VMID{Id: id})
+	r, err := c.StopVM(ctx, d)
 	if err != nil {
 		log.Fatalf("could not greet: %v", err)
 	}
@@ -122,11 +122,11 @@ func StopVM(id int64) bool {
 	return r.GetStatus()
 }
 
-func ShutdownVM(id int64) bool {
-	if id < 1 {
+func ShutdownVM(d *pb.VMID, address string) bool {
+	if d.Id < 1 {
 		fmt.Println("Value False")
 		fmt.Printf("Debug: value is ")
-		fmt.Println(id)
+		fmt.Println(d.Id)
 		return false
 	}
 
@@ -139,7 +139,7 @@ func ShutdownVM(id int64) bool {
 
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
 	defer cancel()
-	r, err := c.ShutdownVM(ctx, &pb.VMID{Id: id})
+	r, err := c.ShutdownVM(ctx, d)
 	if err != nil {
 		log.Fatalf("could not greet: %v", err)
 	}
@@ -147,11 +147,11 @@ func ShutdownVM(id int64) bool {
 	return r.GetStatus()
 }
 
-func ResetVM(id int64) bool {
-	if id < 1 {
+func ResetVM(d *pb.VMID, address string) bool {
+	if d.Id < 1 {
 		fmt.Println("Value False")
 		fmt.Printf("Debug: value is ")
-		fmt.Println(id)
+		fmt.Println(d.Id)
 		return false
 	}
 
@@ -164,7 +164,7 @@ func ResetVM(id int64) bool {
 
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
 	defer cancel()
-	r, err := c.StopVM(ctx, &pb.VMID{Id: id})
+	r, err := c.StopVM(ctx, d)
 	if err != nil {
 		log.Fatalf("could not greet: %v", err)
 	}
@@ -172,11 +172,11 @@ func ResetVM(id int64) bool {
 	return r.GetStatus()
 }
 
-func PauseVM(id int64) bool {
-	if id < 1 {
+func PauseVM(d *pb.VMID, address string) bool {
+	if d.Id < 1 {
 		fmt.Println("Value False")
 		fmt.Printf("Debug: value is ")
-		fmt.Println(id)
+		fmt.Println(d.Id)
 		return false
 	}
 
@@ -189,7 +189,7 @@ func PauseVM(id int64) bool {
 
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
 	defer cancel()
-	r, err := c.PauseVM(ctx, &pb.VMID{Id: id})
+	r, err := c.PauseVM(ctx, d)
 	if err != nil {
 		log.Fatalf("could not greet: %v", err)
 	}
@@ -197,11 +197,11 @@ func PauseVM(id int64) bool {
 	return r.GetStatus()
 }
 
-func ResumeVM(id int64) bool {
-	if id < 1 {
+func ResumeVM(d *pb.VMID, address string) bool {
+	if d.Id < 1 {
 		fmt.Println("Value False")
 		fmt.Printf("Debug: value is ")
-		fmt.Println(id)
+		fmt.Println(d.Id)
 		return false
 	}
 
@@ -214,7 +214,7 @@ func ResumeVM(id int64) bool {
 
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
 	defer cancel()
-	r, err := c.ResumeVM(ctx, &pb.VMID{Id: id})
+	r, err := c.ResumeVM(ctx, d)
 	if err != nil {
 		log.Fatalf("could not greet: %v", err)
 	}
@@ -222,11 +222,11 @@ func ResumeVM(id int64) bool {
 	return r.GetStatus()
 }
 
-func GetVM(id int64) {
-	if id < 1 {
+func GetVM(d *pb.VMID, address string) {
+	if d.Id < 1 {
 		fmt.Println("Value False")
 		fmt.Printf("Debug: value is ")
-		fmt.Println(id)
+		fmt.Println(d.Id)
 	}
 
 	conn, err := grpc.Dial(address, grpc.WithInsecure(), grpc.WithBlock())
@@ -238,7 +238,7 @@ func GetVM(id int64) {
 
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
 	defer cancel()
-	r, err := c.GetVM(ctx, &pb.VMID{Id: id})
+	r, err := c.GetVM(ctx, d)
 	if err != nil {
 		log.Fatalf("could not greet: %v", err)
 	}
@@ -255,7 +255,7 @@ func GetVM(id int64) {
 	log.Printf("AutoStart: %t", r.Option.GetAutostart())
 }
 
-func GetVMName(name string) {
+func GetVMName(d *pb.VMName, address string) {
 	conn, err := grpc.Dial(address, grpc.WithInsecure(), grpc.WithBlock())
 	if err != nil {
 		log.Fatalf("Not connect; %v", err)
@@ -265,7 +265,7 @@ func GetVMName(name string) {
 
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
 	defer cancel()
-	r, err := c.GetVMName(ctx, &pb.VMName{Vmname: name})
+	r, err := c.GetVMName(ctx, d)
 	if err != nil {
 		log.Fatalf("could not greet: %v", err)
 	}
@@ -280,7 +280,7 @@ func GetVMName(name string) {
 
 }
 
-func GetAllVM() {
+func GetAllVM(d *pb.Base, address string) {
 	conn, err := grpc.Dial(address, grpc.WithInsecure(), grpc.WithBlock())
 	if err != nil {
 		log.Fatalf("Not connect; %v", err)
@@ -290,7 +290,7 @@ func GetAllVM() {
 	c := pb.NewGrpcClient(conn)
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
 	defer cancel()
-	stream, err := c.GetAllVM(ctx, &pb.Base{User: "test", Pass: "test"})
+	stream, err := c.GetAllVM(ctx, d)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -317,7 +317,7 @@ func GetAllVM() {
 	//log.Println(r.Status)
 }
 
-func NodeStopVM(address string) {
+func NodeStopVM(d *pb.NodeID, address string) {
 	conn, err := grpc.Dial(address, grpc.WithInsecure(), grpc.WithBlock())
 	if err != nil {
 		log.Fatalf("Not connect; %v", err)
@@ -327,7 +327,7 @@ func NodeStopVM(address string) {
 
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
 	defer cancel()
-	r, err := c.StopNode(ctx, &pb.NodeID{})
+	r, err := c.StopNode(ctx, d)
 	if err != nil {
 		log.Fatalf("could not greet: %v", err)
 	}
