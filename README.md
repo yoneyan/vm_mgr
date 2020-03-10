@@ -32,7 +32,7 @@ VMを管理するという意味を込めてvm_mgrとしています。
 * Client  
 
 上記の3つの構造を基本とします。  
-ControllerとNode間はgRPCにてデータのやり取りを行います。
+Controller,Node,Client間はすべてgRPCにてデータのやり取りを行います。
 
 **実装予定はGithubのProjectに載せています。**
 
