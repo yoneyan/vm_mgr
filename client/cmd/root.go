@@ -66,6 +66,7 @@ func init() {
 	rootCmd.PersistentFlags().StringP("host", "H", "127.0.0.1:50200", "host example: 127.0.0.1:50001")
 	rootCmd.PersistentFlags().StringP("authuser", "u", "test", "username")
 	rootCmd.PersistentFlags().StringP("authpass", "p", "test", "password")
+	rootCmd.PersistentFlags().StringP("group", "g", "test", "group")
 	rootCmd.PersistentFlags().BoolP("direct", "D", false, "direct connection to node")
 }
 

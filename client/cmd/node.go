@@ -24,7 +24,7 @@ package cmd
 import (
 	"fmt"
 	"github.com/spf13/cobra"
-	"github.com/yoneyan/vm_mgr/client/data/direct"
+	"github.com/yoneyan/vm_mgr/client/data"
 	"log"
 )
 
@@ -45,7 +45,7 @@ var nodeStopCmd = &cobra.Command{
 			log.Fatalf("could not greet: %v", err)
 			return nil
 		}
-		direct.NodeStopVM(address)
+		data.NodeStopVM(address)
 		fmt.Println("Process End")
 		return nil
 	},

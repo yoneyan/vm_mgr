@@ -1,9 +1,8 @@
-package direct
+package data
 
 import (
 	"context"
 	"fmt"
-	"github.com/yoneyan/vm_mgr/client/data"
 	pb "github.com/yoneyan/vm_mgr/proto/proto-go"
 	"google.golang.org/grpc"
 	"io"
@@ -19,7 +18,7 @@ const (
 
 //name string, vcpu, vmem, storage int64, storage_path string, cdrom string, vnet string, vnc int64, autostart bool
 func CreateVM(d *pb.VMData) {
-	if data.CreateVMCheck(d) == false {
+	if CreateVMCheck(d) == false {
 		log.Fatal("Valid value!!")
 	}
 	// Set up a connection to the server.
