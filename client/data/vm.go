@@ -12,10 +12,6 @@ import (
 	"time"
 )
 
-const (
-	address = "localhost:50100"
-)
-
 //name string, vcpu, vmem, storage int64, storage_path string, cdrom string, vnet string, vnc int64, autostart bool
 func CreateVM(d *pb.VMData, address string) {
 	if CreateVMCheck(d) == false {
@@ -306,31 +302,4 @@ func GetAllVM(d *pb.Base, address string) {
 		fmt.Printf("ID: " + strconv.Itoa(int(article.Option.Id)) + " Name: " + article.Vmname + " CPU: " + strconv.Itoa(int(article.Vcpu)) + " Mem: " + strconv.Itoa(int(article.Vmem)))
 		fmt.Println(" Net: " + article.Vnet + " AutoStart: " + strconv.FormatBool(article.Option.Autostart) + " status: " + strconv.Itoa(int(article.Option.Status)))
 	}
-
-	//ctx, cancel := context.WithTimeout(context.Background(), time.Second)
-	//defer cancel()
-	//r, err := c.GetAllVM(ctx, &pb.VMID{Id: 1})
-	//if err != nil {
-	//	log.Fatalf("could not greet: %v", err)
-	//}
-	//log.Printf("ID: ")
-	//log.Println(r.Status)
-}
-
-func NodeStopVM(d *pb.NodeID, address string) {
-	conn, err := grpc.Dial(address, grpc.WithInsecure(), grpc.WithBlock())
-	if err != nil {
-		log.Fatalf("Not connect; %v", err)
-	}
-	defer conn.Close()
-	c := pb.NewGrpcClient(conn)
-
-	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
-	defer cancel()
-	r, err := c.StopNode(ctx, d)
-	if err != nil {
-		log.Fatalf("could not greet: %v", err)
-	}
-	log.Printf("ID: ")
-	log.Println(r.Status)
 }
