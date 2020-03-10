@@ -36,13 +36,14 @@ type Group struct {
 	MaxCPU     int
 	MaxMem     int
 	MaxStorage int
+	Net        string
 }
 
 func connectdb() *sql.DB {
 	db, err := sql.Open("sqlite3", DBPath)
 	if err != nil {
 		fmt.Println("SQL open error")
-		log.Fatalln(err)
+		fmt.Println(err)
 		//panic(err)
 	}
 
@@ -55,7 +56,7 @@ func createdb(database string) bool {
 
 	_, err := db.Exec(database)
 	if err != nil {
-		log.Fatalln(err)
+		fmt.Println(err)
 		return false
 	}
 	return true
@@ -67,7 +68,7 @@ func InitDB() bool {
 	//user data
 	createdb(`CREATE TABLE IF NOT EXISTS "userdata" ("id" INTEGER PRIMARY KEY, "name" VARCHAR(255), "pass" VARCHAR(255))`)
 	//group data
-	createdb(`CREATE TABLE IF NOT EXISTS "groupdata" ("id" INTEGER PRIMARY KEY, "name" VARCHAR(255),"admin" VARCHAR(500),"user" VARCHAR(2000),"maxcpu" INT,"maxmem" INT,"maxstorage" INT)`)
+	createdb(`CREATE TABLE IF NOT EXISTS "groupdata" ("id" INTEGER PRIMARY KEY, "name" VARCHAR(255),"admin" VARCHAR(500),"user" VARCHAR(2000),"maxcpu" INT,"maxmem" INT,"maxstorage" INT,"net" VARCHAR(255))`)
 
 	return true
 }
@@ -159,12 +160,12 @@ func AddDBUser(data User) bool {
 	db := connectdb()
 	addDb, err := db.Prepare(`INSERT INTO "userdata" ("name","pass") VALUES (?,?)`)
 	if err != nil {
-		panic(err)
+		fmt.Println(err)
 		return false
 	}
 
 	if _, err := addDb.Exec(data.Name, etc.Hashgenerate(data.Pass)); err != nil {
-		panic(err)
+		fmt.Println(err)
 		return false
 	}
 
@@ -176,7 +177,7 @@ func RemoveDBUser(name string) bool {
 	deleteDb := "DELETE FROM userdata WHERE name = ?"
 	_, err := db.Exec(deleteDb, name)
 	if err != nil {
-		log.Fatalln(err)
+		fmt.Println(err)
 		return false
 	}
 	return true
@@ -186,7 +187,7 @@ func PassAuthDBUser(name, pass string) bool {
 	db := connectdb()
 	var hash string
 	if err := db.QueryRow("SELECT pass FROM userdata WHERE name = ?", name).Scan(&hash); err != nil {
-		log.Fatal(err)
+		fmt.Println(err)
 	}
 	fmt.Println("User Auth Success")
 
@@ -197,7 +198,6 @@ func GetDBUserID(name string) (int, bool) {
 	db := connectdb()
 
 	var id int
-
 	if err := db.QueryRow("SELECT id FROM userdata WHERE name = ?", name).Scan(&id); err != nil {
 		fmt.Println(err)
 		return 0, false
@@ -259,13 +259,13 @@ func ChangeDBUserPassword(id int, data string) bool {
 //groupdata
 func AddDBGroup(data Group) bool {
 	db := connectdb()
-	addDb, err := db.Prepare(`INSERT INTO "groupdata" ("name","user","admin","maxcpu","maxmem","maxstorage") VALUES (?,?,?,?,?,?)`)
+	addDb, err := db.Prepare(`INSERT INTO "groupdata" ("name","admin","user","maxcpu","maxmem","maxstorage","net") VALUES (?,?,?,?,?,?,?)`)
 	if err != nil {
 		panic(err)
 		return false
 	}
 
-	if _, err := addDb.Exec(data.Name, data.User, data.Admin, data.MaxCPU, data.MaxMem, data.MaxStorage); err != nil {
+	if _, err := addDb.Exec(data.Name, data.Admin, data.User, data.MaxCPU, data.MaxMem, data.MaxStorage, data.Net); err != nil {
 		panic(err)
 		return false
 	}
@@ -295,9 +295,9 @@ func GetDBAllGroup() []Group {
 	var bg []Group
 	for rows.Next() {
 		var b Group
-		err := rows.Scan(&b.ID, &b.Name, &b.User, &b.Admin, &b.MaxCPU, &b.MaxMem, &b.MaxStorage)
+		err := rows.Scan(&b.ID, &b.Name, &b.Admin, &b.User, &b.MaxCPU, &b.MaxMem, &b.MaxStorage, &b.Net)
 		if err != nil {
-			log.Println(err)
+			fmt.Println(err)
 		}
 		bg = append(bg, b)
 	}
@@ -309,7 +309,7 @@ func GetDBGroup(id int) (Group, bool) {
 	rows := db.QueryRow("SELECT * FROM groupdata WHERE id = ?", id)
 
 	var b Group
-	err := rows.Scan(&b.ID, &b.Name, &b.Admin, &b.User, &b.MaxCPU, &b.MaxMem, &b.MaxStorage)
+	err := rows.Scan(&b.ID, &b.Name, &b.Admin, &b.User, &b.MaxCPU, &b.MaxMem, &b.MaxStorage, &b.Net)
 
 	switch {
 	case err == sql.ErrNoRows:
@@ -330,7 +330,7 @@ func GetDBGroupID(name string) (int, bool) {
 	var id int
 	fmt.Println(name)
 	if err := db.QueryRow("SELECT id FROM groupdata WHERE name = ?", name).Scan(&id); err != nil {
-		log.Fatal(err)
+		fmt.Println(err)
 		return -1, false
 	}
 

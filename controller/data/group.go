@@ -7,119 +7,129 @@ import (
 	"strings"
 )
 
-func AddGroupUser(name, group string) bool {
-	data, result := VerifyGroup(name, group)
+func AddGroupUser(name, group string) (string, bool) {
+	data, info, result := VerifyGroup(name, group)
 	if result == false {
-		return false
+		return info, false
 	}
+	fmt.Println(data)
 	d, result := ProcessStringToArray(data.User, name, 0)
 	if result == false {
 		fmt.Println("Error: User is exists this group")
-		return false
+		return "Error: User is exists this group", false
 	}
 
 	if db.ChangeDBGroupUser(data.ID, d) {
-		return true
+		return "ok", true
 	}
-	return false
+	return "DBChangeError!!", false
 }
 
-func AddGroupAdmin(name, group string) bool {
-	data, result := VerifyGroup(name, group)
+func AddGroupAdmin(name, group string) (string, bool) {
+	data, info, result := VerifyGroup(name, group)
 	if result == false {
-		return false
+		return info, false
 	}
+	fmt.Println("Admin")
+
 	d, result := ProcessStringToArray(data.Admin, name, 0)
 	if result == false {
 		fmt.Println("Error: User is exists this group")
-		return false
+		return "Error: User is exists this group", false
 	}
 
-	if db.ChangeDBGroupUser(data.ID, d) {
-		return true
+	if db.ChangeDBGroupAdmin(data.ID, d) {
+		return "ok", true
 	}
-	return false
+	return "DBChangeError!!", false
 }
 
-func DeleteGroupAdmin(name, group string) bool {
-	data, result := VerifyGroup(name, group)
+func RemoveGroupAdmin(name, group string) (string, bool) {
+	data, info, result := VerifyGroup(name, group)
 	if result == false {
-		return false
+		return info, false
 	}
 	d, result := ProcessStringToArray(data.Admin, name, 1)
 	if result == false {
 		fmt.Println("Error: User is exists this group")
-		return false
+		return "Error: User is exists this group", false
 	}
 
 	if db.ChangeDBGroupAdmin(data.ID, d) {
-		return true
+		return "ok", true
 	}
-	return false
+	return "DBChangeError!!", false
 }
-func DeleteGroupUser(name, group string) bool {
-	data, result := VerifyGroup(name, group)
+
+func RemoveGroupUser(name, group string) (string, bool) {
+	data, info, result := VerifyGroup(name, group)
 	if result == false {
-		return false
+		return info, false
 	}
 	d, result := ProcessStringToArray(data.User, name, 1)
 	if result == false {
 		fmt.Println("Error: User is exists this group")
-		return false
+		return "Error: User is exists this group", false
 	}
 
 	if db.ChangeDBGroupUser(data.ID, d) {
-		return true
+		return "ok", true
 	}
-	return false
+	return "DBChangeError!!", false
 }
 
-func VerifyGroup(name, group string) (*db.Group, bool) {
-	var d *db.Group
+func VerifyGroup(name, group string) (db.Group, string, bool) {
 	_, result := db.GetDBUserID(name)
 	if result == false {
 		fmt.Println("Error: Not exists this User")
-		return d, false
+		return db.Group{Name: name}, "Not exists this User", false
 	}
 	id, result := db.GetDBGroupID(group)
 	if result == false {
 		fmt.Println("Error: Not exists this group")
-		return d, false
+		return db.Group{Name: name}, "Not exists this group", false
 	}
 	data, result := db.GetDBGroup(id)
 	if result == false {
 		fmt.Println("Error: Failed GetGroup")
-		return d, false
+		return db.Group{Name: name}, "Failed GetGroup", false
 	}
-	return &data, true
+	return data, "ok", true
 }
 
 //mode 0: create 1:delete
 func ProcessStringToArray(basedata, data string, mode int) (string, bool) {
+	fmt.Println(basedata)
+	basedataarray := strings.Split(basedata, ",")
+	fmt.Println("length: " + strconv.Itoa(len(basedataarray)))
+	fmt.Println(basedataarray)
 	if mode == 0 {
-		basedataarray := strings.Split(basedata, ",")
-		for _, a := range basedataarray {
-			if a == data {
-				return "0", false
+		if len(basedataarray) == 0 {
+			var result []string
+			result[0] = data
+			return strings.Join(result, ","), true
+		} else {
+			//verify same user data
+			for _, a := range basedataarray {
+				if a == data {
+					return "0", false
+				}
 			}
+			basedataarray := append(basedataarray, data)
+			return strings.Join(basedataarray, ","), true
 		}
-		basedataarray = append(basedataarray, data)
-		result := strings.Join(basedataarray, ",")
-		fmt.Println("stringdata: " + result)
-		return result, true
 	} else if mode == 1 {
+		if len(basedataarray) == 0 {
+			fmt.Println("GroupData: No data!!")
+			return "0", false
+		}
 		var dataarray []string
-		basedataarray := strings.Split(basedata, ",")
 		for _, a := range basedataarray {
-			if a == data {
-				return "0", false
-			} else {
+			if a != data {
 				dataarray = append(dataarray, a)
 			}
 		}
-		result := strings.Join(dataarray, ",")
-		fmt.Println("stringdata: " + result)
-		return result, true
+		return strings.Join(dataarray, ","), true
 	}
 	return "0", false
 }

@@ -39,6 +39,7 @@ func ExistUserCheck(name string) bool {
 	return false
 }
 
+//Exists All Group User
 func GroupAllUserCheck(name string) bool {
 	data := db.GetDBAllGroup()
 	for i, _ := range data {

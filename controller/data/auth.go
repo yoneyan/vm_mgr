@@ -17,9 +17,17 @@ func AdminUserCertification(name, pass string) bool {
 	return false
 }
 
-func UserCertification(name, pass, group string) bool {
-	if db.PassAuthDBUser(name, pass) && SearchGroupUser(name, group, 1) {
+func UserCertification(name, pass string) bool {
+	if db.PassAuthDBUser(name, pass) {
 		fmt.Println("Certification OK!! (User)")
+		return true
+	}
+	return false
+}
+
+func GroupUserCertification(name, pass, group string) bool {
+	if db.PassAuthDBUser(name, pass) && SearchGroupUser(name, group, 1) {
+		fmt.Println("Certification OK!! (GroupUser)")
 		return true
 	}
 	return false
