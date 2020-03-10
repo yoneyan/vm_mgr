@@ -9,14 +9,14 @@ import (
 const DBPath = "./main.db"
 
 type Node struct {
-	ID       int
-	HostName string
-	IP       string
-	Port     int
-	Auth     int
-	MaxCPU   int
-	MaxMem   int
-	Status   int
+	ID        int
+	HostName  string
+	IP        string
+	Path      string
+	OnlyAdmin int
+	MaxCPU    int
+	MaxMem    int
+	Status    int
 }
 
 type User struct {
@@ -63,7 +63,7 @@ func createdb(database string) bool {
 
 func InitDB() bool {
 	//Node data
-	createdb(`CREATE TABLE IF NOT EXISTS "node" ("id" INTEGER PRIMARY KEY, "hostname" VARCHAR(255), "ip" VARCHAR(255), "port" INT, "auth" INT,"maxcpu" INT "maxmem" INT "status" INT)`)
+	createdb(`CREATE TABLE IF NOT EXISTS "node" ("id" INTEGER PRIMARY KEY, "hostname" VARCHAR(255), "ip" VARCHAR(255), "path" VARCHAR(2000), "onlyadmin" INT,"maxcpu" INT ,"maxmem" INT, "status" INT)`)
 	//user data
 	createdb(`CREATE TABLE IF NOT EXISTS "userdata" ("id" INTEGER PRIMARY KEY, "name" VARCHAR(255), "pass" VARCHAR(255))`)
 	//group data

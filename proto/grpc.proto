@@ -35,7 +35,7 @@ service grpc {
     }
     rpc GetNode (Base) returns (stream NodeData) {
     }
-    rpc DeleteNode (NodeID) returns (Result) {
+    rpc RemoveNode (NodeID) returns (Result) {
     }
     rpc StartNode (NodeID) returns (Result) {
     }
@@ -142,9 +142,9 @@ message NodeData {
     int32 NodeID = 2;
     string hostname = 3;
     string IP = 4;
-    int32 port = 5;
-    int32 auth = 6;
-    bool status = 7;
+    string path = 5;
+    bool onlyAdmin = 6;
+    int32 status = 7;
     bool enable = 8;
     SpecData sepc = 9;
 }

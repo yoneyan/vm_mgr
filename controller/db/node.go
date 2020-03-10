@@ -7,16 +7,30 @@ import (
 
 //Node
 func AddDBNode(data Node) bool {
+	fmt.Println(data)
 	db := *connectdb()
-	addDb, err := db.Prepare(`INSERT INTO "node" ("id","hostname","ip","port","auth","maxcpu","maxmem","status") VALUES (?,?,?,?,?,?,?,?)`)
-	if err != nil {
-		fmt.Println("DBError!!")
-		return false
-	}
+	if data.ID == 0 {
+		addDb, err := db.Prepare(`INSERT INTO "node" ("hostname","ip","path","onlyadmin","maxcpu","maxmem","status") VALUES (?,?,?,?,?,?,?)`)
+		if err != nil {
+			fmt.Println("DBError!!")
+			return false
+		}
 
-	if _, err := addDb.Exec(data.ID, data.HostName, data.IP, data.Port, data.Auth, data.MaxCPU, data.MaxMem, data.Status); err != nil {
-		fmt.Println("Add Error!!")
-		return false
+		if _, err := addDb.Exec(data.HostName, data.IP, data.Path, data.OnlyAdmin, data.MaxCPU, data.MaxMem, data.Status); err != nil {
+			fmt.Println("Add Error!!")
+			return false
+		}
+	} else {
+		addDb, err := db.Prepare(`INSERT INTO "node" ("id","hostname","ip","path","onlyadmin","maxcpu","maxmem","status") VALUES (?,?,?,?,?,?,?,?)`)
+		if err != nil {
+			fmt.Println("DBError!!")
+			return false
+		}
+
+		if _, err := addDb.Exec(data.ID, data.HostName, data.IP, data.Path, data.OnlyAdmin, data.MaxCPU, data.MaxMem, data.Status); err != nil {
+			fmt.Println("Add Error!!")
+			return false
+		}
 	}
 	return true
 }
@@ -54,7 +68,7 @@ func GetDBNodeID(id int) (Node, bool) {
 	defer rows.Close()
 
 	var b Node
-	err = rows.Scan(b.ID, b.HostName, b.IP, b.Port, b.Auth, b.MaxCPU, b.MaxMem, b.Status)
+	err = rows.Scan(&b.ID, &b.HostName, &b.IP, &b.Path, &b.OnlyAdmin, &b.MaxCPU, &b.MaxMem, &b.Status)
 
 	if err != nil {
 		fmt.Println(err)
@@ -77,7 +91,7 @@ func GetDBAllNode() []Node {
 	var bg []Node
 	for rows.Next() {
 		var b Node
-		err := rows.Scan(b.ID, b.HostName, b.IP, b.Port, b.Auth, b.MaxCPU, b.MaxMem, b.Status)
+		err := rows.Scan(&b.ID, &b.HostName, &b.IP, &b.Path, &b.OnlyAdmin, &b.MaxCPU, &b.MaxMem, &b.Status)
 		if err != nil {
 			log.Println(err)
 		}

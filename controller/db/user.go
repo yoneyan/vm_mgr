@@ -40,7 +40,7 @@ func PassAuthDBUser(name, pass string) bool {
 	if err := db.QueryRow("SELECT pass FROM userdata WHERE name = ?", name).Scan(&hash); err != nil {
 		fmt.Println(err)
 	}
-	fmt.Println("User Auth Success")
+	fmt.Println("User OnlyAdmin Success")
 
 	return etc.Verifyhashdata(pass, hash)
 }
