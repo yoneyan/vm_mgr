@@ -1,6 +1,7 @@
 package db
 
 import (
+	"database/sql"
 	"fmt"
 	"log"
 )
@@ -61,21 +62,22 @@ func NodeDBStatusUpdate(id, status int) bool {
 func GetDBNodeID(id int) (Node, bool) {
 	db := *connectdb()
 
-	rows, err := db.Query("SELECT * FROM node WHERE id = ?", id)
-	if err != nil {
-		fmt.Println(err)
-	}
-	defer rows.Close()
+	rows := db.QueryRow("SELECT * FROM node WHERE id = ?", id)
 
 	var b Node
-	err = rows.Scan(&b.ID, &b.HostName, &b.IP, &b.Path, &b.OnlyAdmin, &b.MaxCPU, &b.MaxMem, &b.Status)
+	err := rows.Scan(&b.ID, &b.HostName, &b.IP, &b.Path, &b.OnlyAdmin, &b.MaxCPU, &b.MaxMem, &b.Status)
 
-	if err != nil {
-		fmt.Println(err)
+	switch {
+	case err == sql.ErrNoRows:
+		fmt.Printf("Not found")
 		return b, false
+	case err != nil:
+		fmt.Println(err)
+		fmt.Println("Error: DBError")
+		return b, false
+	default:
+		return b, true
 	}
-
-	return b, true
 }
 
 func GetDBAllNode() []Node {

@@ -299,7 +299,7 @@ func GetAllVM(d *pb.Base, address string) {
 		if err != nil {
 			log.Fatal(err)
 		}
-		fmt.Printf("ID: " + strconv.Itoa(int(article.Option.Id)) + " Name: " + article.Vmname + " CPU: " + strconv.Itoa(int(article.Vcpu)) + " Mem: " + strconv.Itoa(int(article.Vmem)))
+		fmt.Printf("NodeID: " + strconv.Itoa(int(article.Node)) + " ID: " + strconv.Itoa(int(article.Option.Id)) + " Name: " + article.Vmname + " CPU: " + strconv.Itoa(int(article.Vcpu)) + " Mem: " + strconv.Itoa(int(article.Vmem)))
 		fmt.Println(" Net: " + article.Vnet + " AutoStart: " + strconv.FormatBool(article.Option.Autostart) + " status: " + strconv.Itoa(int(article.Option.Status)))
 	}
 }

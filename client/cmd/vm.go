@@ -48,9 +48,9 @@ vm create -n test -c 1 -m 1024 -p /home/yoneyan/test.qcow2 -s 1024 -N br100 -v 2
 `,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		stringArray := []string{"name", "storage_path", "cdrom", "vnet"}
-		int64Array := []string{"cpu", "mem", "storage", "vnc"}
+		int64Array := []string{"cpu", "mem", "storage", "vnc", "node"}
 		var resultStringArray [4]string
-		var resultInt64Array [4]int64
+		var resultInt64Array [5]int64
 		for i, b := range stringArray {
 			result, err := cmd.PersistentFlags().GetString(b)
 			if err != nil {
@@ -84,6 +84,7 @@ vm create -n test -c 1 -m 1024 -p /home/yoneyan/test.qcow2 -s 1024 -N br100 -v 2
 				Group: d[3],
 			},
 			Vmname:  resultStringArray[0],
+			Node:    int32(resultInt64Array[4]),
 			Vcpu:    resultInt64Array[0],
 			Vmem:    resultInt64Array[1],
 			Storage: resultInt64Array[2],
@@ -385,11 +386,12 @@ func Base(cmd *cobra.Command) []string {
 }
 
 func init() {
+	vmCreateCmd.PersistentFlags().Int64P("node", "r", 1, "nodeid")
 	vmCreateCmd.PersistentFlags().StringP("name", "n", "", "vm name")
-	vmCreateCmd.PersistentFlags().Int64P("cpu", "c", 0, "virtual cpu")
-	vmCreateCmd.PersistentFlags().Int64P("mem", "m", 0, "virtual memory")
+	vmCreateCmd.PersistentFlags().Int64P("cpu", "c", 1, "virtual cpu")
+	vmCreateCmd.PersistentFlags().Int64P("mem", "m", 512, "virtual memory")
 	vmCreateCmd.PersistentFlags().StringP("storage_path", "P", "", "storage path")
-	vmCreateCmd.PersistentFlags().Int64P("storage", "s", 0, "storage capacity")
+	vmCreateCmd.PersistentFlags().Int64P("storage", "s", 1024, "storage capacity")
 	vmCreateCmd.PersistentFlags().StringP("cdrom", "C", "", "cdrom path")
 	vmCreateCmd.PersistentFlags().StringP("vnet", "N", "", "virtual net")
 	vmCreateCmd.PersistentFlags().Int64P("vnc", "v", 0, "vnc port")
