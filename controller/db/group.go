@@ -9,13 +9,13 @@ import (
 //groupdata
 func AddDBGroup(data Group) bool {
 	db := connectdb()
-	addDb, err := db.Prepare(`INSERT INTO "groupdata" ("name","admin","user","maxcpu","maxmem","maxstorage","net") VALUES (?,?,?,?,?,?,?)`)
+	addDb, err := db.Prepare(`INSERT INTO "groupdata" ("name","admin","user","maxvm","maxcpu","maxmem","maxstorage","net") VALUES (?,?,?,?,?,?,?,?)`)
 	if err != nil {
 		panic(err)
 		return false
 	}
 
-	if _, err := addDb.Exec(data.Name, data.Admin, data.User, data.MaxCPU, data.MaxMem, data.MaxStorage, data.Net); err != nil {
+	if _, err := addDb.Exec(data.Name, data.Admin, data.User, data.MaxVM, data.MaxCPU, data.MaxMem, data.MaxStorage, data.Net); err != nil {
 		panic(err)
 		return false
 	}
@@ -45,7 +45,7 @@ func GetDBAllGroup() []Group {
 	var bg []Group
 	for rows.Next() {
 		var b Group
-		err := rows.Scan(&b.ID, &b.Name, &b.Admin, &b.User, &b.MaxCPU, &b.MaxMem, &b.MaxStorage, &b.Net)
+		err := rows.Scan(&b.ID, &b.Name, &b.Admin, &b.User, &b.MaxVM, &b.MaxCPU, &b.MaxMem, &b.MaxStorage, &b.Net)
 		if err != nil {
 			fmt.Println(err)
 		}
@@ -59,7 +59,7 @@ func GetDBGroup(id int) (Group, bool) {
 	rows := db.QueryRow("SELECT * FROM groupdata WHERE id = ?", id)
 
 	var b Group
-	err := rows.Scan(&b.ID, &b.Name, &b.Admin, &b.User, &b.MaxCPU, &b.MaxMem, &b.MaxStorage, &b.Net)
+	err := rows.Scan(&b.ID, &b.Name, &b.Admin, &b.User, &b.MaxVM, &b.MaxCPU, &b.MaxMem, &b.MaxStorage, &b.Net)
 
 	switch {
 	case err == sql.ErrNoRows:

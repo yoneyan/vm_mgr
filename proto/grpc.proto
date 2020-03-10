@@ -171,8 +171,9 @@ message GroupData {
 }
 
 message SpecData {
-    int32 maxcpu = 1;
-    int32 maxmem = 2;
-    int32 maxstorage = 3;
-    string net = 4;
+    int32 maxvm = 1;
+    int32 maxcpu = 2;
+    int32 maxmem = 3;
+    int32 maxstorage = 4;
+    string net = 5;
 }

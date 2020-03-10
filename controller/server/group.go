@@ -13,6 +13,7 @@ import (
 func (s *server) AddGroup(ctx context.Context, in *pb.GroupData) (*pb.Result, error) {
 	log.Println("----AddGroup----")
 	log.Println("Receive GroupName       : " + in.GetName())
+	log.Println("Receive GroupMaxVM      : " + strconv.Itoa(int(in.GetSepc().GetMaxvm())))
 	log.Println("Receive GroupMaxCPU     : " + strconv.Itoa(int(in.GetSepc().GetMaxcpu())))
 	log.Println("Receive GroupMaxMem     : " + strconv.Itoa(int(in.GetSepc().GetMaxmem())))
 	log.Println("Receive GroupMaxStorage : " + strconv.Itoa(int(in.GetSepc().GetMaxstorage())))
@@ -25,7 +26,7 @@ func (s *server) AddGroup(ctx context.Context, in *pb.GroupData) (*pb.Result, er
 	if data.ExistGroupCheck(in.GetName()) {
 		return &pb.Result{Status: false, Info: "Exists Group!!"}, nil
 	}
-	if db.AddDBGroup(db.Group{Name: in.GetName(), Admin: "", User: "", MaxCPU: int(in.GetSepc().GetMaxcpu()), MaxMem: int(in.GetSepc().GetMaxmem()), MaxStorage: int(in.GetSepc().GetMaxstorage()), Net: in.GetSepc().GetNet()}) {
+	if db.AddDBGroup(db.Group{Name: in.GetName(), Admin: "", User: "", MaxVM: int(in.GetSepc().GetMaxvm()), MaxCPU: int(in.GetSepc().GetMaxcpu()), MaxMem: int(in.GetSepc().GetMaxmem()), MaxStorage: int(in.GetSepc().GetMaxstorage()), Net: in.GetSepc().GetNet()}) {
 		return &pb.Result{Status: true, Info: "OK!"}, nil
 	} else {
 		return &pb.Result{Status: false, Info: "DB Error!!"}, nil
@@ -139,6 +140,7 @@ func (s *server) GetGroup(data *pb.GroupData, stream pb.Grpc_GetGroupServer) err
 				Admin: a.Admin,
 				User:  a.User,
 				Sepc: &pb.SpecData{
+					Maxvm:      int32(a.MaxVM),
 					Maxcpu:     int32(a.MaxCPU),
 					Maxmem:     int32(a.MaxMem),
 					Maxstorage: int32(a.MaxStorage),

@@ -46,7 +46,7 @@ var groupaddCmd = &cobra.Command{
 for example:
 
 group add otaku -H 127.0.0.1:50200 -u admin -p
-group add [GroupName] [Network] [MaxCPU] [MaxMem] [MaxStorage]`,
+group add [GroupName] [Network] [MaxVM] [MaxCPU] [MaxMem] [MaxStorage]`,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		if len(args) < 1 {
 			return errors.New("false")
@@ -69,7 +69,7 @@ group add [GroupName] [Network] [MaxCPU] [MaxMem] [MaxStorage]`,
 			return nil
 		}
 
-		data.AddGroup(&data.AuthData{Name: authuser, Pass1: authpass}, host, args[0], args[1], args[2], args[3], args[4])
+		data.AddGroup(&data.AuthData{Name: authuser, Pass1: authpass}, host, args[0], args[1], args[2], args[3], args[4], args[5])
 
 		fmt.Println("Process End")
 		return nil

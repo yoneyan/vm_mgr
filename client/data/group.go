@@ -11,7 +11,11 @@ import (
 	"time"
 )
 
-func AddGroup(a *AuthData, address, group, net, maxcpu, maxmem, maxstorage string) {
+func AddGroup(a *AuthData, address, group, net, maxvm, maxcpu, maxmem, maxstorage string) {
+	vm, err := strconv.Atoi(maxvm)
+	if err != nil {
+		log.Fatal("MaxCPU Error")
+	}
 	cpu, err := strconv.Atoi(maxcpu)
 	if err != nil {
 		log.Fatal("MaxCPU Error")
@@ -35,7 +39,7 @@ func AddGroup(a *AuthData, address, group, net, maxcpu, maxmem, maxstorage strin
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
 	defer cancel()
 
-	r, err := c.AddGroup(ctx, &pb.GroupData{Base: &pb.Base{User: a.Name, Pass: a.Pass1}, Name: group, Sepc: &pb.SpecData{Net: net, Maxcpu: int32(cpu), Maxmem: int32(mem), Maxstorage: int32(storage)}})
+	r, err := c.AddGroup(ctx, &pb.GroupData{Base: &pb.Base{User: a.Name, Pass: a.Pass1}, Name: group, Sepc: &pb.SpecData{Maxvm: int32(vm), Net: net, Maxcpu: int32(cpu), Maxmem: int32(mem), Maxstorage: int32(storage)}})
 	if err != nil {
 		log.Fatalf("could not greet: %v", err)
 	}
