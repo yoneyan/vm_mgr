@@ -45,19 +45,23 @@ service grpc {
     }
     rpc RemoveUser (UserData) returns (Result) {
     }
-    rpc GetUser (UserData) returns (Result) {
+    rpc GetUser (UserData) returns (stream UserData) {
     }
     rpc TestUserPass (UserData) returns (Result) {
+    }
+    rpc ChangeUserPass (UserData) returns (Result) {
+    }
+    rpc ChangeUserName (UserData) returns (Result) {
     }
     rpc AddGroup (GroupData) returns (Result) {
     }
     rpc RemoveGroup (GroupData) returns (Result) {
     }
-    rpc GetGroup (GroupData) returns (GroupData) {
+    rpc GetGroup (GroupData) returns (stream GroupData) {
     }
-    rpc UserAddGroup (GroupData) returns (GroupData) {
+    rpc UserAddGroup (GroupData) returns (Result) {
     }
-    rpc UserRemoveGroup (GroupData) returns (GroupData) {
+    rpc UserRemoveGroup (GroupData) returns (Result) {
     }
 }
 
@@ -149,9 +153,12 @@ message UserData {
     int64 id = 2;
     string user = 3;
     string pass = 4;
-    SpecData sepc = 5;
+    int32 mode = 5;
+    SpecData sepc = 6;
 }
 
+//Get : mode0 <-All mode1 <- Select mode2 <- MyGroup
+//Join: mode0 <- Admin mode1 <- User
 message GroupData {
     Base base = 1;
     int32 id = 2;
@@ -167,4 +174,5 @@ message SpecData {
     int32 maxcpu = 1;
     int32 maxmem = 2;
     int32 maxstorage = 3;
+    string net = 4;
 }
