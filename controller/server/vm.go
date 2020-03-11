@@ -383,7 +383,7 @@ func (s *server) ShutdownVM(ctx context.Context, in *pb.VMID) (*pb.Result, error
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
 	defer cancel()
 
-	r, err := c.ResetVM(ctx, &pb.VMID{Id: vmid})
+	r, err := c.ShutdownVM(ctx, &pb.VMID{Id: vmid})
 	if err != nil {
 		fmt.Printf("Not connect; ")
 		fmt.Println(err)
