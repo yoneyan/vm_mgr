@@ -3,10 +3,12 @@ package data
 import (
 	"context"
 	"fmt"
+	"github.com/olekukonko/tablewriter"
 	pb "github.com/yoneyan/vm_mgr/proto/proto-go"
 	"google.golang.org/grpc"
 	"io"
 	"log"
+	"os"
 	"strconv"
 	"time"
 )
@@ -64,6 +66,7 @@ func GetNode(a *AuthData, address string) {
 	if err != nil {
 		log.Fatal(err)
 	}
+	var data [][]string
 	for {
 		article, err := stream.Recv()
 		if err == io.EOF {
@@ -72,10 +75,17 @@ func GetNode(a *AuthData, address string) {
 		if err != nil {
 			log.Fatal(err)
 		}
-		fmt.Printf("ID: " + strconv.Itoa(int(article.NodeID)) + " IP: " + article.IP + " Path: " + article.Path)
-		fmt.Printf(" MaxCPU: " + strconv.Itoa(int(article.Sepc.Maxcpu)) + " MaxMem: " + strconv.Itoa(int(article.Sepc.Maxmem)))
-		fmt.Println(" Status: " + strconv.Itoa(int(article.Status)))
+		tmp := []string{strconv.Itoa(int(article.NodeID)), article.IP, article.Path, strconv.Itoa(int(article.Sepc.Maxcpu)),
+			strconv.Itoa(int(article.Sepc.Maxmem)), article.Sepc.Net, strconv.FormatBool(article.OnlyAdmin), strconv.Itoa(int(article.Status))}
+		data = append(data, tmp)
 	}
+	table := tablewriter.NewWriter(os.Stdout)
+	table.SetHeader([]string{"NodeID", "IP", "Path", "MaxCPU", "MaxMem", "Net", "OnlyAdmin", "Status"})
+
+	for _, v := range data {
+		table.Append(v)
+	}
+	table.Render()
 }
 
 func NodeStopVM(d *pb.NodeID, address string) {
