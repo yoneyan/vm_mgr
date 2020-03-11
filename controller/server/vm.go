@@ -298,7 +298,7 @@ func (s *server) GetAllVM(base *pb.Base, stream pb.Grpc_GetAllVMServer) error {
 			}
 			d = append(d, VMDataStruct{
 				NodeID:    a.ID,
-				ID:        int(article.Option.Id),
+				ID:        int(article.Option.Id) + (1000 * a.ID),
 				Name:      article.Vmname,
 				CPU:       int(article.Vcpu),
 				Mem:       int(article.Vmem),

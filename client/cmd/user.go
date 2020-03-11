@@ -87,7 +87,6 @@ var userremovecmd = &cobra.Command{
 			log.Fatalf("could not greet: %v", err)
 			return nil
 		}
-		fmt.Println("sa")
 		authuser, err := cmd.Flags().GetString("authuser")
 		if err != nil {
 			log.Fatalf("could not greet: %v", err)
@@ -127,7 +126,6 @@ user get all -u test -p test -H 127.0.0.1:50200`,
 			log.Fatalf("could not greet: %v", err)
 			return nil
 		}
-		fmt.Println("sa")
 		authuser, err := cmd.Flags().GetString("authuser")
 		if err != nil {
 			log.Fatalf("could not greet: %v", err)
@@ -167,7 +165,6 @@ user change pass [username] [newpass]`,
 			log.Fatalf("could not greet: %v", err)
 			return nil
 		}
-		fmt.Println("sa")
 		authuser, err := cmd.Flags().GetString("authuser")
 		if err != nil {
 			log.Fatalf("could not greet: %v", err)

@@ -3,10 +3,12 @@ package data
 import (
 	"context"
 	"fmt"
+	"github.com/olekukonko/tablewriter"
 	pb "github.com/yoneyan/vm_mgr/proto/proto-go"
 	"google.golang.org/grpc"
 	"io"
 	"log"
+	"os"
 	_ "os"
 	"strconv"
 	"time"
@@ -291,15 +293,26 @@ func GetAllVM(d *pb.Base, address string) {
 		log.Fatal(err)
 	}
 
+	var data [][]string
+	i := 0
+
 	for {
 		article, err := stream.Recv()
+		i++
 		if err == io.EOF {
 			break
 		}
 		if err != nil {
 			log.Fatal(err)
 		}
-		fmt.Printf("NodeID: " + strconv.Itoa(int(article.Node)) + " ID: " + strconv.Itoa(int(article.Option.Id)) + " Name: " + article.Vmname + " CPU: " + strconv.Itoa(int(article.Vcpu)) + " Mem: " + strconv.Itoa(int(article.Vmem)))
-		fmt.Println(" Net: " + article.Vnet + " AutoStart: " + strconv.FormatBool(article.Option.Autostart) + " status: " + strconv.Itoa(int(article.Option.Status)))
+		tmp := []string{strconv.Itoa(int(article.Node)), strconv.Itoa(int(article.Option.Id)), article.Vmname, strconv.Itoa(int(article.Vcpu)), strconv.Itoa(int(article.Vmem)), article.Vnet, strconv.FormatBool(article.Option.Autostart), strconv.Itoa(int(article.Option.Status))}
+		data = append(data, tmp)
 	}
+	table := tablewriter.NewWriter(os.Stdout)
+	table.SetHeader([]string{"NodeID", "ID", "Name", "CPU", "Mem", "Net", "AutoStart", "Status"})
+
+	for _, v := range data {
+		table.Append(v)
+	}
+	table.Render()
 }

@@ -3,10 +3,12 @@ package data
 import (
 	"context"
 	"fmt"
+	"github.com/olekukonko/tablewriter"
 	pb "github.com/yoneyan/vm_mgr/proto/proto-go"
 	"google.golang.org/grpc"
 	"io"
 	"log"
+	"os"
 	"strconv"
 	"time"
 )
@@ -86,6 +88,7 @@ func GetAllGroup(a *AuthData, address string) {
 	if err != nil {
 		log.Fatal(err)
 	}
+	var data [][]string
 	for {
 		article, err := stream.Recv()
 		if err == io.EOF {
@@ -94,10 +97,19 @@ func GetAllGroup(a *AuthData, address string) {
 		if err != nil {
 			log.Fatal(err)
 		}
-		fmt.Printf("ID: " + strconv.Itoa(int(article.Id)) + " Name: " + article.Name + " Admin: " + article.Admin + " User: " + article.User)
-		fmt.Printf(" MaxCPU: " + strconv.Itoa(int(article.Sepc.Maxcpu)) + " MaxMem: " + strconv.Itoa(int(article.Sepc.Maxmem)) + " MaxStorage: " + strconv.Itoa(int(article.Sepc.Maxstorage)))
-		fmt.Println(" Net: " + article.Sepc.Net)
+		tmp := []string{strconv.Itoa(int(article.Id)), article.Name, article.Admin, article.User,
+			strconv.Itoa(int(article.Sepc.Maxcpu)), strconv.Itoa(int(article.Sepc.Maxmem)), strconv.Itoa(int(article.Sepc.Maxstorage)),
+			article.Sepc.Net}
+		data = append(data, tmp)
+
 	}
+	table := tablewriter.NewWriter(os.Stdout)
+	table.SetHeader([]string{"ID", "Name", "Admin", "User", "MaxCPU", "MaxMem", "MaxStorage", "Net"})
+
+	for _, v := range data {
+		table.Append(v)
+	}
+	table.Render()
 }
 
 func GetSelectGroup(a *AuthData, address, name string) {

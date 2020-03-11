@@ -2,11 +2,12 @@ package data
 
 import (
 	"context"
-	"fmt"
+	"github.com/olekukonko/tablewriter"
 	pb "github.com/yoneyan/vm_mgr/proto/proto-go"
 	"google.golang.org/grpc"
 	"io"
 	"log"
+	"os"
 	_ "os"
 	"strconv"
 	"time"
@@ -77,6 +78,7 @@ func GetAllUser(a *AuthData, address string) {
 	if err != nil {
 		log.Fatal(err)
 	}
+	var data [][]string
 	for {
 		article, err := stream.Recv()
 		if err == io.EOF {
@@ -85,8 +87,16 @@ func GetAllUser(a *AuthData, address string) {
 		if err != nil {
 			log.Fatal(err)
 		}
-		fmt.Println("ID: " + strconv.Itoa(int(article.Id)) + " Name: " + article.User)
+		tmp := []string{strconv.Itoa(int(article.Id)), article.User}
+		data = append(data, tmp)
 	}
+	table := tablewriter.NewWriter(os.Stdout)
+	table.SetHeader([]string{"UserID", "User"})
+
+	for _, v := range data {
+		table.Append(v)
+	}
+	table.Render()
 }
 
 func UserNameChange(a *AuthData, address, user, pass string) {
