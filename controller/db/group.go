@@ -3,7 +3,6 @@ package db
 import (
 	"database/sql"
 	"fmt"
-	"log"
 )
 
 //groupdata
@@ -28,7 +27,7 @@ func RemoveDBGroup(id int) bool {
 	deletedb := "DELETE FROM groupdata WHERE id = ?"
 	_, err := db.Exec(deletedb, id)
 	if err != nil {
-		log.Fatalln(err)
+		fmt.Println(err)
 		return false
 	}
 	return true

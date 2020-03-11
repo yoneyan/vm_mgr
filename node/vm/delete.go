@@ -12,8 +12,9 @@ func DeleteVMProcess(id int) (string, bool) {
 		fmt.Println("VMID Not Found!!")
 		return "VMID Not Found!!", false
 	}
-	err := VMStop(id)
-	if err != nil {
+	info, result := VMStop(id)
+	if result == false {
+		fmt.Println(info)
 		fmt.Println("Already stopped!!")
 	} else {
 		fmt.Println("Stop process end!!")

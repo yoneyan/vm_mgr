@@ -30,7 +30,6 @@ func RunQEMUMonitor(command, socket string) error {
 }
 func RunQEMUCmd(command []string) error {
 	fmt.Println("----CommandRun")
-	time.Sleep(time.Second * 1)
 	//cmd = append(cmd,"-") //Intel VT-d support enable
 	cmd := exec.Command("qemu-system-x86_64", command...)
 
@@ -43,10 +42,14 @@ func RunQEMUCmd(command []string) error {
 	//go manage.VMLifeCheck(command[2], cmd)
 	go func() {
 		cmd.Start()
-		fmt.Println("VMName: "+command[2]+" StartTime: ", time.Now().Format("15:04:05"))
+		fmt.Println("--------------------------------")
+		fmt.Println("VMName: "+command[2]+" StartTime: ", time.Now().Format("2006-01-02 15:04:05"))
+		fmt.Println("--------------------------------")
 		cmd.Wait()
 		db.VMDBStatusUpdate(id, 0)
-		fmt.Println("VMName: "+command[2]+" EndTime: ", time.Now().Format("15:04:05"))
+		fmt.Println("--------------------------------")
+		fmt.Println("VMName: "+command[2]+" EndTime: ", time.Now().Format("2006-01-02 15:04:05"))
+		fmt.Println("--------------------------------")
 	}()
 	return nil
 }
