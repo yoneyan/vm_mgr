@@ -34,12 +34,9 @@ func CreateVM(d *pb.VMData, address string) {
 	if err != nil {
 		log.Fatalf("could not greet: %v", err)
 	}
-	log.Printf("Greeting: %s", r.GetStatus())
-	log.Printf("Status: ")
-	log.Println(r.Status)
 
-	log.Printf("Info: ")
-	log.Println(r.Info)
+	log.Printf("Status : %t", r.GetStatus())
+	log.Printf("Info   : %s", r.GetInfo())
 }
 
 func DeleteVM(d *pb.VMID, address string) {
@@ -62,12 +59,8 @@ func DeleteVM(d *pb.VMID, address string) {
 	if err != nil {
 		log.Fatalf("could not greet: %v", err)
 	}
-	log.Printf("Greeting: %s", r.GetStatus())
-	log.Printf("Status: ")
-	log.Println(r.Status)
-
-	log.Printf("Info: ")
-	log.Println(r.Info)
+	log.Printf("Status : %t", r.GetStatus())
+	log.Printf("Info   : %s", r.GetInfo())
 }
 
 func StartVM(d *pb.VMID, address string) bool {
@@ -91,7 +84,8 @@ func StartVM(d *pb.VMID, address string) bool {
 	if err != nil {
 		log.Fatalf("could not greet: %v", err)
 	}
-	log.Printf("Greeting: %s", r.GetStatus())
+	log.Printf("Status : %t", r.GetStatus())
+	log.Printf("Info   : %s", r.GetInfo())
 	return r.GetStatus()
 }
 
@@ -116,7 +110,8 @@ func StopVM(d *pb.VMID, address string) bool {
 	if err != nil {
 		log.Fatalf("could not greet: %v", err)
 	}
-	log.Printf("Greeting: %s", r.GetStatus())
+	log.Printf("Status : %t", r.GetStatus())
+	log.Printf("Info   : %s", r.GetInfo())
 	return r.GetStatus()
 }
 
@@ -141,7 +136,8 @@ func ShutdownVM(d *pb.VMID, address string) bool {
 	if err != nil {
 		log.Fatalf("could not greet: %v", err)
 	}
-	log.Printf("Greeting: %s", r.GetStatus())
+	log.Printf("Status : %t", r.GetStatus())
+	log.Printf("Info   : %s", r.GetInfo())
 	return r.GetStatus()
 }
 
@@ -166,7 +162,8 @@ func ResetVM(d *pb.VMID, address string) bool {
 	if err != nil {
 		log.Fatalf("could not greet: %v", err)
 	}
-	log.Printf("Greeting: %s", r.GetStatus())
+	log.Printf("Status : %t", r.GetStatus())
+	log.Printf("Info   : %s", r.GetInfo())
 	return r.GetStatus()
 }
 
@@ -191,7 +188,8 @@ func PauseVM(d *pb.VMID, address string) bool {
 	if err != nil {
 		log.Fatalf("could not greet: %v", err)
 	}
-	log.Printf("Greeting: %s", r.GetStatus())
+	log.Printf("Status : %t", r.GetStatus())
+	log.Printf("Info   : %s", r.GetInfo())
 	return r.GetStatus()
 }
 
@@ -216,7 +214,9 @@ func ResumeVM(d *pb.VMID, address string) bool {
 	if err != nil {
 		log.Fatalf("could not greet: %v", err)
 	}
-	log.Printf("Greeting: %s", r.GetStatus())
+
+	log.Printf("Status : %t", r.GetStatus())
+	log.Printf("Info   : %s", r.GetInfo())
 	return r.GetStatus()
 }
 
@@ -305,7 +305,15 @@ func GetAllVM(d *pb.Base, address string) {
 		if err != nil {
 			log.Fatal(err)
 		}
-		tmp := []string{strconv.Itoa(int(article.Node)), strconv.Itoa(int(article.Option.Id)), article.Vmname, strconv.Itoa(int(article.Vcpu)), strconv.Itoa(int(article.Vmem)), article.Vnet, strconv.FormatBool(article.Option.Autostart), strconv.Itoa(int(article.Option.Status))}
+		var status string
+		if article.Option.Status == 0 {
+			status = "Power Off"
+		} else if article.Option.Status == 1 {
+			status = "Power On"
+		} else {
+			status = strconv.Itoa(int(article.Option.Status))
+		}
+		tmp := []string{strconv.Itoa(int(article.Node)), strconv.Itoa(int(article.Option.Id)), article.Vmname, strconv.Itoa(int(article.Vcpu)), strconv.Itoa(int(article.Vmem)), article.Vnet, strconv.FormatBool(article.Option.Autostart), status}
 		data = append(data, tmp)
 	}
 	table := tablewriter.NewWriter(os.Stdout)
