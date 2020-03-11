@@ -7,24 +7,24 @@ import (
 	"strconv"
 )
 
-func StartVMProcess(id int) bool {
+func StartVMProcess(id int) (string, bool) {
 	fmt.Println("-----StartVMProcess-----")
 	if manage.VMExistsID(id) == false {
 		fmt.Println("VM Not Found!!")
-		return false
+		return "VM Not Found!!", false
 	}
 	data, err := db.VMDBGetData(id)
 	if err != nil {
 		fmt.Println("VM Data Not Found!!")
-		return false
+		return "VM Data Not Found!!", false
 	}
 	status, err := db.VMDBGetVMStatus(id)
 	if status == 1 {
 		fmt.Println("VM is power on!!")
-		return false
+		return "VM is power on!!", false
 	} else if status > 1 || status < 0 {
 		fmt.Println("VM status is error!! status: " + strconv.Itoa(status))
-		return false
+		return "VM status is error!! status: " + strconv.Itoa(status), false
 	}
 	var c CreateVMInformation
 	c.Name = data.Name
@@ -40,15 +40,15 @@ func StartVMProcess(id int) bool {
 	if err != nil {
 		fmt.Println(err)
 
-		return false
+		return "QEMURunError!!", false
 	}
 
 	fmt.Println("Start End")
 	result := db.VMDBStatusUpdate(id, 1)
 	if result {
-		return true
+		return "ok", true
 	} else {
-		return false
+		return "Status Update Error!!", false
 	}
 
 }

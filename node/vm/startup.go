@@ -17,13 +17,14 @@ func StartupProcess() {
 	}
 	fmt.Printf(" AutoStartVMID: ")
 	for i, _ := range autostart {
-		if StartVMProcess(autostart[i]) {
+		info, result := StartVMProcess(autostart[i])
+		if result {
 			fmt.Printf("Start VMID: %d", i)
 		} else {
+			fmt.Println(info)
 			fmt.Printf("Failed start VMID: %d", i)
 		}
 
 	}
-	fmt.Println()
 	fmt.Println("Start process is end!!")
 }
