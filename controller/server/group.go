@@ -127,10 +127,15 @@ func (s *server) UserRemoveGroup(ctx context.Context, in *pb.GroupData) (*pb.Res
 	}
 }
 
-func (s *server) GetGroup(data *pb.GroupData, stream pb.Grpc_GetGroupServer) error {
+func (s *server) GetGroup(d *pb.GroupData, stream pb.Grpc_GetGroupServer) error {
 	log.Println("----GetGroup----")
-	if data.Mode == 0 {
+	log.Println("Receive AuthUser  : " + d.GetBase().GetUser() + ", AuthPass: " + d.GetBase().GetPass())
+	if d.Mode == 0 {
 		log.Printf("Receive GetAllGroup")
+		if data.AdminUserCertification(d.GetBase().GetUser(), d.GetBase().GetPass()) == false {
+			fmt.Println("Failed authentication")
+			return nil
+		}
 		fmt.Println(db.GetDBAllGroup())
 		result := db.GetDBAllGroup()
 		for _, a := range result {
@@ -150,9 +155,9 @@ func (s *server) GetGroup(data *pb.GroupData, stream pb.Grpc_GetGroupServer) err
 				return err
 			}
 		}
-	} else if data.Mode == 1 {
+	} else if d.Mode == 1 {
 		log.Printf("Receive GetAllGroup")
-	} else if data.Mode == 2 {
+	} else if d.Mode == 2 {
 		log.Printf("Receive GetAllGroup")
 	} else {
 		log.Printf("Mode error!!!")

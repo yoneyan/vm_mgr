@@ -47,8 +47,10 @@ func (s *server) CreateVM(ctx context.Context, in *pb.VMData) (*pb.Result, error
 	pass := in.GetBase().GetPass()
 	group := in.GetBase().GetGroup()
 
-	if data.AdminUserCertification(user, pass) == false || data.GroupAdminCertification(user, pass, group) == false {
-		return &pb.Result{Status: false, Info: "Auth Failed!!"}, nil
+	if data.AdminUserCertification(user, pass) == false {
+		if data.GroupAdminCertification(user, pass, group) == false {
+			return &pb.Result{Status: false, Info: "Auth Failed!!"}, nil
+		}
 	}
 	d, result := db.GetDBNodeID(int(in.GetNode()))
 	fmt.Println(d)
@@ -64,7 +66,12 @@ func (s *server) CreateVM(ctx context.Context, in *pb.VMData) (*pb.Result, error
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
 	defer cancel()
 
-	name := strconv.Itoa(int(in.GetNode())) + "-" + strconv.Itoa(0) + "-" + in.GetVmname()
+	groupid, result := db.GetDBGroupID(group)
+	if result == false {
+		return &pb.Result{Status: false, Info: "GroupID Not Found!!"}, nil
+	}
+
+	name := strconv.Itoa(groupid) + "-" + strconv.Itoa(0) + "-" + in.GetVmname()
 	fmt.Println("Name: " + name)
 
 	r, err := c.CreateVM(ctx, &pb.VMData{
@@ -142,17 +149,20 @@ func (s *server) StartVM(ctx context.Context, in *pb.VMID) (*pb.Result, error) {
 	pass := in.GetBase().GetPass()
 	group := in.GetBase().GetGroup()
 
-	if data.AdminUserCertification(user, pass) == false || data.GroupAdminCertification(user, pass, group) == false || data.GroupUserCertification(user, pass, group) == false {
-		return &pb.Result{Status: false, Info: "Auth Failed!!"}, nil
-	}
-
 	d, result := db.GetDBNodeID(int(nodeid))
 	if result == false {
 		return &pb.Result{Status: false, Info: "Node Not Found!!"}, nil
 	}
-	info, result := data.VMCertification(int(vmid), d.ID, d.IP)
-	if result == false {
-		return &pb.Result{Status: false, Info: info}, nil
+	if data.AdminUserCertification(user, pass) == false {
+		if data.GroupAdminCertification(user, pass, group) == false {
+			if data.GroupUserCertification(user, pass, group) == false {
+				return &pb.Result{Status: false, Info: "Auth Failed!!"}, nil
+			}
+			info, result := data.VMCertification(int(vmid), d.ID, d.IP)
+			if result == false {
+				return &pb.Result{Status: false, Info: info}, nil
+			}
+		}
 	}
 	conn, err := grpc.Dial(d.IP, grpc.WithInsecure(), grpc.WithBlock())
 	if err != nil {
@@ -172,7 +182,7 @@ func (s *server) StartVM(ctx context.Context, in *pb.VMID) (*pb.Result, error) {
 
 func (s *server) StopVM(ctx context.Context, in *pb.VMID) (*pb.Result, error) {
 	fmt.Println("----------StartVM-----")
-	log.Println("Receive VMID  : %v", in.GetId())
+	log.Println("Receive VMID  : %s", in.GetId())
 	log.Println("Receive AuthUser  : " + in.GetBase().GetUser() + ", AuthPass: " + in.GetBase().GetPass() + ", Group: " + in.GetBase().GetGroup())
 
 	nodeid := in.GetId() / 1000
@@ -182,18 +192,24 @@ func (s *server) StopVM(ctx context.Context, in *pb.VMID) (*pb.Result, error) {
 	pass := in.GetBase().GetPass()
 	group := in.GetBase().GetGroup()
 
-	if data.AdminUserCertification(user, pass) == false || data.GroupAdminCertification(user, pass, group) == false || data.GroupUserCertification(user, pass, group) == false {
-		return &pb.Result{Status: false, Info: "Auth Failed!!"}, nil
-	}
-
 	d, result := db.GetDBNodeID(int(nodeid))
 	if result == false {
+		fmt.Println("DBNodeID Error")
 		return &pb.Result{Status: false, Info: "Node Not Found!!"}, nil
 	}
-	info, result := data.VMCertification(int(vmid), d.ID, d.IP)
-	if result == false {
-		return &pb.Result{Status: false, Info: info}, nil
+
+	if data.AdminUserCertification(user, pass) == false {
+		if data.GroupAdminCertification(user, pass, group) == false {
+			if data.GroupUserCertification(user, pass, group) == false {
+				return &pb.Result{Status: false, Info: "Auth Failed!!"}, nil
+			}
+			info, result := data.VMCertification(int(vmid), d.ID, d.IP)
+			if result == false {
+				return &pb.Result{Status: false, Info: info}, nil
+			}
+		}
 	}
+
 	conn, err := grpc.Dial(d.IP, grpc.WithInsecure(), grpc.WithBlock())
 	if err != nil {
 		log.Fatalf("Not connect; %v", err)
@@ -202,6 +218,7 @@ func (s *server) StopVM(ctx context.Context, in *pb.VMID) (*pb.Result, error) {
 	c := pb.NewGrpcClient(conn)
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
 	defer cancel()
+	fmt.Println(d.IP)
 
 	r, err := c.StopVM(ctx, &pb.VMID{Id: vmid})
 	if err != nil {
