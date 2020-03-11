@@ -110,8 +110,10 @@ func (s *server) DeleteVM(ctx context.Context, in *pb.VMID) (*pb.Result, error) 
 	pass := in.GetBase().GetPass()
 	group := in.GetBase().GetGroup()
 
-	if data.AdminUserCertification(user, pass) == false || data.GroupAdminCertification(user, pass, group) == false {
-		return &pb.Result{Status: false, Info: "Auth Failed!!"}, nil
+	if data.AdminUserCertification(user, pass) == false {
+		if data.GroupAdminCertification(user, pass, group) == false {
+			return &pb.Result{Status: false, Info: "Auth Failed!!"}, nil
+		}
 	}
 
 	d, result := db.GetDBNodeID(int(nodeid))
