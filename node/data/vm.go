@@ -59,10 +59,10 @@ func (s *server) DeleteVM(ctx context.Context, in *pb.VMID) (*pb.Result, error) 
 	info, result := vm.DeleteVMProcess(int(in.GetId()))
 	if result {
 		fmt.Println("Delete success!!")
-		return &pb.Result{Status: true, Info: info}, nil
+		return &pb.Result{Status: true, Info: "ok"}, nil
 	} else {
 		fmt.Println("Delete Failed....")
-		return &pb.Result{Status: false, Info: "Delete Failed!!"}, nil
+		return &pb.Result{Status: false, Info: info}, nil
 	}
 }
 
@@ -71,7 +71,7 @@ func (s *server) StartVM(ctx context.Context, in *pb.VMID) (*pb.Result, error) {
 	log.Printf("Receive VMID: %v", in.GetId())
 	info, result := vm.StartVMProcess(int(in.GetId()))
 	if result {
-		return &pb.Result{Status: true, Info: info}, nil
+		return &pb.Result{Status: true, Info: "ok"}, nil
 	} else {
 		return &pb.Result{Status: false, Info: info}, nil
 	}
@@ -80,13 +80,13 @@ func (s *server) StartVM(ctx context.Context, in *pb.VMID) (*pb.Result, error) {
 func (s *server) StopVM(ctx context.Context, in *pb.VMID) (*pb.Result, error) {
 	fmt.Println("----------StopVM-----")
 	log.Printf("Receive VMID: %v", in.GetId())
-	err := vm.VMStop(int(in.GetId()))
-	if err != nil {
+	info, result := vm.VMStop(int(in.GetId()))
+	if result == false {
 		fmt.Println("VMStop Error!!")
-		return &pb.Result{Status: true, Info: "VMStop Error!!"}, nil
+		return &pb.Result{Status: false, Info: info}, nil
 	}
 
-	return &pb.Result{Status: true}, nil
+	return &pb.Result{Status: true, Info: "ok!!"}, nil
 }
 
 func (s *server) GetVM(ctx context.Context, in *pb.VMID) (*pb.VMData, error) {
