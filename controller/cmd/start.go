@@ -30,7 +30,7 @@ import (
 // startCmd represents the start command
 var startCmd = &cobra.Command{
 	Use:   "start",
-	Short: "start client server",
+	Short: "start controller server",
 	Long:  ``,
 	Run: func(cmd *cobra.Command, args []string) {
 		server.Server()

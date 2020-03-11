@@ -35,7 +35,7 @@ service grpc {
     }
     rpc GetNode (Base) returns (stream NodeData) {
     }
-    rpc DeleteNode (NodeID) returns (Result) {
+    rpc RemoveNode (NodeID) returns (Result) {
     }
     rpc StartNode (NodeID) returns (Result) {
     }
@@ -45,19 +45,23 @@ service grpc {
     }
     rpc RemoveUser (UserData) returns (Result) {
     }
-    rpc GetUser (UserData) returns (Result) {
+    rpc GetUser (UserData) returns (stream UserData) {
     }
     rpc TestUserPass (UserData) returns (Result) {
+    }
+    rpc ChangeUserPass (UserData) returns (Result) {
+    }
+    rpc ChangeUserName (UserData) returns (Result) {
     }
     rpc AddGroup (GroupData) returns (Result) {
     }
     rpc RemoveGroup (GroupData) returns (Result) {
     }
-    rpc GetGroup (GroupData) returns (GroupData) {
+    rpc GetGroup (GroupData) returns (stream GroupData) {
     }
-    rpc UserAddGroup (GroupData) returns (GroupData) {
+    rpc UserAddGroup (GroupData) returns (Result) {
     }
-    rpc UserRemoveGroup (GroupData) returns (GroupData) {
+    rpc UserRemoveGroup (GroupData) returns (Result) {
     }
 }
 
@@ -86,10 +90,11 @@ message VMData {
 message Option {
     string storage_path = 1;
     string cdrom_path = 2;
-    int32 vnc = 3;
-    int64 id = 4;
-    bool autostart = 5;
-    int32 status = 6;
+    int32 image = 3;
+    int32 vnc = 4;
+    int64 id = 5;
+    bool autostart = 6;
+    int32 status = 7;
 }
 
 message SnapshotOperationData {
@@ -137,9 +142,9 @@ message NodeData {
     int32 NodeID = 2;
     string hostname = 3;
     string IP = 4;
-    int32 port = 5;
-    int32 auth = 6;
-    bool status = 7;
+    string path = 5;
+    bool onlyAdmin = 6;
+    int32 status = 7;
     bool enable = 8;
     SpecData sepc = 9;
 }
@@ -149,9 +154,12 @@ message UserData {
     int64 id = 2;
     string user = 3;
     string pass = 4;
-    SpecData sepc = 5;
+    int32 mode = 5;
+    SpecData sepc = 6;
 }
 
+//Get : mode0 <-All mode1 <- Select mode2 <- MyGroup
+//Join: mode0 <- Admin mode1 <- User
 message GroupData {
     Base base = 1;
     int32 id = 2;
@@ -164,7 +172,9 @@ message GroupData {
 }
 
 message SpecData {
-    int32 maxcpu = 1;
-    int32 maxmem = 2;
-    int32 maxstorage = 3;
+    int32 maxvm = 1;
+    int32 maxcpu = 2;
+    int32 maxmem = 3;
+    int32 maxstorage = 4;
+    string net = 5;
 }

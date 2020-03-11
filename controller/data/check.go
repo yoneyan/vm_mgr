@@ -17,6 +17,19 @@ func CreateVMCheck(d *grpc.VMData) bool {
 	return true
 }
 
+func ExistNodeCheck(name, ip string) (string, bool) {
+	data := db.GetDBAllNode()
+	for _, a := range data {
+		if a.HostName == name {
+			return "Exists HostName", true
+		}
+		if a.IP == ip {
+			return "Exists IP", true
+		}
+	}
+	return "not found", false
+}
+
 func ExistGroupCheck(name string) bool {
 	data := db.GetDBAllGroup()
 	for _, a := range data {
@@ -39,6 +52,7 @@ func ExistUserCheck(name string) bool {
 	return false
 }
 
+//Exists All Group User
 func GroupAllUserCheck(name string) bool {
 	data := db.GetDBAllGroup()
 	for i, _ := range data {

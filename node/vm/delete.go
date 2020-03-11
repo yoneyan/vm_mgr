@@ -6,19 +6,20 @@ import (
 	"github.com/yoneyan/vm_mgr/node/manage"
 )
 
-func DeleteVMProcess(id int) bool {
+func DeleteVMProcess(id int) (string, bool) {
 	result := manage.VMExistsID(id)
 	if result == false {
 		fmt.Println("VMID Not Found!!")
-		return false
+		return "VMID Not Found!!", false
 	}
-	err := VMStop(id)
-	if err != nil {
+	info, result := VMStop(id)
+	if result == false {
+		fmt.Println(info)
 		fmt.Println("Already stopped!!")
 	} else {
 		fmt.Println("Stop process end!!")
 	}
 
 	db.DeleteDBVM(id)
-	return true
+	return "ok", true
 }

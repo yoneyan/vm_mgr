@@ -7,10 +7,10 @@ import (
 	"github.com/yoneyan/vm_mgr/node/manage"
 )
 
-func VMStop(id int) error {
+func VMStop(id int) (string, bool) {
 	if manage.VMExistsID(id) == false {
 		fmt.Println("VMID Error")
-		return nil
+		return "Not Found VMID", false
 	}
 
 	result, err := db.VMDBGetData(id)
@@ -20,7 +20,7 @@ func VMStop(id int) error {
 		fmt.Println("Power Off State")
 	} else {
 		fmt.Println("Power State Error")
-		return nil
+		return "Power State Error!!", false
 	}
 
 	fmt.Println(result)
@@ -50,7 +50,7 @@ func VMStop(id int) error {
 	} else {
 		fmt.Println("state Error!!")
 	}
-	return nil
+	return "ok", true
 }
 
 func StopProcess() {
@@ -66,9 +66,10 @@ func StopProcess() {
 	fmt.Println(status)
 
 	for i, _ := range status {
-		err := VMStop(status[i])
+		info, result := VMStop(status[i])
 		{
-			if err != nil {
+			if result == false {
+				fmt.Println(info)
 				fmt.Printf("Failed stop VMID: %d", i)
 			}
 			fmt.Printf("Start VMID: %d", i)

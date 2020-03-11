@@ -22,7 +22,7 @@ type CreateVMInformation struct {
 	AutoStart   bool
 }
 
-func CreateVMProcess(c *CreateVMInformation) (bool, string) {
+func CreateVMProcess(c *CreateVMInformation) (string, bool) {
 	fmt.Println("----VMNewCreate")
 
 	if manage.VMVncExistsCheck(c.VNC) {
@@ -52,14 +52,14 @@ func CreateVMProcess(c *CreateVMInformation) (bool, string) {
 			if err != nil {
 				fmt.Println(err)
 				log.Fatal("VMNewCreate Error!!")
-				return false, "Error: RunQEMUCmd"
+				return "Error: RunQEMUCmd", false
 			} else {
 				db.VMDBStatusUpdate(c.ID, 1)
 			}
 		}
 	}
 
-	return true, "ok"
+	return "ok", true
 }
 
 func CreateVMDBProcess(c *CreateVMInformation) {

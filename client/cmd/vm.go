@@ -25,7 +25,7 @@ import (
 	"errors"
 	"fmt"
 	"github.com/spf13/cobra"
-	"github.com/yoneyan/vm_mgr/client/data/direct"
+	"github.com/yoneyan/vm_mgr/client/data"
 	"github.com/yoneyan/vm_mgr/proto/proto-go"
 	"log"
 	"strconv"
@@ -48,9 +48,9 @@ vm create -n test -c 1 -m 1024 -p /home/yoneyan/test.qcow2 -s 1024 -N br100 -v 2
 `,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		stringArray := []string{"name", "storage_path", "cdrom", "vnet"}
-		int64Array := []string{"cpu", "mem", "storage", "vnc"}
+		int64Array := []string{"cpu", "mem", "storage", "vnc", "node"}
 		var resultStringArray [4]string
-		var resultInt64Array [4]int64
+		var resultInt64Array [5]int64
 		for i, b := range stringArray {
 			result, err := cmd.PersistentFlags().GetString(b)
 			if err != nil {
@@ -65,6 +65,7 @@ vm create -n test -c 1 -m 1024 -p /home/yoneyan/test.qcow2 -s 1024 -N br100 -v 2
 				log.Fatalf("could not greet: %v", err)
 				return nil
 			}
+
 			resultInt64Array[i] = result
 		}
 
@@ -74,8 +75,16 @@ vm create -n test -c 1 -m 1024 -p /home/yoneyan/test.qcow2 -s 1024 -N br100 -v 2
 			return nil
 		}
 
+		d := Base(cmd)
+
 		c := grpc.VMData{
+			Base: &grpc.Base{
+				User:  d[1],
+				Pass:  d[2],
+				Group: d[3],
+			},
 			Vmname:  resultStringArray[0],
+			Node:    int32(resultInt64Array[4]),
 			Vcpu:    resultInt64Array[0],
 			Vmem:    resultInt64Array[1],
 			Storage: resultInt64Array[2],
@@ -87,7 +96,7 @@ vm create -n test -c 1 -m 1024 -p /home/yoneyan/test.qcow2 -s 1024 -N br100 -v 2
 				Autostart:   autostart,
 			},
 		}
-		direct.CreateVM(&c)
+		data.CreateVM(&c, d[0])
 		fmt.Println("Process End")
 		return nil
 	},
@@ -104,7 +113,16 @@ var vmDeleteCmd = &cobra.Command{
 		if result < 0 {
 			return errors.New("value failed")
 		}
-		direct.DeleteVM(int64(result))
+		d := Base(cmd)
+		c := grpc.VMID{
+			Base: &grpc.Base{
+				User:  d[1],
+				Pass:  d[2],
+				Group: d[3],
+			},
+			Id: int64(result),
+		}
+		data.DeleteVM(&c, d[0])
 		fmt.Println("Process End")
 		return nil
 	},
@@ -122,7 +140,16 @@ var vmStartCmd = &cobra.Command{
 		if result < 0 {
 			return errors.New("value failed")
 		}
-		direct.StartVM(int64(result))
+		d := Base(cmd)
+		c := grpc.VMID{
+			Base: &grpc.Base{
+				User:  d[1],
+				Pass:  d[2],
+				Group: d[3],
+			},
+			Id: int64(result),
+		}
+		data.StartVM(&c, d[0])
 		fmt.Println("Process End")
 		return nil
 	},
@@ -140,7 +167,17 @@ var vmStopCmd = &cobra.Command{
 		if result < 0 {
 			return errors.New("value failed")
 		}
-		direct.StopVM(int64(result))
+
+		d := Base(cmd)
+		c := grpc.VMID{
+			Base: &grpc.Base{
+				User:  d[1],
+				Pass:  d[2],
+				Group: d[3],
+			},
+			Id: int64(result),
+		}
+		data.StopVM(&c, d[0])
 		fmt.Println("Process End")
 		return nil
 	},
@@ -158,7 +195,17 @@ var vmShutdownCmd = &cobra.Command{
 		if result < 0 {
 			return errors.New("value failed")
 		}
-		direct.ShutdownVM(int64(result))
+
+		d := Base(cmd)
+		c := grpc.VMID{
+			Base: &grpc.Base{
+				User:  d[1],
+				Pass:  d[2],
+				Group: d[3],
+			},
+			Id: int64(result),
+		}
+		data.ShutdownVM(&c, d[0])
 		fmt.Println("Process End")
 		return nil
 	},
@@ -176,7 +223,16 @@ var vmResetCmd = &cobra.Command{
 		if result < 0 {
 			return errors.New("value failed")
 		}
-		direct.ResetVM(int64(result))
+		d := Base(cmd)
+		c := grpc.VMID{
+			Base: &grpc.Base{
+				User:  d[1],
+				Pass:  d[2],
+				Group: d[3],
+			},
+			Id: int64(result),
+		}
+		data.ResetVM(&c, d[0])
 		fmt.Println("Process End")
 		return nil
 	},
@@ -194,7 +250,16 @@ var vmResumeCmd = &cobra.Command{
 		if result < 0 {
 			return errors.New("value failed")
 		}
-		direct.ResumeVM(int64(result))
+		d := Base(cmd)
+		c := grpc.VMID{
+			Base: &grpc.Base{
+				User:  d[1],
+				Pass:  d[2],
+				Group: d[3],
+			},
+			Id: int64(result),
+		}
+		data.ResumeVM(&c, d[0])
 		fmt.Println("Process End")
 		return nil
 	},
@@ -212,7 +277,16 @@ var vmPauseCmd = &cobra.Command{
 		if result < 0 {
 			return errors.New("value failed")
 		}
-		direct.PauseVM(int64(result))
+		d := Base(cmd)
+		c := grpc.VMID{
+			Base: &grpc.Base{
+				User:  d[1],
+				Pass:  d[2],
+				Group: d[3],
+			},
+			Id: int64(result),
+		}
+		data.PauseVM(&c, d[0])
 		fmt.Println("Process End")
 		return nil
 	},
@@ -236,7 +310,16 @@ var vmGetIDCmd = &cobra.Command{
 		if result < 0 {
 			return errors.New("value failed")
 		}
-		direct.GetVM(int64(result))
+		d := Base(cmd)
+		c := grpc.VMID{
+			Base: &grpc.Base{
+				User:  d[1],
+				Pass:  d[2],
+				Group: d[3],
+			},
+			Id: int64(result),
+		}
+		data.GetVM(&c, d[0])
 		fmt.Println("Process End")
 		return nil
 	},
@@ -249,8 +332,16 @@ var vmGetNameCmd = &cobra.Command{
 		if len(args) < 1 {
 			return errors.New("requires id")
 		}
-		result := args[0]
-		direct.GetVMName(result)
+		d := Base(cmd)
+		c := grpc.VMName{
+			Base: &grpc.Base{
+				User:  d[1],
+				Pass:  d[2],
+				Group: d[3],
+			},
+			Vmname: args[0],
+		}
+		data.GetVMName(&c, d[0])
 		fmt.Println("Process End")
 		return nil
 	},
@@ -260,18 +351,47 @@ var vmGetAllCmd = &cobra.Command{
 	Short: "all",
 	Long:  "get all VM",
 	RunE: func(cmd *cobra.Command, args []string) error {
-		direct.GetAllVM()
+		d := Base(cmd)
+		c := grpc.Base{
+			User:  d[1],
+			Pass:  d[2],
+			Group: d[3],
+		}
+		data.GetAllVM(&c, d[0])
 		fmt.Println("Process End")
 		return nil
 	},
 }
 
+func Base(cmd *cobra.Command) []string {
+	host, err := cmd.Flags().GetString("host")
+	if err != nil {
+		log.Fatalf("could not greet: %v", err)
+	}
+	authuser, err := cmd.Flags().GetString("authuser")
+	if err != nil {
+		log.Fatalf("could not greet: %v", err)
+	}
+	authpass, err := cmd.Flags().GetString("authpass")
+	if err != nil {
+		log.Fatalf("could not greet: %v", err)
+	}
+	group, err := cmd.Flags().GetString("group")
+	if err != nil {
+		log.Fatalf("could not greet: %v", err)
+	}
+	data := []string{host, authuser, authpass, group}
+
+	return data
+}
+
 func init() {
+	vmCreateCmd.PersistentFlags().Int64P("node", "r", 1, "nodeid")
 	vmCreateCmd.PersistentFlags().StringP("name", "n", "", "vm name")
-	vmCreateCmd.PersistentFlags().Int64P("cpu", "c", 0, "virtual cpu")
-	vmCreateCmd.PersistentFlags().Int64P("mem", "m", 0, "virtual memory")
+	vmCreateCmd.PersistentFlags().Int64P("cpu", "c", 1, "virtual cpu")
+	vmCreateCmd.PersistentFlags().Int64P("mem", "m", 512, "virtual memory")
 	vmCreateCmd.PersistentFlags().StringP("storage_path", "P", "", "storage path")
-	vmCreateCmd.PersistentFlags().Int64P("storage", "s", 0, "storage capacity")
+	vmCreateCmd.PersistentFlags().Int64P("storage", "s", 1024, "storage capacity")
 	vmCreateCmd.PersistentFlags().StringP("cdrom", "C", "", "cdrom path")
 	vmCreateCmd.PersistentFlags().StringP("vnet", "N", "", "virtual net")
 	vmCreateCmd.PersistentFlags().Int64P("vnc", "v", 0, "vnc port")
