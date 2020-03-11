@@ -18,16 +18,19 @@ client init:     init client`,
 var initdbCmd = &cobra.Command{
 	Use:   "db",
 	Short: "db init",
-	Long:  "db init cmd",
+	Long: `db init cmd
+For example:
+
+db init [Admin Name] [Admin Pass]`,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		fmt.Println("----Initalize Database----")
 		result := db.InitDB()
 		fmt.Println(result)
-		db.AddDBUser(db.User{Name: "test", Pass: "test"})
+		db.AddDBUser(db.User{Name: args[0], Pass: args[1]})
 		db.AddDBGroup(db.Group{
 			Name:       "admin",
-			Admin:      "test",
-			User:       "test",
+			Admin:      args[0],
+			User:       args[0],
 			MaxCPU:     100,
 			MaxMem:     10240000,
 			MaxStorage: 1000000000,
