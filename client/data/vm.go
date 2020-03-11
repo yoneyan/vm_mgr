@@ -294,11 +294,9 @@ func GetAllVM(d *pb.Base, address string) {
 	}
 
 	var data [][]string
-	i := 0
 
 	for {
 		article, err := stream.Recv()
-		i++
 		if err == io.EOF {
 			break
 		}
