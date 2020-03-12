@@ -3,6 +3,9 @@ syntax = "proto3";
 //import "google/protobuf/timestamp.proto-go";
 
 service grpc {
+    rpc Auth (Base) returns (AuthResult) {
+
+    }
     rpc CreateVM (VMData) returns (Result) {
     }
     rpc DeleteVM (VMID) returns (Result) {
@@ -72,6 +75,12 @@ message Base {
     string user = 1;
     string pass = 2;
     string group = 3;
+    string token = 4;
+}
+
+message AuthResult {
+    string token = 1;
+    int32 userid = 2;
 }
 
 message VMData {
