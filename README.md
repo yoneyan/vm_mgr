@@ -11,9 +11,10 @@ VMを管理するという意味を込めてvm_mgrとしています。
 ## 状況
 |機能|状況|
 |---|---|
-|controller|NG|
+|controller|OK(一部NG)|
 |node|OK(一部NG)|
 |client|OK(一部NG)|
+現時点では基本的な機能は動作できるようになっています。  
 
 ## 特徴
 * ユーザ認証が可能（未実装）
@@ -35,7 +36,6 @@ VMを管理するという意味を込めてvm_mgrとしています。
 Controller,Node,Client間はすべてgRPCにてデータのやり取りを行います。
 
 **実装予定はGithubのProjectに載せています。**
-
 
 ## 実行テスト
 ### Node
