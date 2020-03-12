@@ -10,12 +10,12 @@ func AddDBGroup(data Group) bool {
 	db := connectdb()
 	addDb, err := db.Prepare(`INSERT INTO "groupdata" ("name","admin","user","maxvm","maxcpu","maxmem","maxstorage","net") VALUES (?,?,?,?,?,?,?,?)`)
 	if err != nil {
-		panic(err)
+		fmt.Println(err)
 		return false
 	}
 
 	if _, err := addDb.Exec(data.Name, data.Admin, data.User, data.MaxVM, data.MaxCPU, data.MaxMem, data.MaxStorage, data.Net); err != nil {
-		panic(err)
+		fmt.Println(err)
 		return false
 	}
 
