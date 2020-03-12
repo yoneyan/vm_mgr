@@ -42,15 +42,15 @@ func (s *server) CreateVM(ctx context.Context, in *pb.VMData) (*pb.Result, error
 	log.Printf("Receive vnc: %v", in.GetOption().Vnc)
 	log.Printf("Receive net: %v", in.GetVnet())
 	log.Printf("Receive change: %v", in.GetOption().Autostart)
+	log.Println("Receive AuthUser  : " + in.GetBase().GetUser() + ", AuthPass: " + in.GetBase().GetPass() + ", Group: " + in.GetBase().GetGroup())
+	log.Println("Receive Token     : " + in.GetBase().GetToken())
 
 	user := in.GetBase().GetUser()
 	pass := in.GetBase().GetPass()
 	group := in.GetBase().GetGroup()
 
-	if data.AdminUserCertification(user, pass) == false {
-		if data.GroupAdminCertification(user, pass, group) == false {
-			return &pb.Result{Status: false, Info: "Auth Failed!!"}, nil
-		}
+	if data.SuperUserCertification(&data.UserCertData{User: user, Pass: pass, Group: group}) == false {
+		return &pb.Result{Status: false, Info: "Auth Failed!!"}, nil
 	}
 	d, result := db.GetDBNodeID(int(in.GetNode()))
 	fmt.Println(d)
@@ -102,6 +102,7 @@ func (s *server) DeleteVM(ctx context.Context, in *pb.VMID) (*pb.Result, error) 
 	fmt.Println("----------DeleteVM-----")
 	log.Printf("Receive VMID: %v", in.GetId())
 	log.Println("Receive AuthUser  : " + in.GetBase().GetUser() + ", AuthPass: " + in.GetBase().GetPass() + ", Group: " + in.GetBase().GetGroup())
+	log.Println("Receive Token     : " + in.GetBase().GetToken())
 
 	nodeId := in.GetId() / 1000
 	vmId := in.GetId() - (1000 * nodeId)
@@ -110,20 +111,18 @@ func (s *server) DeleteVM(ctx context.Context, in *pb.VMID) (*pb.Result, error) 
 	pass := in.GetBase().GetPass()
 	group := in.GetBase().GetGroup()
 
-	d, result := db.GetDBNodeID(int(nodeId))
+	address, result := data.SuperUserVMCertification(&data.UserCertData{
+		User:   user,
+		Pass:   pass,
+		Group:  group,
+		Token:  in.GetBase().GetToken(),
+		VMID:   int(vmId),
+		NodeID: int(nodeId),
+	})
 	if result == false {
-		return &pb.Result{Status: false, Info: "Node Not Found!!"}, nil
+		return &pb.Result{Status: false, Info: "Auth Failed!!"}, nil
 	}
-	if data.AdminUserCertification(user, pass) == false {
-		if data.GroupAdminCertification(user, pass, group) == false {
-			return &pb.Result{Status: false, Info: "Auth Failed!!"}, nil
-			info, result := data.VMCertification(int(vmId), d.ID, d.IP)
-			if result == false {
-				return &pb.Result{Status: false, Info: info}, nil
-			}
-		}
-	}
-	conn, err := grpc.Dial(d.IP, grpc.WithInsecure(), grpc.WithBlock())
+	conn, err := grpc.Dial(address, grpc.WithInsecure(), grpc.WithBlock())
 	if err != nil {
 		fmt.Printf("Not connect; ")
 		fmt.Println(err)
@@ -146,6 +145,7 @@ func (s *server) StartVM(ctx context.Context, in *pb.VMID) (*pb.Result, error) {
 	fmt.Println("----------StartVM-----")
 	log.Println("Receive VMID  : ", in.GetId())
 	log.Println("Receive AuthUser  : " + in.GetBase().GetUser() + ", AuthPass: " + in.GetBase().GetPass() + ", Group: " + in.GetBase().GetGroup())
+	log.Println("Receive Token     : " + in.GetBase().GetToken())
 
 	nodeId := in.GetId() / 1000
 	vmId := in.GetId() - (1000 * nodeId)
@@ -154,22 +154,19 @@ func (s *server) StartVM(ctx context.Context, in *pb.VMID) (*pb.Result, error) {
 	pass := in.GetBase().GetPass()
 	group := in.GetBase().GetGroup()
 
-	d, result := db.GetDBNodeID(int(nodeId))
+	address, result := data.StandardUserVMCertification(&data.UserCertData{
+		User:   user,
+		Pass:   pass,
+		Group:  group,
+		Token:  in.GetBase().GetToken(),
+		VMID:   int(vmId),
+		NodeID: int(nodeId),
+	})
 	if result == false {
-		return &pb.Result{Status: false, Info: "Node Not Found!!"}, nil
+		return &pb.Result{Status: false, Info: "Auth Failed!!"}, nil
 	}
-	if data.AdminUserCertification(user, pass) == false {
-		if data.GroupAdminCertification(user, pass, group) == false {
-			if data.GroupUserCertification(user, pass, group) == false {
-				return &pb.Result{Status: false, Info: "Auth Failed!!"}, nil
-			}
-			info, result := data.VMCertification(int(vmId), d.ID, d.IP)
-			if result == false {
-				return &pb.Result{Status: false, Info: info}, nil
-			}
-		}
-	}
-	conn, err := grpc.Dial(d.IP, grpc.WithInsecure(), grpc.WithBlock())
+
+	conn, err := grpc.Dial(address, grpc.WithInsecure(), grpc.WithBlock())
 	if err != nil {
 		fmt.Printf("Not connect; ")
 		fmt.Println(err)
@@ -192,33 +189,28 @@ func (s *server) StopVM(ctx context.Context, in *pb.VMID) (*pb.Result, error) {
 	fmt.Println("----------StartVM-----")
 	log.Println("Receive VMID  : ", in.GetId())
 	log.Println("Receive AuthUser  : " + in.GetBase().GetUser() + ", AuthPass: " + in.GetBase().GetPass() + ", Group: " + in.GetBase().GetGroup())
+	log.Println("Receive Token     : " + in.GetBase().GetToken())
 
-	nodeid := in.GetId() / 1000
-	vmid := in.GetId() - (1000 * nodeid)
+	nodeId := in.GetId() / 1000
+	vmId := in.GetId() - (1000 * nodeId)
 
 	user := in.GetBase().GetUser()
 	pass := in.GetBase().GetPass()
 	group := in.GetBase().GetGroup()
 
-	d, result := db.GetDBNodeID(int(nodeid))
+	address, result := data.StandardUserVMCertification(&data.UserCertData{
+		User:   user,
+		Pass:   pass,
+		Group:  group,
+		Token:  in.GetBase().GetToken(),
+		VMID:   int(vmId),
+		NodeID: int(nodeId),
+	})
 	if result == false {
-		fmt.Println("DBNodeID Error")
-		return &pb.Result{Status: false, Info: "Node Not Found!!"}, nil
+		return &pb.Result{Status: false, Info: "Auth Failed!!"}, nil
 	}
 
-	if data.AdminUserCertification(user, pass) == false {
-		if data.GroupAdminCertification(user, pass, group) == false {
-			if data.GroupUserCertification(user, pass, group) == false {
-				return &pb.Result{Status: false, Info: "Auth Failed!!"}, nil
-			}
-			info, result := data.VMCertification(int(vmid), d.ID, d.IP)
-			if result == false {
-				return &pb.Result{Status: false, Info: info}, nil
-			}
-		}
-	}
-
-	conn, err := grpc.Dial(d.IP, grpc.WithInsecure(), grpc.WithBlock())
+	conn, err := grpc.Dial(address, grpc.WithInsecure(), grpc.WithBlock())
 	if err != nil {
 		fmt.Printf("Not connect; ")
 		fmt.Println(err)
@@ -227,9 +219,9 @@ func (s *server) StopVM(ctx context.Context, in *pb.VMID) (*pb.Result, error) {
 	c := pb.NewGrpcClient(conn)
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
 	defer cancel()
-	fmt.Println(d.IP)
+	fmt.Println(address)
 
-	r, err := c.StopVM(ctx, &pb.VMID{Id: vmid})
+	r, err := c.StopVM(ctx, &pb.VMID{Id: vmId})
 	if err != nil {
 		fmt.Printf("Not connect; ")
 		fmt.Println(err)
@@ -294,9 +286,9 @@ func (s *server) GetVMName(ctx context.Context, in *pb.VMName) (*pb.VMData, erro
 func (s *server) GetAllVM(base *pb.Base, stream pb.Grpc_GetAllVMServer) error {
 	log.Println("----GetAllVM----")
 	log.Println("Receive AuthUser  : " + base.GetUser() + ", AuthPass: " + base.GetPass())
+	log.Println("Receive Token     : " + base.GetToken())
 
-	if data.AdminUserCertification(base.GetUser(), base.GetPass()) == false {
-		fmt.Println("Failed authentication")
+	if data.AdminUserCertification(base.GetUser(), base.GetPass(), base.GetToken()) == false {
 		return nil
 	}
 
@@ -350,32 +342,28 @@ func (s *server) ShutdownVM(ctx context.Context, in *pb.VMID) (*pb.Result, error
 	log.Println("----ShutdownVM----")
 	log.Println("Receive VMID  : ", in.GetId())
 	log.Println("Receive AuthUser  : " + in.GetBase().GetUser() + ", AuthPass: " + in.GetBase().GetPass() + ", Group: " + in.GetBase().GetGroup())
+	log.Println("Receive Token     : " + in.GetBase().GetToken())
 
-	nodeid := in.GetId() / 1000
-	vmid := in.GetId() - (1000 * nodeid)
+	nodeId := in.GetId() / 1000
+	vmId := in.GetId() - (1000 * nodeId)
 
 	user := in.GetBase().GetUser()
 	pass := in.GetBase().GetPass()
 	group := in.GetBase().GetGroup()
 
-	d, result := db.GetDBNodeID(int(nodeid))
+	address, result := data.StandardUserVMCertification(&data.UserCertData{
+		User:   user,
+		Pass:   pass,
+		Group:  group,
+		Token:  in.GetBase().GetToken(),
+		VMID:   int(vmId),
+		NodeID: int(nodeId),
+	})
 	if result == false {
-		fmt.Println("DBNodeID Error")
-		return &pb.Result{Status: false, Info: "Node Not Found!!"}, nil
+		return &pb.Result{Status: false, Info: "Auth Failed!!"}, nil
 	}
 
-	if data.AdminUserCertification(user, pass) == false {
-		if data.GroupAdminCertification(user, pass, group) == false {
-			if data.GroupUserCertification(user, pass, group) == false {
-				return &pb.Result{Status: false, Info: "Auth Failed!!"}, nil
-			}
-			info, result := data.VMCertification(int(vmid), d.ID, d.IP)
-			if result == false {
-				return &pb.Result{Status: false, Info: info}, nil
-			}
-		}
-	}
-	conn, err := grpc.Dial(d.IP, grpc.WithInsecure(), grpc.WithBlock())
+	conn, err := grpc.Dial(address, grpc.WithInsecure(), grpc.WithBlock())
 	if err != nil {
 		fmt.Printf("Not connect; ")
 		fmt.Println(err)
@@ -385,7 +373,7 @@ func (s *server) ShutdownVM(ctx context.Context, in *pb.VMID) (*pb.Result, error
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
 	defer cancel()
 
-	r, err := c.ShutdownVM(ctx, &pb.VMID{Id: vmid})
+	r, err := c.ShutdownVM(ctx, &pb.VMID{Id: vmId})
 	if err != nil {
 		fmt.Printf("Not connect; ")
 		fmt.Println(err)
@@ -397,32 +385,28 @@ func (s *server) ResetVM(ctx context.Context, in *pb.VMID) (*pb.Result, error) {
 	log.Println("----RebootVM----")
 	log.Println("Receive VMID  : ", in.GetId())
 	log.Println("Receive AuthUser  : " + in.GetBase().GetUser() + ", AuthPass: " + in.GetBase().GetPass() + ", Group: " + in.GetBase().GetGroup())
+	log.Println("Receive Token     : " + in.GetBase().GetToken())
 
-	nodeid := in.GetId() / 1000
-	vmid := in.GetId() - (1000 * nodeid)
+	nodeId := in.GetId() / 1000
+	vmId := in.GetId() - (1000 * nodeId)
 
 	user := in.GetBase().GetUser()
 	pass := in.GetBase().GetPass()
 	group := in.GetBase().GetGroup()
 
-	d, result := db.GetDBNodeID(int(nodeid))
+	address, result := data.StandardUserVMCertification(&data.UserCertData{
+		User:   user,
+		Pass:   pass,
+		Group:  group,
+		Token:  in.GetBase().GetToken(),
+		VMID:   int(vmId),
+		NodeID: int(nodeId),
+	})
 	if result == false {
-		fmt.Println("DBNodeID Error")
-		return &pb.Result{Status: false, Info: "Node Not Found!!"}, nil
+		return &pb.Result{Status: false, Info: "Auth Failed!!"}, nil
 	}
 
-	if data.AdminUserCertification(user, pass) == false {
-		if data.GroupAdminCertification(user, pass, group) == false {
-			if data.GroupUserCertification(user, pass, group) == false {
-				return &pb.Result{Status: false, Info: "Auth Failed!!"}, nil
-			}
-			info, result := data.VMCertification(int(vmid), d.ID, d.IP)
-			if result == false {
-				return &pb.Result{Status: false, Info: info}, nil
-			}
-		}
-	}
-	conn, err := grpc.Dial(d.IP, grpc.WithInsecure(), grpc.WithBlock())
+	conn, err := grpc.Dial(address, grpc.WithInsecure(), grpc.WithBlock())
 	if err != nil {
 		fmt.Printf("Not connect; ")
 		fmt.Println(err)
@@ -432,7 +416,7 @@ func (s *server) ResetVM(ctx context.Context, in *pb.VMID) (*pb.Result, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
 	defer cancel()
 
-	r, err := c.ResetVM(ctx, &pb.VMID{Id: vmid})
+	r, err := c.ResetVM(ctx, &pb.VMID{Id: vmId})
 	if err != nil {
 		fmt.Printf("Not connect; ")
 		fmt.Println(err)
@@ -444,32 +428,27 @@ func (s *server) PauseVM(ctx context.Context, in *pb.VMID) (*pb.Result, error) {
 	log.Println("----PauseVM----")
 	log.Println("Receive VMID  : ", in.GetId())
 	log.Println("Receive AuthUser  : " + in.GetBase().GetUser() + ", AuthPass: " + in.GetBase().GetPass() + ", Group: " + in.GetBase().GetGroup())
+	log.Println("Receive Token     : " + in.GetBase().GetToken())
 
-	nodeid := in.GetId() / 1000
-	vmid := in.GetId() - (1000 * nodeid)
+	nodeId := in.GetId() / 1000
+	vmId := in.GetId() - (1000 * nodeId)
 
 	user := in.GetBase().GetUser()
 	pass := in.GetBase().GetPass()
 	group := in.GetBase().GetGroup()
 
-	d, result := db.GetDBNodeID(int(nodeid))
+	address, result := data.StandardUserVMCertification(&data.UserCertData{
+		User:   user,
+		Pass:   pass,
+		Group:  group,
+		Token:  in.GetBase().GetToken(),
+		VMID:   int(vmId),
+		NodeID: int(nodeId),
+	})
 	if result == false {
-		fmt.Println("DBNodeID Error")
-		return &pb.Result{Status: false, Info: "Node Not Found!!"}, nil
+		return &pb.Result{Status: false, Info: "Auth Failed!!"}, nil
 	}
-
-	if data.AdminUserCertification(user, pass) == false {
-		if data.GroupAdminCertification(user, pass, group) == false {
-			if data.GroupUserCertification(user, pass, group) == false {
-				return &pb.Result{Status: false, Info: "Auth Failed!!"}, nil
-			}
-			info, result := data.VMCertification(int(vmid), d.ID, d.IP)
-			if result == false {
-				return &pb.Result{Status: false, Info: info}, nil
-			}
-		}
-	}
-	conn, err := grpc.Dial(d.IP, grpc.WithInsecure(), grpc.WithBlock())
+	conn, err := grpc.Dial(address, grpc.WithInsecure(), grpc.WithBlock())
 	if err != nil {
 		fmt.Printf("Not connect; ")
 		fmt.Println(err)
@@ -479,7 +458,7 @@ func (s *server) PauseVM(ctx context.Context, in *pb.VMID) (*pb.Result, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
 	defer cancel()
 
-	r, err := c.PauseVM(ctx, &pb.VMID{Id: vmid})
+	r, err := c.PauseVM(ctx, &pb.VMID{Id: vmId})
 	if err != nil {
 		fmt.Printf("Not connect; ")
 		fmt.Println(err)
@@ -491,32 +470,27 @@ func (s *server) ResumeVM(ctx context.Context, in *pb.VMID) (*pb.Result, error) 
 	fmt.Println("-----ResumeVM-----")
 	log.Println("Receive VMID  : ", in.GetId())
 	log.Println("Receive AuthUser  : " + in.GetBase().GetUser() + ", AuthPass: " + in.GetBase().GetPass() + ", Group: " + in.GetBase().GetGroup())
+	log.Println("Receive Token     : " + in.GetBase().GetToken())
 
-	nodeid := in.GetId() / 1000
-	vmid := in.GetId() - (1000 * nodeid)
+	nodeId := in.GetId() / 1000
+	vmId := in.GetId() - (1000 * nodeId)
 
 	user := in.GetBase().GetUser()
 	pass := in.GetBase().GetPass()
 	group := in.GetBase().GetGroup()
 
-	d, result := db.GetDBNodeID(int(nodeid))
+	address, result := data.StandardUserVMCertification(&data.UserCertData{
+		User:   user,
+		Pass:   pass,
+		Group:  group,
+		Token:  in.GetBase().GetToken(),
+		VMID:   int(vmId),
+		NodeID: int(nodeId),
+	})
 	if result == false {
-		fmt.Println("DBNodeID Error")
-		return &pb.Result{Status: false, Info: "Node Not Found!!"}, nil
+		return &pb.Result{Status: false, Info: "Auth Failed!!"}, nil
 	}
-
-	if data.AdminUserCertification(user, pass) == false {
-		if data.GroupAdminCertification(user, pass, group) == false {
-			if data.GroupUserCertification(user, pass, group) == false {
-				return &pb.Result{Status: false, Info: "Auth Failed!!"}, nil
-			}
-			info, result := data.VMCertification(int(vmid), d.ID, d.IP)
-			if result == false {
-				return &pb.Result{Status: false, Info: info}, nil
-			}
-		}
-	}
-	conn, err := grpc.Dial(d.IP, grpc.WithInsecure(), grpc.WithBlock())
+	conn, err := grpc.Dial(address, grpc.WithInsecure(), grpc.WithBlock())
 	if err != nil {
 		fmt.Printf("Not connect; ")
 		fmt.Println(err)
@@ -526,7 +500,7 @@ func (s *server) ResumeVM(ctx context.Context, in *pb.VMID) (*pb.Result, error) 
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
 	defer cancel()
 
-	r, err := c.ResumeVM(ctx, &pb.VMID{Id: vmid})
+	r, err := c.ResumeVM(ctx, &pb.VMID{Id: vmId})
 	if err != nil {
 		fmt.Printf("Not connect; ")
 		fmt.Println(err)

@@ -20,8 +20,9 @@ func (s *server) AddNode(ctx context.Context, in *pb.NodeData) (*pb.Result, erro
 	log.Printf("Receive Spec      : ")
 	log.Println(in.GetSepc())
 	log.Println("Receive AuthUser  : " + in.GetBase().User + ", AuthPass: " + in.GetBase().Pass)
+	log.Println("Receive Token     : " + in.GetBase().GetToken())
 
-	if data.AdminUserCertification(in.GetBase().User, in.GetBase().Pass) == false {
+	if data.AdminUserCertification(in.GetBase().GetUser(), in.GetBase().GetPass(), in.GetBase().GetToken()) == false {
 		return &pb.Result{Status: false, Info: "Authentication failed!!"}, nil
 	}
 	info, result := data.ExistNodeCheck(in.GetHostname(), in.GetIP())
@@ -53,8 +54,9 @@ func (s *server) RemoveNode(ctx context.Context, in *pb.NodeID) (*pb.Result, err
 	log.Println("----RemoveNode----")
 	log.Println("Receive ID       : " + strconv.Itoa(int(in.GetNodeID())))
 	log.Println("Receive AuthUser : " + in.GetBase().User + ", AuthPass: " + in.GetBase().Pass)
+	log.Println("Receive Token     : " + in.GetBase().GetToken())
 
-	if data.AdminUserCertification(in.GetBase().User, in.GetBase().Pass) == false {
+	if data.AdminUserCertification(in.GetBase().GetUser(), in.GetBase().GetPass(), in.GetBase().GetToken()) == false {
 		return &pb.Result{Status: false, Info: "Authentication failed!!"}, nil
 	}
 	if db.RemoveDBNode(int(in.GetNodeID())) {
@@ -67,7 +69,9 @@ func (s *server) RemoveNode(ctx context.Context, in *pb.NodeID) (*pb.Result, err
 func (s *server) GetNode(d *pb.Base, stream pb.Grpc_GetNodeServer) error {
 	log.Println("----GetNode----")
 	log.Println("Receive AuthUser : " + d.GetUser() + ", AuthPass: " + d.GetPass())
-	if data.AdminUserCertification(d.GetUser(), d.GetPass()) == false {
+	log.Println("Receive Token     : " + d.GetToken())
+
+	if data.AdminUserCertification(d.GetUser(), d.GetPass(), d.GetToken()) == false {
 		fmt.Println("Administrator certification failed!!!")
 		return nil
 	}

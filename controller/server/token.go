@@ -12,14 +12,12 @@ import (
 func (s *server) GenerateToken(ctx context.Context, in *pb.Base) (*pb.AuthResult, error) {
 	log.Println("----GenerateToken----")
 	log.Println("Receive AuthUser : " + in.GetUser() + ", AuthPass: " + in.GetPass())
+	log.Println("Receive Token     : " + in.GetToken())
 
-	user := in.GetUser()
-	pass := in.GetPass()
-
-	if data.UserCertification(user, pass) == false {
+	if data.AdminUserCertification(in.GetUser(), in.GetPass(), in.GetToken()) == false {
 		return &pb.AuthResult{Result: false, Token: "Auth Failed!!"}, nil
 	}
-	uuid, result := data.NewToken(user)
+	uuid, result := data.NewToken(in.GetUser())
 	if result {
 		return &pb.AuthResult{Result: true, Token: uuid}, nil
 	} else {
@@ -32,8 +30,9 @@ func (s *server) DeleteToken(ctx context.Context, in *pb.Base) (*pb.Result, erro
 	log.Println("----DeleteToken----")
 	log.Println("Receive Token       : " + in.GetToken())
 	log.Println("Receive AuthUser : " + in.GetUser() + ", AuthPass: " + in.GetPass())
+	log.Println("Receive Token     : " + in.GetToken())
 
-	if data.AdminUserCertification(in.GetUser(), in.GetPass()) == false {
+	if data.AdminUserCertification(in.GetUser(), in.GetPass(), in.GetToken()) == false {
 		return &pb.Result{Status: false, Info: "Authentication failed!!"}, nil
 	}
 	data, result := db.GetDBToken(in.GetToken())
@@ -52,7 +51,8 @@ func (s *server) GetAllToken(d *pb.Base, stream pb.Grpc_GetAllTokenServer) error
 	go data.DeleteExpiredToken()
 	log.Println("----GetAllToken----")
 	log.Println("Receive AuthUser : " + d.GetUser() + ", AuthPass: " + d.GetPass())
-	if data.AdminUserCertification(d.GetUser(), d.GetPass()) == false {
+	log.Println("Receive Token     : " + d.GetToken())
+	if data.AdminUserCertification(d.GetUser(), d.GetPass(), d.GetToken()) == false {
 		fmt.Println("Administrator certification failed!!!")
 		return nil
 	}
