@@ -43,11 +43,13 @@ node add [HostName] [IPandPort] [MaxCPU]`,
 
 		d1 := Base(cmd)
 		d2 := NodeSpec(cmd)
+
 		c := grpc.NodeData{
 			Base: &grpc.Base{
-				User:  d1[1],
-				Pass:  d1[2],
-				Group: d1[3],
+				User:  d1.User,
+				Pass:  d1.Pass,
+				Group: d1.Group,
+				Token: d1.Token,
 			},
 			NodeID:    d2.ID,
 			Hostname:  args[0],
@@ -60,7 +62,7 @@ node add [HostName] [IPandPort] [MaxCPU]`,
 				Net:    d2.Net,
 			},
 		}
-		data.NodeAdd(&c, d1[0])
+		data.NodeAdd(&c, d1.Host)
 		fmt.Println("Process End")
 		return nil
 	},
@@ -82,13 +84,14 @@ var nodeRemoveCmd = &cobra.Command{
 		d := Base(cmd)
 		c := grpc.NodeID{
 			Base: &grpc.Base{
-				User:  d[1],
-				Pass:  d[2],
-				Group: d[3],
+				User:  d.User,
+				Pass:  d.Pass,
+				Group: d.Group,
+				Token: d.Token,
 			},
 			NodeID: int32(result),
 		}
-		data.NodeRemove(&c, d[0])
+		data.NodeRemove(&c, d.Host)
 		fmt.Println("Process End")
 		return nil
 	},
@@ -108,7 +111,7 @@ var nodeGetCmd = &cobra.Command{
 		}
 
 		d := Base(cmd)
-		data.GetNode(&data.AuthData{Name: d[1], Pass1: d[2]}, d[0])
+		data.GetNode(&data.AuthData{Name: d.User, Pass: d.Pass, Token: d.Token}, d.Host)
 		fmt.Println("Process End")
 		return nil
 	},
@@ -130,13 +133,14 @@ var nodeStopCmd = &cobra.Command{
 		d := Base(cmd)
 		c := grpc.NodeID{
 			Base: &grpc.Base{
-				User:  d[1],
-				Pass:  d[2],
-				Group: d[3],
+				User:  d.User,
+				Pass:  d.Pass,
+				Group: d.Group,
+				Token: d.Token,
 			},
 			NodeID: int32(result),
 		}
-		data.NodeStopVM(&c, d[0])
+		data.NodeStopVM(&c, d.Host)
 		fmt.Println("Process End")
 		return nil
 	},

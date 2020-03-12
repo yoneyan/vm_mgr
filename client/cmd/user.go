@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"github.com/spf13/cobra"
 	"github.com/yoneyan/vm_mgr/client/data"
-	"log"
 )
 
 // userCmd represents the user command
@@ -28,25 +27,10 @@ user add admin test -H 127.0.0.1:50200 -u admin -p `,
 		if len(args) < 1 {
 			return errors.New("false")
 		}
-		host, err := cmd.Flags().GetString("host")
-		if err != nil {
-			log.Fatalf("could not greet: %v", err)
-			return nil
-		}
-		fmt.Println(host)
-		fmt.Println(host)
-		authuser, err := cmd.Flags().GetString("authuser")
-		if err != nil {
-			log.Fatalf("could not greet: %v", err)
-			return nil
-		}
-		authpass, err := cmd.Flags().GetString("authpass")
-		if err != nil {
-			log.Fatalf("could not greet: %v", err)
-			return nil
-		}
 
-		data.AddUser(&data.AuthData{Name: authuser, Pass1: authpass}, host, args[0], args[1])
+		d := Base(cmd)
+
+		data.AddUser(&data.AuthData{Name: d.User, Pass: d.Pass, Token: d.Token}, d.Host, args[0], args[1])
 
 		fmt.Println("Process End")
 		return nil
@@ -61,23 +45,9 @@ var userremovecmd = &cobra.Command{
 		//if len(args) < 1 {
 		//	return errors.New("false")
 		//}
-		host, err := cmd.Flags().GetString("host")
-		if err != nil {
-			log.Fatalf("could not greet: %v", err)
-			return nil
-		}
-		authuser, err := cmd.Flags().GetString("authuser")
-		if err != nil {
-			log.Fatalf("could not greet: %v", err)
-			return nil
-		}
-		authpass, err := cmd.Flags().GetString("authpass")
-		if err != nil {
-			log.Fatalf("could not greet: %v", err)
-			return nil
-		}
+		d := Base(cmd)
 
-		data.RemoveUser(&data.AuthData{Name: authuser, Pass1: authpass}, host, args[0])
+		data.RemoveUser(&data.AuthData{Name: d.User, Pass: d.Pass, Token: d.Token}, d.Host, args[0])
 
 		fmt.Println("Process End")
 		return nil
@@ -97,26 +67,9 @@ var userGetAllCmd = &cobra.Command{
 for example:
 user get all -u test -p test -H 127.0.0.1:50200`,
 	RunE: func(cmd *cobra.Command, args []string) error {
-		//if len(args) < 1 {
-		//	return errors.New("false")
-		//}
-		host, err := cmd.Flags().GetString("host")
-		if err != nil {
-			log.Fatalf("could not greet: %v", err)
-			return nil
-		}
-		authuser, err := cmd.Flags().GetString("authuser")
-		if err != nil {
-			log.Fatalf("could not greet: %v", err)
-			return nil
-		}
-		authpass, err := cmd.Flags().GetString("authpass")
-		if err != nil {
-			log.Fatalf("could not greet: %v", err)
-			return nil
-		}
+		d := Base(cmd)
 
-		data.GetAllUser(&data.AuthData{Name: authuser, Pass1: authpass}, host)
+		data.GetAllUser(&data.AuthData{Name: d.User, Pass: d.Pass, Token: d.Token}, d.Host)
 
 		fmt.Println("Process End")
 		return nil
@@ -136,26 +89,12 @@ var userpasschangeCmd = &cobra.Command{
 for example:
 user change pass [username] [newpass]`,
 	RunE: func(cmd *cobra.Command, args []string) error {
-		//if len(args) < 1 {
-		//	return errors.New("false")
-		//}
-		host, err := cmd.Flags().GetString("host")
-		if err != nil {
-			log.Fatalf("could not greet: %v", err)
-			return nil
+		if len(args) < 1 {
+			return errors.New("false")
 		}
-		authuser, err := cmd.Flags().GetString("authuser")
-		if err != nil {
-			log.Fatalf("could not greet: %v", err)
-			return nil
-		}
-		authpass, err := cmd.Flags().GetString("authpass")
-		if err != nil {
-			log.Fatalf("could not greet: %v", err)
-			return nil
-		}
+		d := Base(cmd)
 
-		data.UserNameChange(&data.AuthData{Name: authuser, Pass1: authpass}, host, args[0], args[1])
+		data.UserNameChange(&data.AuthData{Name: d.User, Pass: d.Pass, Token: d.Token}, d.Host, args[0], args[1])
 
 		fmt.Println("Process End")
 		return nil
@@ -169,26 +108,12 @@ var usernamechangeCmd = &cobra.Command{
 for example:
 user change pass [before username] [after username]`,
 	RunE: func(cmd *cobra.Command, args []string) error {
-		//if len(args) < 1 {
-		//	return errors.New("false")
-		//}
-		host, err := cmd.Flags().GetString("host")
-		if err != nil {
-			log.Fatalf("could not greet: %v", err)
-			return nil
+		if len(args) < 1 {
+			return errors.New("false")
 		}
-		authuser, err := cmd.Flags().GetString("authuser")
-		if err != nil {
-			log.Fatalf("could not greet: %v", err)
-			return nil
-		}
-		authpass, err := cmd.Flags().GetString("authpass")
-		if err != nil {
-			log.Fatalf("could not greet: %v", err)
-			return nil
-		}
+		d := Base(cmd)
 
-		data.UserPassChange(&data.AuthData{Name: authuser, Pass1: authpass}, host, args[0], args[1])
+		data.UserPassChange(&data.AuthData{Name: d.User, Pass: d.Pass, Token: d.Token}, d.Host, args[0], args[1])
 
 		fmt.Println("Process End")
 		return nil

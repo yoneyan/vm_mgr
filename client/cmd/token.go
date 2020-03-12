@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"github.com/spf13/cobra"
 	"github.com/yoneyan/vm_mgr/client/data"
-	"log"
 )
 
 // testCmd represents the test command
@@ -23,23 +22,9 @@ for example:
 
 token generate -H 127.0.0.1:50200 -u test -p test`,
 	RunE: func(cmd *cobra.Command, args []string) error {
-		host, err := cmd.Flags().GetString("host")
-		if err != nil {
-			log.Fatalf("could not greet: %v", err)
-			return nil
-		}
-		authuser, err := cmd.Flags().GetString("authuser")
-		if err != nil {
-			log.Fatalf("could not greet: %v", err)
-			return nil
-		}
-		authpass, err := cmd.Flags().GetString("authpass")
-		if err != nil {
-			log.Fatalf("could not greet: %v", err)
-			return nil
-		}
+		d := Base(cmd)
 
-		data.GenerateToken(host, authuser, authpass)
+		data.GenerateToken(d.Host, d.User, d.Pass)
 
 		fmt.Println("Process End")
 		return nil
@@ -57,23 +42,9 @@ token remove [token] -H 127.0.0.1:50200`,
 		if len(args) < 1 || 2 < len(args) {
 			return errors.New("false")
 		}
-		host, err := cmd.Flags().GetString("host")
-		if err != nil {
-			log.Fatalf("could not greet: %v", err)
-			return nil
-		}
-		authuser, err := cmd.Flags().GetString("authuser")
-		if err != nil {
-			log.Fatalf("could not greet: %v", err)
-			return nil
-		}
-		authpass, err := cmd.Flags().GetString("authpass")
-		if err != nil {
-			log.Fatalf("could not greet: %v", err)
-			return nil
-		}
+		d := Base(cmd)
 
-		data.DeleteToken(&data.AuthData{Name: authuser, Pass1: authpass}, host, args[0])
+		data.DeleteToken(&data.AuthData{Name: d.User, Pass: d.Pass, Token: d.Token}, d.Host, args[0])
 
 		fmt.Println("Process End")
 		return nil
@@ -92,23 +63,9 @@ token get -H 127.0.0.1:50200 -u admin -p test`,
 
 			return errors.New("false")
 		}
-		host, err := cmd.Flags().GetString("host")
-		if err != nil {
-			log.Fatalf("could not greet: %v", err)
-			return nil
-		}
-		authuser, err := cmd.Flags().GetString("authuser")
-		if err != nil {
-			log.Fatalf("could not greet: %v", err)
-			return nil
-		}
-		authpass, err := cmd.Flags().GetString("authpass")
-		if err != nil {
-			log.Fatalf("could not greet: %v", err)
-			return nil
-		}
+		d := Base(cmd)
 
-		data.GetAllToken(&data.AuthData{Name: authuser, Pass1: authpass}, host)
+		data.GetAllToken(&data.AuthData{Name: d.User, Pass: d.Pass, Token: d.Token}, d.Host)
 
 		fmt.Println("Process End")
 		return nil

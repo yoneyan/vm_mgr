@@ -62,7 +62,7 @@ func GetNode(a *AuthData, address string) {
 
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
 	defer cancel()
-	stream, err := c.GetNode(ctx, &pb.Base{User: a.Name, Pass: a.Pass1})
+	stream, err := c.GetNode(ctx, &pb.Base{User: a.Name, Pass: a.Pass, Token: a.Token})
 	if err != nil {
 		log.Fatal(err)
 	}

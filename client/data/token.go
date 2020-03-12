@@ -52,7 +52,7 @@ func DeleteToken(a *AuthData, address, token string) {
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
 	defer cancel()
 
-	r, err := c.DeleteToken(ctx, &pb.Base{User: a.Name, Pass: a.Pass1, Token: token})
+	r, err := c.DeleteToken(ctx, &pb.Base{User: a.Name, Pass: a.Pass, Token: token})
 	if err != nil {
 		log.Fatalf("could not greet: %v", err)
 	}
@@ -74,7 +74,7 @@ func GetAllToken(a *AuthData, address string) {
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
 	defer cancel()
 
-	stream, err := c.GetAllToken(ctx, &pb.Base{User: a.Name, Pass: a.Pass1})
+	stream, err := c.GetAllToken(ctx, &pb.Base{User: a.Name, Pass: a.Pass, Token: a.Token})
 	if err != nil {
 		log.Fatal(err)
 	}

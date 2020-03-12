@@ -15,8 +15,8 @@ import (
 
 type AuthData struct {
 	Name  string
-	Pass1 string
-	Pass2 string
+	Pass  string
+	Token string
 }
 
 func AddUser(a *AuthData, address, user, pass string) {
@@ -30,7 +30,7 @@ func AddUser(a *AuthData, address, user, pass string) {
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
 	defer cancel()
 
-	r, err := c.AddUser(ctx, &pb.UserData{Base: &pb.Base{User: a.Name, Pass: a.Pass1}, User: user, Pass: pass})
+	r, err := c.AddUser(ctx, &pb.UserData{Base: &pb.Base{User: a.Name, Pass: a.Pass, Token: a.Token}, User: user, Pass: pass})
 	if err != nil {
 		log.Fatalf("could not greet: %v", err)
 	}
@@ -52,7 +52,7 @@ func RemoveUser(a *AuthData, address, user string) {
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
 	defer cancel()
 
-	r, err := c.RemoveUser(ctx, &pb.UserData{Base: &pb.Base{User: a.Name, Pass: a.Pass1}, User: user})
+	r, err := c.RemoveUser(ctx, &pb.UserData{Base: &pb.Base{User: a.Name, Pass: a.Pass, Token: a.Token}, User: user})
 	if err != nil {
 		log.Fatalf("could not greet: %v", err)
 	}
@@ -74,7 +74,7 @@ func GetAllUser(a *AuthData, address string) {
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
 	defer cancel()
 
-	stream, err := c.GetUser(ctx, &pb.UserData{Base: &pb.Base{User: a.Name, Pass: a.Pass1}, Mode: 0})
+	stream, err := c.GetUser(ctx, &pb.UserData{Base: &pb.Base{User: a.Name, Pass: a.Pass, Token: a.Token}, Mode: 0})
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -110,7 +110,7 @@ func UserNameChange(a *AuthData, address, user, pass string) {
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
 	defer cancel()
 
-	r, err := c.ChangeUserName(ctx, &pb.UserData{Base: &pb.Base{User: a.Name, Pass: a.Pass1}, User: user, Pass: pass})
+	r, err := c.ChangeUserName(ctx, &pb.UserData{Base: &pb.Base{User: a.Name, Pass: a.Pass, Token: a.Token}, User: user, Pass: pass})
 	if err != nil {
 		log.Fatalf("could not greet: %v", err)
 	}
@@ -132,7 +132,7 @@ func UserPassChange(a *AuthData, address, user, pass string) {
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
 	defer cancel()
 
-	r, err := c.ChangeUserPass(ctx, &pb.UserData{Base: &pb.Base{User: a.Name, Pass: a.Pass1}, User: user, Pass: pass})
+	r, err := c.ChangeUserPass(ctx, &pb.UserData{Base: &pb.Base{User: a.Name, Pass: a.Pass, Token: a.Token}, User: user, Pass: pass})
 	if err != nil {
 		log.Fatalf("could not greet: %v", err)
 	}

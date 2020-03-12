@@ -58,9 +58,10 @@ vm create -n test -c 1 -m 1024 -p /home/yoneyan/test.qcow2 -s 1024 -N br100 -v 2
 
 		c := grpc.VMData{
 			Base: &grpc.Base{
-				User:  d[1],
-				Pass:  d[2],
-				Group: d[3],
+				User:  d.User,
+				Pass:  d.Pass,
+				Group: d.Group,
+				Token: d.Token,
 			},
 			Vmname:  resultStringArray[0],
 			Node:    int32(resultInt64Array[4]),
@@ -75,7 +76,7 @@ vm create -n test -c 1 -m 1024 -p /home/yoneyan/test.qcow2 -s 1024 -N br100 -v 2
 				Autostart:   autostart,
 			},
 		}
-		data.CreateVM(&c, d[0])
+		data.CreateVM(&c, d.Host)
 		fmt.Println("Process End")
 		return nil
 	},
@@ -95,13 +96,14 @@ var vmDeleteCmd = &cobra.Command{
 		d := Base(cmd)
 		c := grpc.VMID{
 			Base: &grpc.Base{
-				User:  d[1],
-				Pass:  d[2],
-				Group: d[3],
+				User:  d.User,
+				Pass:  d.Pass,
+				Group: d.Group,
+				Token: d.Token,
 			},
 			Id: int64(result),
 		}
-		data.DeleteVM(&c, d[0])
+		data.DeleteVM(&c, d.Host)
 		fmt.Println("Process End")
 		return nil
 	},
@@ -122,13 +124,14 @@ var vmStartCmd = &cobra.Command{
 		d := Base(cmd)
 		c := grpc.VMID{
 			Base: &grpc.Base{
-				User:  d[1],
-				Pass:  d[2],
-				Group: d[3],
+				User:  d.User,
+				Pass:  d.Pass,
+				Group: d.Group,
+				Token: d.Token,
 			},
 			Id: int64(result),
 		}
-		data.StartVM(&c, d[0])
+		data.StartVM(&c, d.Host)
 		fmt.Println("Process End")
 		return nil
 	},
@@ -150,13 +153,14 @@ var vmStopCmd = &cobra.Command{
 		d := Base(cmd)
 		c := grpc.VMID{
 			Base: &grpc.Base{
-				User:  d[1],
-				Pass:  d[2],
-				Group: d[3],
+				User:  d.User,
+				Pass:  d.Pass,
+				Group: d.Group,
+				Token: d.Token,
 			},
 			Id: int64(result),
 		}
-		data.StopVM(&c, d[0])
+		data.StopVM(&c, d.Host)
 		fmt.Println("Process End")
 		return nil
 	},
@@ -178,13 +182,14 @@ var vmShutdownCmd = &cobra.Command{
 		d := Base(cmd)
 		c := grpc.VMID{
 			Base: &grpc.Base{
-				User:  d[1],
-				Pass:  d[2],
-				Group: d[3],
+				User:  d.User,
+				Pass:  d.Pass,
+				Group: d.Group,
+				Token: d.Token,
 			},
 			Id: int64(result),
 		}
-		data.ShutdownVM(&c, d[0])
+		data.ShutdownVM(&c, d.Host)
 		fmt.Println("Process End")
 		return nil
 	},
@@ -205,13 +210,14 @@ var vmResetCmd = &cobra.Command{
 		d := Base(cmd)
 		c := grpc.VMID{
 			Base: &grpc.Base{
-				User:  d[1],
-				Pass:  d[2],
-				Group: d[3],
+				User:  d.User,
+				Pass:  d.Pass,
+				Group: d.Group,
+				Token: d.Token,
 			},
 			Id: int64(result),
 		}
-		data.ResetVM(&c, d[0])
+		data.ResetVM(&c, d.Host)
 		fmt.Println("Process End")
 		return nil
 	},
@@ -232,13 +238,14 @@ var vmResumeCmd = &cobra.Command{
 		d := Base(cmd)
 		c := grpc.VMID{
 			Base: &grpc.Base{
-				User:  d[1],
-				Pass:  d[2],
-				Group: d[3],
+				User:  d.User,
+				Pass:  d.Pass,
+				Group: d.Group,
+				Token: d.Token,
 			},
 			Id: int64(result),
 		}
-		data.ResumeVM(&c, d[0])
+		data.ResumeVM(&c, d.Host)
 		fmt.Println("Process End")
 		return nil
 	},
@@ -259,13 +266,14 @@ var vmPauseCmd = &cobra.Command{
 		d := Base(cmd)
 		c := grpc.VMID{
 			Base: &grpc.Base{
-				User:  d[1],
-				Pass:  d[2],
-				Group: d[3],
+				User:  d.User,
+				Pass:  d.Pass,
+				Group: d.Group,
+				Token: d.Token,
 			},
 			Id: int64(result),
 		}
-		data.PauseVM(&c, d[0])
+		data.PauseVM(&c, d.Host)
 		fmt.Println("Process End")
 		return nil
 	},
@@ -292,13 +300,14 @@ var vmGetIDCmd = &cobra.Command{
 		d := Base(cmd)
 		c := grpc.VMID{
 			Base: &grpc.Base{
-				User:  d[1],
-				Pass:  d[2],
-				Group: d[3],
+				User:  d.User,
+				Pass:  d.Pass,
+				Group: d.Group,
+				Token: d.Token,
 			},
 			Id: int64(result),
 		}
-		data.GetVM(&c, d[0])
+		data.GetVM(&c, d.Host)
 		fmt.Println("Process End")
 		return nil
 	},
@@ -314,13 +323,14 @@ var vmGetNameCmd = &cobra.Command{
 		d := Base(cmd)
 		c := grpc.VMName{
 			Base: &grpc.Base{
-				User:  d[1],
-				Pass:  d[2],
-				Group: d[3],
+				User:  d.User,
+				Pass:  d.Pass,
+				Group: d.Group,
+				Token: d.Token,
 			},
 			Vmname: args[0],
 		}
-		data.GetVMName(&c, d[0])
+		data.GetVMName(&c, d.Host)
 		fmt.Println("Process End")
 		return nil
 	},
@@ -332,36 +342,15 @@ var vmGetAllCmd = &cobra.Command{
 	RunE: func(cmd *cobra.Command, args []string) error {
 		d := Base(cmd)
 		c := grpc.Base{
-			User:  d[1],
-			Pass:  d[2],
-			Group: d[3],
+			User:  d.User,
+			Pass:  d.Pass,
+			Group: d.Group,
+			Token: d.Token,
 		}
-		data.GetAllVM(&c, d[0])
+		data.GetAllVM(&c, d.Host)
 		fmt.Println("Process End")
 		return nil
 	},
-}
-
-func Base(cmd *cobra.Command) []string {
-	host, err := cmd.Flags().GetString("host")
-	if err != nil {
-		log.Fatalf("could not greet: %v", err)
-	}
-	authuser, err := cmd.Flags().GetString("authuser")
-	if err != nil {
-		log.Fatalf("could not greet: %v", err)
-	}
-	authpass, err := cmd.Flags().GetString("authpass")
-	if err != nil {
-		log.Fatalf("could not greet: %v", err)
-	}
-	group, err := cmd.Flags().GetString("group")
-	if err != nil {
-		log.Fatalf("could not greet: %v", err)
-	}
-	data := []string{host, authuser, authpass, group}
-
-	return data
 }
 
 func init() {
