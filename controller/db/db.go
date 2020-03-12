@@ -42,7 +42,7 @@ type Token struct {
 	ID        int
 	Token     string
 	Userid    int
-	Groupid   int
+	Groupid   string
 	Begintime int
 	Endtime   int
 }

@@ -13,20 +13,24 @@ import (
 )
 
 //Token Authentication
-func TokenCertification(token string) (int, int, bool) {
+func TokenCertification(token string) (int, []int, bool) {
 	go DeleteExpiredToken()
 	data, result := db.GetDBToken(token)
 	if result == false {
-		return 0, 0, false
+		return 0, nil, false
 	}
 	if VerifyTime(data.Endtime) == false {
-		return 1, 0, false
+		return 1, nil, false
 	}
-	return data.Userid, data.Groupid, true
+	return data.Userid, nil, true
 }
 
 //User Certification Tool is testing now !!
 func AdminUserCertification(name, pass string) bool {
+	if name == "" || pass == "" {
+		fmt.Println("Certification NG!! (Administrator)")
+		return false
+	}
 	if db.PassAuthDBUser(name, pass) {
 		if SearchGroupUser(name, "admin", 0) {
 			fmt.Println("Certification OK!! (Administrator)")

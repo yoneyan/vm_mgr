@@ -12,15 +12,22 @@ const (
 	holdtime = 21600 //secound
 )
 
-func NewToken() (string, bool) {
-	var data *db.Token
+func NewToken(user string) (string, bool) {
+	userid, result := db.GetDBUserID(user)
+	if result == false {
+		return "ID SeachFailed", false
+	}
+	bt, et := TimeCalc()
+	token := GenerateToken()
 
-	data.Begintime, data.Endtime = TimeCalc()
-	data.Token = GenerateToken()
+	db.AddDBToken(db.Token{
+		Token:     token,
+		Userid:    userid,
+		Begintime: bt,
+		Endtime:   et,
+	})
 
-	db.AddDBToken(*data)
-
-	return data.Token, true
+	return token, true
 }
 
 func TimeCalc() (int, int) {
