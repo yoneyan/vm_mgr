@@ -93,7 +93,7 @@ message TokenData {
     int64 id = 1;
     string token = 2;
     int32 userid = 3;
-    int32 groupid = 4;
+    string groupid = 4;
     int64 begintime = 5;
     int64 endtime = 6;
 }
