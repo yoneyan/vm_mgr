@@ -4,7 +4,6 @@ syntax = "proto3";
 
 service grpc {
     rpc Auth (Base) returns (AuthResult) {
-
     }
     rpc CreateVM (VMData) returns (Result) {
     }
@@ -66,6 +65,12 @@ service grpc {
     }
     rpc UserRemoveGroup (GroupData) returns (Result) {
     }
+    rpc GetAllToken (Base) returns (stream TokenData) {
+    }
+    rpc GetToken (Base) returns (TokenData) {
+    }
+    rpc DeleteToken (Base) returns (Result) {
+    }
 }
 
 message Null {
@@ -76,11 +81,21 @@ message Base {
     string pass = 2;
     string group = 3;
     string token = 4;
+    bool result = 5;
 }
 
 message AuthResult {
     string token = 1;
     int32 userid = 2;
+}
+
+message TokenData {
+    int64 id = 1;
+    string token = 2;
+    int32 userid = 3;
+    int32 groupid = 4;
+    int64 begintime = 5;
+    int64 endtime = 6;
 }
 
 message VMData {

@@ -12,6 +12,19 @@ import (
 	"time"
 )
 
+//Token Authentication
+func TokenCertification(token string) (int, int, bool) {
+	go DeleteExpiredToken()
+	data, result := db.GetDBToken(token)
+	if result == false {
+		return 0, 0, false
+	}
+	if VerifyTime(data.Endtime) == false {
+		return 1, 0, false
+	}
+	return data.Userid, data.Groupid, true
+}
+
 //User Certification Tool is testing now !!
 func AdminUserCertification(name, pass string) bool {
 	if db.PassAuthDBUser(name, pass) {

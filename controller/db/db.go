@@ -38,6 +38,15 @@ type Group struct {
 	Net        string
 }
 
+type Token struct {
+	ID        int
+	Token     string
+	Userid    int
+	Groupid   int
+	Begintime int
+	Endtime   int
+}
+
 func connectdb() *sql.DB {
 	db, err := sql.Open("sqlite3", DBPath)
 	if err != nil {
@@ -68,6 +77,8 @@ func InitDB() bool {
 	createdb(`CREATE TABLE IF NOT EXISTS "userdata" ("id" INTEGER PRIMARY KEY, "name" VARCHAR(255), "pass" VARCHAR(255))`)
 	//group data
 	createdb(`CREATE TABLE IF NOT EXISTS "groupdata" ("id" INTEGER PRIMARY KEY, "name" VARCHAR(255),"admin" VARCHAR(500),"user" VARCHAR(2000),"maxvm" INT,"maxcpu" INT,"maxmem" INT,"maxstorage" INT,"net" VARCHAR(255))`)
+	//token data
+	createdb(`CREATE TABLE IF NOT EXISTS "tokendata" ("id" INTEGER PRIMARY KEY, "token" VARCHAR(1000), "userid" INT,"groupid" INT,"begintime" INT,"endtime" INT)`)
 
 	return true
 }
