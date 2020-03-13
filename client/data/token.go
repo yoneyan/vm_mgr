@@ -6,6 +6,7 @@ import (
 	"github.com/olekukonko/tablewriter"
 	pb "github.com/yoneyan/vm_mgr/proto/proto-go"
 	"google.golang.org/grpc"
+	"google.golang.org/grpc/metadata"
 	"io"
 	"log"
 	"os"
@@ -71,10 +72,12 @@ func GetAllToken(a *AuthData, address string) {
 	defer conn.Close()
 	c := pb.NewGrpcClient(conn)
 
-	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
-	defer cancel()
+	md := metadata.New(map[string]string{"authuser": a.Name, "authpass": a.Pass, "authtoken": a.Token})
+	ctx := metadata.NewOutgoingContext(context.Background(), md)
 
-	stream, err := c.GetAllToken(ctx, &pb.Base{User: a.Name, Pass: a.Pass, Token: a.Token})
+	//var header metadata.MD
+
+	stream, err := c.GetAllToken(ctx, &pb.Base{User: a.Name, Pass: a.Pass, Token: a.Token}, grpc.Header(&md))
 	if err != nil {
 		log.Fatal(err)
 	}
