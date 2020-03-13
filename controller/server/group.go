@@ -18,10 +18,10 @@ func (s *server) AddGroup(ctx context.Context, in *pb.GroupData) (*pb.Result, er
 	log.Println("Receive GroupMaxMem     : " + strconv.Itoa(int(in.GetSepc().GetMaxmem())))
 	log.Println("Receive GroupMaxStorage : " + strconv.Itoa(int(in.GetSepc().GetMaxstorage())))
 	log.Println("Receive GroupNet        : " + in.GetSepc().GetNet())
-	log.Println("Receive AuthUser        : " + in.GetBase().User + ", AuthPass: " + in.GetBase().Pass)
-	log.Println("Receive Token           : " + in.GetBase().GetToken())
+	log.Println("Receive AuthUser        : " + in.Base.User + ", AuthPass: " + in.Base.Pass)
+	log.Println("Receive Token           : " + in.Base.GetToken())
 
-	if data.AdminUserCertification(in.GetBase().GetUser(), in.GetBase().GetPass(), in.GetBase().GetToken()) == false {
+	if data.AdminUserCertification(in.Base.GetUser(), in.Base.GetPass(), in.Base.GetToken()) == false {
 		return &pb.Result{Status: false, Info: "Authentication failed!!"}, nil
 	}
 	if data.ExistGroupCheck(in.GetName()) {
@@ -37,10 +37,10 @@ func (s *server) AddGroup(ctx context.Context, in *pb.GroupData) (*pb.Result, er
 func (s *server) RemoveGroup(ctx context.Context, in *pb.GroupData) (*pb.Result, error) {
 	log.Println("----RemoveGroup----")
 	log.Println("Receive GroupName       : " + in.GetName())
-	log.Println("Receive AuthUser        : " + in.GetBase().User + ", AuthPass: " + in.GetBase().Pass)
-	log.Println("Receive Token           : " + in.GetBase().GetToken())
+	log.Println("Receive AuthUser        : " + in.Base.User + ", AuthPass: " + in.Base.Pass)
+	log.Println("Receive Token           : " + in.Base.GetToken())
 
-	if data.AdminUserCertification(in.GetBase().GetUser(), in.GetBase().GetPass(), in.GetBase().GetToken()) == false {
+	if data.AdminUserCertification(in.Base.GetUser(), in.Base.GetPass(), in.Base.GetToken()) == false {
 		return &pb.Result{Status: false, Info: "Authentication failed!!"}, nil
 	}
 	if data.ExistGroupCheck(in.GetName()) == false {
@@ -61,8 +61,8 @@ func (s *server) UserAddGroup(ctx context.Context, in *pb.GroupData) (*pb.Result
 	log.Println("----UserAddGroup----")
 	log.Println("Receive GroupName   : " + in.GetName())
 	log.Println("Receive AddUserName : " + in.GetUser())
-	log.Println("Receive AuthUser    : " + in.GetBase().User + ", AuthPass: " + in.GetBase().Pass)
-	log.Println("Receive Token     : " + in.GetBase().GetToken())
+	log.Println("Receive AuthUser    : " + in.Base.User + ", AuthPass: " + in.Base.Pass)
+	log.Println("Receive Token     : " + in.Base.GetToken())
 
 	if in.GetMode() == 0 {
 		log.Println("Receive Mode    : Admin")
@@ -72,7 +72,7 @@ func (s *server) UserAddGroup(ctx context.Context, in *pb.GroupData) (*pb.Result
 		return &pb.Result{Status: false, Info: "Mode error!!!"}, nil
 	}
 
-	if data.AdminUserCertification(in.GetBase().GetUser(), in.GetBase().GetPass(), in.GetBase().GetToken()) == false {
+	if data.AdminUserCertification(in.Base.GetUser(), in.Base.GetPass(), in.Base.GetToken()) == false {
 		return &pb.Result{Status: false, Info: "Authentication failed!!"}, nil
 	}
 	if data.ExistGroupCheck(in.GetName()) == false {
@@ -99,8 +99,8 @@ func (s *server) UserRemoveGroup(ctx context.Context, in *pb.GroupData) (*pb.Res
 	log.Println("----UserRemoveGroup----")
 	log.Println("Receive GroupName   : " + in.GetName())
 	log.Println("Receive AddUserName : " + in.GetUser())
-	log.Println("Receive AuthUser    : " + in.GetBase().User + ", AuthPass: " + in.GetBase().Pass)
-	log.Println("Receive Token     : " + in.GetBase().GetToken())
+	log.Println("Receive AuthUser    : " + in.Base.User + ", AuthPass: " + in.Base.Pass)
+	log.Println("Receive Token     : " + in.Base.GetToken())
 
 	if in.GetMode() == 0 {
 		log.Println("Receive Mode    : Admin")
@@ -110,7 +110,7 @@ func (s *server) UserRemoveGroup(ctx context.Context, in *pb.GroupData) (*pb.Res
 		return &pb.Result{Status: false, Info: "Mode error!!!"}, nil
 	}
 
-	if data.AdminUserCertification(in.GetBase().GetUser(), in.GetBase().GetPass(), in.GetBase().GetToken()) == false {
+	if data.AdminUserCertification(in.Base.GetUser(), in.Base.GetPass(), in.Base.GetToken()) == false {
 		return &pb.Result{Status: false, Info: "Authentication failed!!"}, nil
 	}
 	if data.ExistGroupCheck(in.GetName()) == false {
@@ -135,12 +135,12 @@ func (s *server) UserRemoveGroup(ctx context.Context, in *pb.GroupData) (*pb.Res
 
 func (s *server) GetGroup(d *pb.GroupData, stream pb.Grpc_GetGroupServer) error {
 	log.Println("----GetGroup----")
-	log.Println("Receive AuthUser  : " + d.GetBase().GetUser() + ", AuthPass: " + d.GetBase().GetPass())
-	log.Println("Receive Token     : " + d.GetBase().GetToken())
+	log.Println("Receive AuthUser  : " + d.Base.GetUser() + ", AuthPass: " + d.Base.GetPass())
+	log.Println("Receive Token     : " + d.Base.GetToken())
 
 	if d.Mode == 0 {
 		log.Printf("Receive GetAllGroup")
-		if data.AdminUserCertification(d.GetBase().GetUser(), d.GetBase().GetPass(), d.GetBase().GetToken()) == false {
+		if data.AdminUserCertification(d.Base.GetUser(), d.Base.GetPass(), d.Base.GetToken()) == false {
 			fmt.Println("Failed authentication")
 			return nil
 		}

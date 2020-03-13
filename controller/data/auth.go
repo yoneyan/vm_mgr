@@ -40,14 +40,14 @@ func AdminUserCertification(name, pass, token string) bool {
 	if token != "" {
 		tokendata, result := db.GetDBToken(token)
 		if result == false {
-			fmt.Println("Error: Token Get Error")
+			fmt.Println("Error: Token Get Error 1")
 			fmt.Println("Certification NG!! (Administrator)")
 			return false
 		}
 
 		userdata, result := db.GetDBUser(tokendata.Userid)
 		if result == false {
-			fmt.Println("Error: Token Get Error")
+			fmt.Println("Error: Token Get Error 2")
 			fmt.Println("Certification NG!! (Administrator)")
 			return false
 		}

@@ -13,10 +13,10 @@ func (s *server) AddUser(ctx context.Context, in *pb.UserData) (*pb.Result, erro
 	log.Println("----AddUser----")
 	log.Println("Receive UserName: " + in.GetUser())
 	log.Println("Receive Pass: " + in.GetPass())
-	log.Println("Receive AuthUser: " + in.GetBase().User + ", AuthPass: " + in.GetBase().Pass)
-	log.Println("Receive Token     : " + in.GetBase().GetToken())
+	log.Println("Receive AuthUser: " + in.Base.GetUser() + ", AuthPass: " + in.Base.GetPass())
+	log.Println("Receive Token     : " + in.Base.GetToken())
 
-	if data.AdminUserCertification(in.GetUser(), in.GetPass(), in.GetToken()) == false {
+	if data.AdminUserCertification(in.Base.GetUser(), in.Base.GetPass(), in.Base.GetToken()) == false {
 		return &pb.Result{Status: false, Info: "Authentication failed!!"}, nil
 	}
 	if data.ExistUserCheck(in.GetUser()) {
@@ -34,11 +34,11 @@ func (s *server) AddUser(ctx context.Context, in *pb.UserData) (*pb.Result, erro
 
 func (s *server) RemoveUser(ctx context.Context, in *pb.UserData) (*pb.Result, error) {
 	log.Println("----RemoveUser----")
-	log.Println("Receive UserName: " + in.GetUser())
-	log.Println("Receive AuthUser: " + in.GetBase().User + ", AuthPass: " + in.GetBase().Pass)
-	log.Println("Receive Token     : " + in.GetBase().GetToken())
+	log.Println("Receive UserName: " + in.Base.GetUser())
+	log.Println("Receive AuthUser: " + in.Base.GetUser() + ", AuthPass: " + in.Base.GetPass())
+	log.Println("Receive Token     : " + in.Base.GetToken())
 
-	if data.AdminUserCertification(in.GetUser(), in.GetPass(), in.GetToken()) == false {
+	if data.AdminUserCertification(in.Base.GetUser(), in.Base.GetPass(), in.Base.GetToken()) == false {
 		return &pb.Result{Status: false, Info: "Authentication failed!!"}, nil
 	}
 	if data.ExistUserCheck(in.GetUser()) == false {
@@ -56,9 +56,12 @@ func (s *server) RemoveUser(ctx context.Context, in *pb.UserData) (*pb.Result, e
 
 func (s *server) GetUser(d *pb.UserData, stream pb.Grpc_GetUserServer) error {
 	log.Println("----GetUser----")
+	log.Println("Receive AuthUser: " + d.Base.GetUser() + ", AuthPass: " + d.Base.GetPass())
+	log.Println("Receive Token     : " + d.Base.GetToken())
+
 	if d.Mode == 0 {
 		log.Println("GetAllUser")
-		if data.AdminUserCertification(d.GetUser(), d.GetPass(), d.GetToken()) == false {
+		if data.AdminUserCertification(d.Base.GetUser(), d.Base.GetPass(), d.Base.GetToken()) == false {
 			fmt.Println("Administrator certification failed!!!")
 			return nil
 		}
