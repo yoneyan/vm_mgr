@@ -4,22 +4,26 @@ import {FormsModule} from "@angular/forms";
 
 import {AppRoutingModule} from './app-routing.module';
 import {AppComponent} from './app.component';
-import {SignInComponent} from './sign-in/sign-in.component';
+import {LoginComponent} from './login/login.component';
 import {RouterModule} from "@angular/router";
 import {ReactiveFormsModule} from "@angular/forms";
+import {AuthService} from './auth.service';
+import {LoginService} from "./login.service";
+import {HttpClientModule} from "@angular/common/http";
 
 @NgModule({
   declarations: [
     AppComponent,
-    SignInComponent,
+    LoginComponent,
 
   ],
   imports: [
     BrowserModule,
     AppRoutingModule,
     FormsModule,
+    HttpClientModule,
     RouterModule.forRoot([
-      {path: '', component: SignInComponent},
+      {path: '', component: LoginComponent},
     ]),
     ReactiveFormsModule
   ],
@@ -28,4 +32,3 @@ import {ReactiveFormsModule} from "@angular/forms";
 })
 export class AppModule {
 }
-FormsModule
