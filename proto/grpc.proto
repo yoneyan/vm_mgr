@@ -1,35 +1,76 @@
 syntax = "proto3";
 
 //import "google/protobuf/timestamp.proto-go";
+import "google/api/annotations.proto";
 
 service grpc {
     rpc CreateVM (VMData) returns (Result) {
+        option (google.api.http) = {
+            put: "/api/v1/vm/{vmname}"
+            body: "*"
+        };
     }
     rpc DeleteVM (VMID) returns (Result) {
+        option (google.api.http) = {
+            delete: "/api/v1/vm/{id}"
+        };
     }
     rpc StartVM (VMID) returns (Result) {
+        option (google.api.http) = {
+            put: "/api/v1/vm/start/{id}"
+            body: "*"
+        };
     }
     rpc StopVM (VMID) returns (Result) {
+        option (google.api.http) = {
+            put: "/api/v1/vm/stop/{id}"
+            body: "*"
+        };
     }
     rpc ShutdownVM (VMID) returns (Result) {
+        option (google.api.http) = {
+            put: "/api/v1/vm/shutdown/{id}"
+            body: "*"
+        };
     }
     rpc ResetVM (VMID) returns (Result) {
+        option (google.api.http) = {
+            put: "/api/v1/vm/reset/{id}"
+            body: "*"
+        };
     }
     rpc PauseVM (VMID) returns (Result) {
+        option (google.api.http) = {
+            put: "/api/v1/vm/pause/{id}"
+            body: "*"
+        };
     }
     rpc ResumeVM (VMID) returns (Result) {
+        option (google.api.http) = {
+            put: "/api/v1/vm/resume/{id}"
+            body: "*"
+        };
     }
     rpc GetSnapshotVM (VMID) returns (stream SnapshotData) {
     }
     rpc SnapshotOperationVM (SnapshotOperationData) returns (Result) {
     }
     rpc GetVM (VMID) returns (VMData) {
+        option (google.api.http) = {
+            get: "/api/v1/vm/get/{id}"
+        };
     }
     rpc GetVMName (VMName) returns (VMData) {
     }
     rpc GetGroupVM (Base) returns (stream VMData) {
+        option (google.api.http) = {
+            get: "/api/v1/vm/get/group/{group}"
+        };
     }
     rpc GetAllVM (Base) returns (stream VMData) {
+        option (google.api.http) = {
+            get: "/api/v1/vm/get/all"
+        };
     }
     rpc AddNode (NodeData) returns (Result) {
     }
@@ -42,34 +83,83 @@ service grpc {
     rpc StopNode (NodeID) returns (Result) {
     }
     rpc AddUser (UserData) returns (Result) {
+        option (google.api.http) = {
+            post: "/api/v1/user"
+            body: "*"
+        };
     }
     rpc RemoveUser (UserData) returns (Result) {
+        option (google.api.http) = {
+            delete: "/api/v1/user/{id}"
+        };
     }
     rpc GetUser (UserData) returns (stream UserData) {
+        option (google.api.http) = {
+            get: "/api/v1/user"
+        };
     }
     rpc TestUserPass (UserData) returns (Result) {
     }
     rpc ChangeUserPass (UserData) returns (Result) {
+        option (google.api.http) = {
+            put: "/api/v1/user/{id}"
+            body: "*"
+        };
     }
     rpc ChangeUserName (UserData) returns (Result) {
+        option (google.api.http) = {
+            put: "/api/v1/user/{id}"
+            body: "*"
+        };
     }
     rpc AddGroup (GroupData) returns (Result) {
+        option (google.api.http) = {
+            post: "/api/v1/group"
+            body: "*"
+        };
     }
     rpc RemoveGroup (GroupData) returns (Result) {
+        option (google.api.http) = {
+            delete: "/api/v1/group/{id}"
+        };
     }
     rpc GetGroup (GroupData) returns (stream GroupData) {
+        option (google.api.http) = {
+            get: "/api/v1/group"
+        };
     }
     rpc UserAddGroup (GroupData) returns (Result) {
+        option (google.api.http) = {
+            post: "/api/v1/group/join"
+            body: "*"
+        };
     }
     rpc UserRemoveGroup (GroupData) returns (Result) {
+        option (google.api.http) = {
+            post: "/api/v1/group/join/{id}/{mode}/{user}"
+            body: "*"
+        };
     }
     rpc GenerateToken (Base) returns (AuthResult) {
+        option (google.api.http) = {
+            post: "/api/v1/token"
+            body: "*"
+        };
     }
     rpc DeleteToken (Base) returns (Result) {
+        option (google.api.http) = {
+            delete: "/api/v1/token"
+        };
     }
     rpc GetAllToken (Base) returns (stream TokenData) {
+        option (google.api.http) = {
+            get: "/api/v1/token"
+        };
     }
     rpc GetToken (Base) returns (TokenData) {
+        option (google.api.http) = {
+            get: "/api/v1/token/{token}"
+        };
     }
 }
 
