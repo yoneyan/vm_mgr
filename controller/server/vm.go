@@ -10,6 +10,7 @@ import (
 	"io"
 	"log"
 	"strconv"
+	"strings"
 	"time"
 )
 
@@ -299,6 +300,81 @@ func (s *server) GetVMName(ctx context.Context, in *pb.VMName) (*pb.VMData, erro
 }
 */
 
+func (s *server) GetGroupVM(base *pb.Base, stream pb.Grpc_GetGroupVMServer) error {
+	log.Println("----GetGroupVM----")
+	log.Println("Receive AuthUser  : " + base.GetUser() + ", AuthPass: " + base.GetPass() + ", Group: " + base.GetGroup())
+	log.Println("Receive Token     : " + base.GetToken())
+
+	user := base.GetUser()
+	pass := base.GetPass()
+	group := base.GetGroup()
+	token := base.GetToken()
+
+	if group == "" {
+		fmt.Println("Group is not specified!!")
+		return nil
+	}
+
+	if data.StandardUserCertification(&data.UserCertData{User: user, Pass: pass, Group: group, Token: token}) == false {
+		fmt.Println("Auth Failed!!")
+		return nil
+	}
+
+	var d []VMDataStruct
+
+	groupid, result := db.GetDBGroupID(group)
+	if result == false {
+		fmt.Println("DB Not Found Group!!")
+		return nil
+	}
+
+	for _, a := range db.GetDBAllNode() {
+		conn, err := grpc.Dial(a.IP, grpc.WithInsecure(), grpc.WithBlock())
+		if err != nil {
+			fmt.Printf("Not connect; ")
+			fmt.Println(err)
+		}
+		defer conn.Close()
+
+		c := pb.NewGrpcClient(conn)
+		ctx, cancel := context.WithTimeout(context.Background(), time.Second)
+		defer cancel()
+		stream, err := c.GetAllVM(ctx, base)
+		if err != nil {
+			fmt.Println(err)
+		}
+		for {
+			article, err := stream.Recv()
+			if err == io.EOF {
+				break
+			}
+			if err != nil {
+				fmt.Println(err)
+			}
+			s := strings.Split(article.Vmname, "-")
+			if s[0] == strconv.Itoa(groupid) {
+				d = append(d, VMDataStruct{
+					NodeID:    a.ID,
+					ID:        int(article.Option.Id) + (1000 * a.ID),
+					Name:      article.Vmname,
+					CPU:       int(article.Vcpu),
+					Mem:       int(article.Vmem),
+					Net:       article.Vnet,
+					AutoStart: article.Option.Autostart,
+					Status:    int(article.Option.Status),
+				})
+			}
+		}
+	}
+
+	for _, a := range d {
+		if err := stream.Send(&pb.VMData{Option: &pb.Option{Id: int64(a.ID), Autostart: a.AutoStart, Status: int32(a.Status)}, Vmname: a.Name, Node: int32(a.NodeID), Vcpu: int64(a.CPU), Vmem: int64(a.Mem), Vnet: a.Net}); err != nil {
+			return err
+		}
+	}
+	return nil
+}
+
 func (s *server) GetAllVM(base *pb.Base, stream pb.Grpc_GetAllVMServer) error {
 	log.Println("----GetAllVM----")
 	log.Println("Receive AuthUser  : " + base.GetUser() + ", AuthPass: " + base.GetPass())
@@ -323,7 +399,7 @@ func (s *server) GetAllVM(base *pb.Base, stream pb.Grpc_GetAllVMServer) error {
 		defer cancel()
 		stream, err := c.GetAllVM(ctx, base)
 		if err != nil {
-			log.Fatal(err)
+			fmt.Println(err)
 		}
 		for {
 			article, err := stream.Recv()
@@ -331,7 +407,7 @@ func (s *server) GetAllVM(base *pb.Base, stream pb.Grpc_GetAllVMServer) error {
 				break
 			}
 			if err != nil {
-				log.Fatal(err)
+				fmt.Println(err)
 			}
 			d = append(d, VMDataStruct{
 				NodeID:    a.ID,
