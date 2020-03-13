@@ -312,25 +312,22 @@ var vmGetIDCmd = &cobra.Command{
 		return nil
 	},
 }
-var vmGetNameCmd = &cobra.Command{
-	Use:   "name",
-	Short: "get name",
-	Long:  "VM get tool from name.",
+var vmGetGroupCmd = &cobra.Command{
+	Use:   "group",
+	Short: "get group",
+	Long: `VM get tool from name.
+For example:
+vm get group -H 127.0.0.1:50200 -t [token] -g [Group]
+vm get group -H 127.0.0.1:50200 -u test -p test -g [Group]`,
 	RunE: func(cmd *cobra.Command, args []string) error {
-		if len(args) < 1 {
-			return errors.New("requires id")
-		}
 		d := Base(cmd)
-		c := grpc.VMName{
-			Base: &grpc.Base{
-				User:  d.User,
-				Pass:  d.Pass,
-				Group: d.Group,
-				Token: d.Token,
-			},
-			Vmname: args[0],
+		c := grpc.Base{
+			User:  d.User,
+			Pass:  d.Pass,
+			Group: d.Group,
+			Token: d.Token,
 		}
-		data.GetVMName(&c, d.Host)
+		data.GetGroupVM(&c, d.Host)
 		fmt.Println("Process End")
 		return nil
 	},
@@ -377,7 +374,7 @@ func init() {
 	vmCmd.AddCommand(vmGetCmd)
 
 	vmGetCmd.AddCommand(vmGetIDCmd)
-	vmGetCmd.AddCommand(vmGetNameCmd)
+	vmGetCmd.AddCommand(vmGetGroupCmd)
 	vmGetCmd.AddCommand(vmGetAllCmd)
 
 	// Here you will define your flags and configuration settings.

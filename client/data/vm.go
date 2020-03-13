@@ -303,15 +303,9 @@ func GetAllVM(d *pb.Base, address string) {
 		if err != nil {
 			log.Fatal(err)
 		}
-		var status string
-		if article.Option.Status == 0 {
-			status = "Power Off"
-		} else if article.Option.Status == 1 {
-			status = "Power On"
-		} else {
-			status = strconv.Itoa(int(article.Option.Status))
-		}
-		tmp := []string{strconv.Itoa(int(article.Node)), strconv.Itoa(int(article.Option.Id)), article.Vmname, strconv.Itoa(int(article.Vcpu)), strconv.Itoa(int(article.Vmem)), article.Vnet, strconv.FormatBool(article.Option.Autostart), status}
+		tmp := []string{strconv.Itoa(int(article.Node)), strconv.Itoa(int(article.Option.Id)), article.Vmname,
+			strconv.Itoa(int(article.Vcpu)), strconv.Itoa(int(article.Vmem)), article.Vnet,
+			strconv.FormatBool(article.Option.Autostart), StatusConversion(int(article.Option.Status))}
 		data = append(data, tmp)
 	}
 	table := tablewriter.NewWriter(os.Stdout)
@@ -321,4 +315,60 @@ func GetAllVM(d *pb.Base, address string) {
 		table.Append(v)
 	}
 	table.Render()
+}
+
+func GetGroupVM(d *pb.Base, address string) {
+	conn, err := grpc.Dial(address, grpc.WithInsecure(), grpc.WithBlock())
+	if err != nil {
+		log.Fatalf("Not connect; %v", err)
+	}
+	defer conn.Close()
+
+	c := pb.NewGrpcClient(conn)
+	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
+	defer cancel()
+	stream, err := c.GetGroupVM(ctx, d)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	var data [][]string
+
+	for {
+		article, err := stream.Recv()
+		if err == io.EOF {
+			break
+		}
+		if err != nil {
+			log.Fatal(err)
+		}
+
+		tmp := []string{strconv.Itoa(int(article.Node)), strconv.Itoa(int(article.Option.Id)), article.Vmname,
+			strconv.Itoa(int(article.Vcpu)), strconv.Itoa(int(article.Vmem)), article.Vnet,
+			strconv.FormatBool(article.Option.Autostart), StatusConversion(int(article.Option.Status))}
+		data = append(data, tmp)
+	}
+	table := tablewriter.NewWriter(os.Stdout)
+	table.SetHeader([]string{"NodeID", "ID", "Name", "CPU", "Mem", "Net", "AutoStart", "Status"})
+
+	for _, v := range data {
+		table.Append(v)
+	}
+	table.Render()
+}
+
+func StatusConversion(status int) string {
+	var statusString string
+	if status == 0 {
+		statusString = "Power Off"
+	} else if status == 1 {
+		statusString = "Power On"
+	} else if status == 2 {
+		statusString = "Shutdown"
+	} else if status == 3 {
+		statusString = "Resume"
+	} else {
+		statusString = strconv.Itoa(status)
+	}
+	return statusString
 }
