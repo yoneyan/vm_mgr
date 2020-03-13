@@ -102,14 +102,6 @@ var nodeGetCmd = &cobra.Command{
 	Short: "node get",
 	Long:  "node get tool",
 	RunE: func(cmd *cobra.Command, args []string) error {
-		if len(args) < 1 {
-			return errors.New("requires id")
-		}
-		result, _ := strconv.Atoi(args[0])
-		if result < 0 {
-			return errors.New("value failed")
-		}
-
 		d := Base(cmd)
 		data.GetNode(&data.AuthData{Name: d.User, Pass: d.Pass, Token: d.Token}, d.Host)
 		fmt.Println("Process End")
