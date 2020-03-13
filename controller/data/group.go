@@ -134,6 +134,62 @@ func ProcessStringToArray(basedata, data string, mode int) (string, bool) {
 	return "0", false
 }
 
+func SearchUserForAllGroup(user string) ([]int, bool) {
+	var r []int
+	admindata, result := SearchUserForAdminGroup(user)
+	if result == false {
+		r[0] = 0
+		return r, false
+	}
+	userdata, result := SearchUserForUserGroup(user)
+	if result == false {
+		r[0] = 0
+		return r, false
+	}
+
+	tmp := admindata[:]
+	tmp = append(tmp, userdata...)
+
+	resultarray := make([]int, 0)
+
+	m := make(map[int]struct{}, 0)
+	for _, el := range tmp {
+		if _, ok := m[el]; ok == false {
+			m[el] = struct{}{}
+			resultarray = append(resultarray, el)
+		}
+	}
+	return tmp, true
+}
+func SearchUserForAdminGroup(user string) ([]int, bool) {
+	data := db.GetDBAllGroup()
+	var result []int
+	for _, a := range data {
+		dataarray := strings.Split(a.Admin, ",")
+		for _, d := range dataarray {
+			if d == user {
+				break
+			}
+		}
+		result = append(result, a.ID)
+	}
+	return result, true
+}
+func SearchUserForUserGroup(user string) ([]int, bool) {
+	data := db.GetDBAllGroup()
+	var result []int
+	for _, a := range data {
+		dataarray := strings.Split(a.User, ",")
+		for _, d := range dataarray {
+			if d == user {
+				break
+			}
+		}
+		result = append(result, a.ID)
+	}
+	return result, true
+}
+
 //basedata: group admin and user data
 func SearchAllGroupUser(basedata, searchnamedata string) bool {
 	dataarray := strings.Split(basedata, ",")

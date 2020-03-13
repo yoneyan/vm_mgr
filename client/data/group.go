@@ -41,7 +41,7 @@ func AddGroup(a *AuthData, address, group, net, maxvm, maxcpu, maxmem, maxstorag
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
 	defer cancel()
 
-	r, err := c.AddGroup(ctx, &pb.GroupData{Base: &pb.Base{User: a.Name, Pass: a.Pass1}, Name: group, Sepc: &pb.SpecData{Maxvm: int32(vm), Net: net, Maxcpu: int32(cpu), Maxmem: int32(mem), Maxstorage: int32(storage)}})
+	r, err := c.AddGroup(ctx, &pb.GroupData{Base: &pb.Base{User: a.Name, Pass: a.Pass, Token: a.Token}, Name: group, Sepc: &pb.SpecData{Maxvm: int32(vm), Net: net, Maxcpu: int32(cpu), Maxmem: int32(mem), Maxstorage: int32(storage)}})
 	if err != nil {
 		log.Fatalf("could not greet: %v", err)
 	}
@@ -63,7 +63,7 @@ func RemoveGroup(a *AuthData, address, group string) {
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
 	defer cancel()
 
-	r, err := c.RemoveGroup(ctx, &pb.GroupData{Base: &pb.Base{User: a.Name, Pass: a.Pass1}, Name: group})
+	r, err := c.RemoveGroup(ctx, &pb.GroupData{Base: &pb.Base{User: a.Name, Pass: a.Pass, Token: a.Token}, Name: group})
 	if err != nil {
 		log.Fatalf("could not greet: %v", err)
 	}
@@ -84,7 +84,7 @@ func GetAllGroup(a *AuthData, address string) {
 
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
 	defer cancel()
-	stream, err := c.GetGroup(ctx, &pb.GroupData{Base: &pb.Base{User: a.Name, Pass: a.Pass1}, Mode: 0})
+	stream, err := c.GetGroup(ctx, &pb.GroupData{Base: &pb.Base{User: a.Name, Pass: a.Pass, Token: a.Token}, Mode: 0})
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -122,7 +122,7 @@ func GetSelectGroup(a *AuthData, address, name string) {
 
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
 	defer cancel()
-	stream, err := c.GetGroup(ctx, &pb.GroupData{Base: &pb.Base{User: a.Name, Pass: a.Pass1}, Name: name, Mode: 1})
+	stream, err := c.GetGroup(ctx, &pb.GroupData{Base: &pb.Base{User: a.Name, Pass: a.Pass, Token: a.Token}, Name: name, Mode: 1})
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -149,7 +149,7 @@ func GetMyGroup(a *AuthData, address string) {
 
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
 	defer cancel()
-	stream, err := c.GetGroup(ctx, &pb.GroupData{Base: &pb.Base{User: a.Name, Pass: a.Pass1}, Mode: 2})
+	stream, err := c.GetGroup(ctx, &pb.GroupData{Base: &pb.Base{User: a.Name, Pass: a.Pass, Token: a.Token}, Mode: 2})
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -177,7 +177,7 @@ func JoinAddGroup(a *AuthData, address, genre, group, user string) {
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
 	defer cancel()
 	if genre == "Admin" || genre == "admin" {
-		r, err := c.UserAddGroup(ctx, &pb.GroupData{Base: &pb.Base{User: a.Name, Pass: a.Pass1}, Name: group, User: user, Mode: 0})
+		r, err := c.UserAddGroup(ctx, &pb.GroupData{Base: &pb.Base{User: a.Name, Pass: a.Pass, Token: a.Token}, Name: group, User: user, Mode: 0})
 		if err != nil {
 			log.Fatalf("could not greet: %v", err)
 		}
@@ -187,7 +187,7 @@ func JoinAddGroup(a *AuthData, address, genre, group, user string) {
 		log.Printf("Info: ")
 		log.Println(r.Info)
 	} else if genre == "User" || genre == "user" {
-		r, err := c.UserAddGroup(ctx, &pb.GroupData{Base: &pb.Base{User: a.Name, Pass: a.Pass1}, Name: group, User: user, Mode: 1})
+		r, err := c.UserAddGroup(ctx, &pb.GroupData{Base: &pb.Base{User: a.Name, Pass: a.Pass, Token: a.Token}, Name: group, User: user, Mode: 1})
 		if err != nil {
 			log.Fatalf("could not greet: %v", err)
 		}
@@ -211,7 +211,7 @@ func JoinRemoveGroup(a *AuthData, address, genre, group, user string) {
 	defer cancel()
 
 	if genre == "Admin" || genre == "admin" {
-		r, err := c.UserRemoveGroup(ctx, &pb.GroupData{Base: &pb.Base{User: a.Name, Pass: a.Pass1}, Name: group, Admin: user, Mode: 0})
+		r, err := c.UserRemoveGroup(ctx, &pb.GroupData{Base: &pb.Base{User: a.Name, Pass: a.Pass, Token: a.Token}, Name: group, Admin: user, Mode: 0})
 		if err != nil {
 			log.Fatalf("could not greet: %v", err)
 		}
@@ -221,7 +221,7 @@ func JoinRemoveGroup(a *AuthData, address, genre, group, user string) {
 		log.Printf("Info: ")
 		log.Println(r.Info)
 	} else if genre == "User" || genre == "user" {
-		r, err := c.UserRemoveGroup(ctx, &pb.GroupData{Base: &pb.Base{User: a.Name, Pass: a.Pass1}, Name: group, User: user, Mode: 1})
+		r, err := c.UserRemoveGroup(ctx, &pb.GroupData{Base: &pb.Base{User: a.Name, Pass: a.Pass, Token: a.Token}, Name: group, User: user, Mode: 1})
 		if err != nil {
 			log.Fatalf("could not greet: %v", err)
 		}

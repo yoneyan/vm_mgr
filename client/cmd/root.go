@@ -3,6 +3,7 @@ package cmd
 import (
 	"fmt"
 	"github.com/spf13/cobra"
+	"log"
 	"os"
 
 	homedir "github.com/mitchellh/go-homedir"
@@ -10,6 +11,14 @@ import (
 )
 
 var cfgFile string
+
+type BaseData struct {
+	Host  string
+	User  string
+	Pass  string
+	Token string
+	Group string
+}
 
 // rootCmd represents the base command when called without any subcommands
 var rootCmd = &cobra.Command{
@@ -41,8 +50,9 @@ func init() {
 
 	// Cobra also supports local flags, which will only run
 	// when this action is called directly.
-	rootCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
+	rootCmd.Flags().Bool("toggle", false, "Help message for toggle")
 	rootCmd.PersistentFlags().StringP("host", "H", "127.0.0.1:50200", "host example: 127.0.0.1:50001")
+	rootCmd.PersistentFlags().StringP("token", "t", "", "token")
 	rootCmd.PersistentFlags().StringP("authuser", "u", "test", "username")
 	rootCmd.PersistentFlags().StringP("authpass", "p", "test", "password")
 	rootCmd.PersistentFlags().StringP("group", "g", "test", "group")
@@ -72,5 +82,36 @@ func initConfig() {
 	// If a config file is found, read it in.
 	if err := viper.ReadInConfig(); err == nil {
 		fmt.Println("Using config file:", viper.ConfigFileUsed())
+	}
+}
+
+func Base(cmd *cobra.Command) BaseData {
+	host, err := cmd.Flags().GetString("host")
+	if err != nil {
+		log.Fatalf("could not greet: %v", err)
+	}
+	authuser, err := cmd.Flags().GetString("authuser")
+	if err != nil {
+		log.Fatalf("could not greet: %v", err)
+	}
+	authpass, err := cmd.Flags().GetString("authpass")
+	if err != nil {
+		log.Fatalf("could not greet: %v", err)
+	}
+	token, err := cmd.Flags().GetString("token")
+	if err != nil {
+		log.Fatalf("could not greet: %v", err)
+	}
+	group, err := cmd.Flags().GetString("group")
+	if err != nil {
+		log.Fatalf("could not greet: %v", err)
+	}
+
+	return BaseData{
+		Host:  host,
+		User:  authuser,
+		Pass:  authpass,
+		Token: token,
+		Group: group,
 	}
 }

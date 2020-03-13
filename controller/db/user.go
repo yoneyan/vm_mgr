@@ -1,6 +1,7 @@
 package db
 
 import (
+	"database/sql"
 	"fmt"
 	"github.com/yoneyan/vm_mgr/controller/etc"
 	"log"
@@ -55,6 +56,26 @@ func GetDBUserID(name string) (int, bool) {
 	}
 
 	return id, true
+}
+
+func GetDBUser(id int) (User, bool) {
+	db := connectdb()
+	rows := db.QueryRow("SELECT * FROM userdata WHERE id = ?", id)
+
+	var b User
+	err := rows.Scan(&b.ID, &b.Name, &b.Pass)
+
+	switch {
+	case err == sql.ErrNoRows:
+		fmt.Printf("Not found")
+		return b, false
+	case err != nil:
+		fmt.Println(err)
+		fmt.Println("Error: DBError")
+		return b, false
+	default:
+		return b, true
+	}
 }
 
 func GetDBAllUser() []User {

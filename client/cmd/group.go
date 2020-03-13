@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"github.com/spf13/cobra"
 	"github.com/yoneyan/vm_mgr/client/data"
-	"log"
 )
 
 // groupCmd represents the group command
@@ -30,25 +29,10 @@ group add [GroupName] [Network] [MaxVM] [MaxCPU] [MaxMem] [MaxStorage]`,
 		if len(args) < 1 {
 			return errors.New("false")
 		}
-		host, err := cmd.Flags().GetString("host")
-		if err != nil {
-			log.Fatalf("could not greet: %v", err)
-			return nil
-		}
-		fmt.Println(host)
-		fmt.Println(host)
-		authuser, err := cmd.Flags().GetString("authuser")
-		if err != nil {
-			log.Fatalf("could not greet: %v", err)
-			return nil
-		}
-		authpass, err := cmd.Flags().GetString("authpass")
-		if err != nil {
-			log.Fatalf("could not greet: %v", err)
-			return nil
-		}
 
-		data.AddGroup(&data.AuthData{Name: authuser, Pass1: authpass}, host, args[0], args[1], args[2], args[3], args[4], args[5])
+		d := Base(cmd)
+
+		data.AddGroup(&data.AuthData{Name: d.User, Pass: d.Pass, Token: d.Token}, d.Host, args[0], args[1], args[2], args[3], args[4], args[5])
 
 		fmt.Println("Process End")
 		return nil
@@ -67,25 +51,10 @@ group remove [GroupName]`,
 		if len(args) < 1 {
 			return errors.New("false")
 		}
-		host, err := cmd.Flags().GetString("host")
-		if err != nil {
-			log.Fatalf("could not greet: %v", err)
-			return nil
-		}
-		fmt.Println(host)
-		fmt.Println(host)
-		authuser, err := cmd.Flags().GetString("authuser")
-		if err != nil {
-			log.Fatalf("could not greet: %v", err)
-			return nil
-		}
-		authpass, err := cmd.Flags().GetString("authpass")
-		if err != nil {
-			log.Fatalf("could not greet: %v", err)
-			return nil
-		}
 
-		data.RemoveGroup(&data.AuthData{Name: authuser, Pass1: authpass}, host, args[0])
+		d := Base(cmd)
+
+		data.RemoveGroup(&data.AuthData{Name: d.User, Pass: d.Pass, Token: d.Token}, d.Host, args[0])
 
 		fmt.Println("Process End")
 		return nil
@@ -107,24 +76,9 @@ for example:
 
 group get all -H 127.0.0.1:50200 -u test -p test`,
 	RunE: func(cmd *cobra.Command, args []string) error {
-		host, err := cmd.Flags().GetString("host")
-		if err != nil {
-			log.Fatalf("could not greet: %v", err)
-			return nil
-		}
-		fmt.Println(host)
-		authuser, err := cmd.Flags().GetString("authuser")
-		if err != nil {
-			log.Fatalf("could not greet: %v", err)
-			return nil
-		}
-		authpass, err := cmd.Flags().GetString("authpass")
-		if err != nil {
-			log.Fatalf("could not greet: %v", err)
-			return nil
-		}
+		d := Base(cmd)
 
-		data.GetAllGroup(&data.AuthData{Name: authuser, Pass1: authpass}, host)
+		data.GetAllGroup(&data.AuthData{Name: d.User, Pass: d.Pass, Token: d.Token}, d.Host)
 
 		fmt.Println("Process End")
 		return nil
@@ -141,24 +95,9 @@ for example:
 		if len(args) < 1 {
 			return errors.New("false")
 		}
-		host, err := cmd.Flags().GetString("host")
-		if err != nil {
-			log.Fatalf("could not greet: %v", err)
-			return nil
-		}
-		fmt.Println(host)
-		authuser, err := cmd.Flags().GetString("authuser")
-		if err != nil {
-			log.Fatalf("could not greet: %v", err)
-			return nil
-		}
-		authpass, err := cmd.Flags().GetString("authpass")
-		if err != nil {
-			log.Fatalf("could not greet: %v", err)
-			return nil
-		}
+		d := Base(cmd)
 
-		data.GetSelectGroup(&data.AuthData{Name: authuser, Pass1: authpass}, host, args[0])
+		data.GetSelectGroup(&data.AuthData{Name: d.User, Pass: d.Pass, Token: d.Token}, d.Host, args[0])
 
 		fmt.Println("Process End")
 		return nil
@@ -175,24 +114,9 @@ for example:
 		if len(args) < 1 {
 			return errors.New("false")
 		}
-		host, err := cmd.Flags().GetString("host")
-		if err != nil {
-			log.Fatalf("could not greet: %v", err)
-			return nil
-		}
-		fmt.Println(host)
-		authuser, err := cmd.Flags().GetString("authuser")
-		if err != nil {
-			log.Fatalf("could not greet: %v", err)
-			return nil
-		}
-		authpass, err := cmd.Flags().GetString("authpass")
-		if err != nil {
-			log.Fatalf("could not greet: %v", err)
-			return nil
-		}
+		d := Base(cmd)
 
-		data.GetMyGroup(&data.AuthData{Name: authuser, Pass1: authpass}, host)
+		data.GetMyGroup(&data.AuthData{Name: d.User, Pass: d.Pass, Token: d.Token}, d.Host)
 
 		fmt.Println("Process End")
 		return nil
@@ -216,24 +140,9 @@ group join add [Admin/User] [GroupName] [User]`,
 		if len(args) < 1 {
 			return errors.New("false")
 		}
-		host, err := cmd.Flags().GetString("host")
-		if err != nil {
-			log.Fatalf("could not greet: %v", err)
-			return nil
-		}
-		fmt.Println(host)
-		authuser, err := cmd.Flags().GetString("authuser")
-		if err != nil {
-			log.Fatalf("could not greet: %v", err)
-			return nil
-		}
-		authpass, err := cmd.Flags().GetString("authpass")
-		if err != nil {
-			log.Fatalf("could not greet: %v", err)
-			return nil
-		}
+		d := Base(cmd)
 
-		data.JoinAddGroup(&data.AuthData{Name: authuser, Pass1: authpass}, host, args[0], args[1], args[2])
+		data.JoinAddGroup(&data.AuthData{Name: d.User, Pass: d.Pass, Token: d.Token}, d.Host, args[0], args[1], args[2])
 
 		fmt.Println("Process End")
 		return nil
@@ -250,24 +159,9 @@ group join remove [Admin/User] [GroupName] [User]`,
 		if len(args) < 1 {
 			return errors.New("false")
 		}
-		host, err := cmd.Flags().GetString("host")
-		if err != nil {
-			log.Fatalf("could not greet: %v", err)
-			return nil
-		}
-		fmt.Println(host)
-		authuser, err := cmd.Flags().GetString("authuser")
-		if err != nil {
-			log.Fatalf("could not greet: %v", err)
-			return nil
-		}
-		authpass, err := cmd.Flags().GetString("authpass")
-		if err != nil {
-			log.Fatalf("could not greet: %v", err)
-			return nil
-		}
+		d := Base(cmd)
 
-		data.JoinRemoveGroup(&data.AuthData{Name: authuser, Pass1: authpass}, host, args[0], args[1], args[2])
+		data.JoinRemoveGroup(&data.AuthData{Name: d.User, Pass: d.Pass, Token: d.Token}, d.Host, args[0], args[1], args[2])
 
 		fmt.Println("Process End")
 		return nil

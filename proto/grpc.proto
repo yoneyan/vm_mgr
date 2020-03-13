@@ -63,6 +63,14 @@ service grpc {
     }
     rpc UserRemoveGroup (GroupData) returns (Result) {
     }
+    rpc GenerateToken (Base) returns (AuthResult) {
+    }
+    rpc DeleteToken (Base) returns (Result) {
+    }
+    rpc GetAllToken (Base) returns (stream TokenData) {
+    }
+    rpc GetToken (Base) returns (TokenData) {
+    }
 }
 
 message Null {
@@ -72,6 +80,22 @@ message Base {
     string user = 1;
     string pass = 2;
     string group = 3;
+    string token = 4;
+    bool result = 5;
+}
+
+message AuthResult {
+    string token = 1;
+    bool result = 2;
+}
+
+message TokenData {
+    int64 id = 1;
+    string token = 2;
+    int32 userid = 3;
+    string groupid = 4;
+    int64 begintime = 5;
+    int64 endtime = 6;
 }
 
 message VMData {
@@ -155,7 +179,8 @@ message UserData {
     string user = 3;
     string pass = 4;
     int32 mode = 5;
-    SpecData sepc = 6;
+    string token = 6;
+    SpecData sepc = 7;
 }
 
 //Get : mode0 <-All mode1 <- Select mode2 <- MyGroup
