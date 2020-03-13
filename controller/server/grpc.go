@@ -20,9 +20,31 @@ func Server() {
 	if err != nil {
 		fmt.Println("failed to listen: %v", err)
 	}
+
+	//opts := []grpc.ServerOption{grpc.UnaryInterceptor(authentication)}
+	//s := grpc.NewServer(opts...)
+	//
+	//pb.RegisterGrpcServer(s, &server{})
+	//s.Serve(lis)
+
 	s := grpc.NewServer()
 	pb.RegisterGrpcServer(s, &server{})
 	if err := s.Serve(lis); err != nil {
 		fmt.Println("failed to serve: %v", err)
 	}
 }
+
+//func authentication(ctx context.Context, req interface{}, info *grpc.UnaryServerInfo, handler grpc.UnaryHandler) (interface{}, error) {
+//	_, ok := metadata.FromIncomingContext(ctx)
+//	if !ok {
+//		fmt.Println("Not")
+//		return nil, status.Error(codes.Unauthenticated, "not found metadata")
+//	}
+//	//values := md["authorization"]
+//	//if len(values) == 0 {
+//	//	fmt.Println("Not")
+//	//	return nil, status.Error(codes.Unauthenticated, "not found metadata")
+//	//}
+//	fmt.Println("OK!!!!!!!!!!!!!!")
+//	return handler(ctx, req)
+//}

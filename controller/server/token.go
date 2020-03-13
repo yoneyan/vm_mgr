@@ -6,6 +6,7 @@ import (
 	"github.com/yoneyan/vm_mgr/controller/data"
 	"github.com/yoneyan/vm_mgr/controller/db"
 	pb "github.com/yoneyan/vm_mgr/proto/proto-go"
+	"google.golang.org/grpc/metadata"
 	"log"
 )
 
@@ -13,6 +14,9 @@ func (s *server) GenerateToken(ctx context.Context, in *pb.Base) (*pb.AuthResult
 	log.Println("----GenerateToken----")
 	log.Println("Receive AuthUser : " + in.GetUser() + ", AuthPass: " + in.GetPass())
 	log.Println("Receive Token    : " + in.GetToken())
+
+	test, _ := metadata.FromIncomingContext(ctx)
+	fmt.Println(test)
 
 	if data.UserCertification(in.GetUser(), in.GetPass()) == false {
 		return &pb.AuthResult{Result: false, Token: "Auth Failed!!"}, nil
@@ -26,15 +30,25 @@ func (s *server) GenerateToken(ctx context.Context, in *pb.Base) (*pb.AuthResult
 }
 
 func (s *server) DeleteToken(ctx context.Context, in *pb.Base) (*pb.Result, error) {
+	md, ok := metadata.FromIncomingContext(ctx)
+	if ok == false {
+		return &pb.Result{Status: false, Info: "Error!!"}, nil
+	}
+	token := data.AuthDataExtraction(md)
+	if token == "" {
+		fmt.Println("Mode gRPC")
+		token = in.GetToken()
+	} else {
+		fmt.Println("Mode RestAPI")
+	}
 	go data.DeleteExpiredToken()
 	log.Println("----DeleteToken----")
-	log.Println("Receive AuthUser : " + in.GetUser() + ", AuthPass: " + in.GetPass())
-	log.Println("Receive Token    : " + in.GetToken())
+	log.Println("Receive Token    : " + token)
 
-	if data.AdminUserCertification(in.GetUser(), in.GetPass(), in.GetToken()) == false {
-		return &pb.Result{Status: false, Info: "Authentication failed!!"}, nil
-	}
-	data, result := db.GetDBToken(in.GetToken())
+	test, _ := metadata.FromIncomingContext(ctx)
+	fmt.Println(test)
+
+	data, result := db.GetDBToken(token)
 	if result == false {
 		return &pb.Result{Status: false, Info: "DB Search failed!!"}, nil
 	}
@@ -47,11 +61,23 @@ func (s *server) DeleteToken(ctx context.Context, in *pb.Base) (*pb.Result, erro
 }
 
 func (s *server) GetAllToken(d *pb.Base, stream pb.Grpc_GetAllTokenServer) error {
+	md, ok := metadata.FromIncomingContext(stream.Context())
+	if ok == false {
+		return nil
+	}
+	token := data.AuthDataExtraction(md)
+	if token == "" {
+		fmt.Println("Mode gRPC")
+		token = d.GetToken()
+	} else {
+		fmt.Println("Mode RestAPI")
+	}
+
 	go data.DeleteExpiredToken()
 	log.Println("----GetAllToken----")
 	log.Println("Receive AuthUser : " + d.GetUser() + ", AuthPass: " + d.GetPass())
-	log.Println("Receive Token    : " + d.GetToken())
-	if data.AdminUserCertification(d.GetUser(), d.GetPass(), d.GetToken()) == false {
+	log.Println("Receive Token    : " + token)
+	if data.AdminUserCertification(d.GetUser(), d.GetPass(), token) == false {
 		fmt.Println("Administrator certification failed!!!")
 		return nil
 	}
