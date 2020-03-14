@@ -28,7 +28,7 @@ export class AuthService {
 
   public verifyUser(data: any): string {
     const body: any = {
-      user: data.name,
+      user: data.user,
       pass: data.pass
     };
     console.log("user: " + body.user)
@@ -41,7 +41,7 @@ export class AuthService {
         if (result.result === true) {
           this.r = true
           localStorage.setItem('id_token', result.token);
-          localStorage.setItem('name', result.name)
+          localStorage.setItem('user', result.name)
           console.log("Auth OK")
           console.log("Token: " + result.token)
           this.isLogin = true
@@ -50,7 +50,7 @@ export class AuthService {
         } else {
           this.r = false
           console.log("Auth NG")
-          this.result =  "Pass worng"
+          this.result =  "Wrong username or password !!"
           // Promise.reject(false)
         }
       })
@@ -61,7 +61,7 @@ export class AuthService {
   }
 
   logout() {
-    localStorage.removeItem("name")
+    localStorage.removeItem("user")
     localStorage.removeItem("id_token")
     this.isLogin = false
     this.router.navigate([ '/logout' ]);
@@ -97,7 +97,7 @@ export class AuthService {
   }
 
   getAuthUser(): string{
-    return localStorage.getItem("name")
+    return localStorage.getItem("user")
   }
 
   getAuthHeader(): string {
