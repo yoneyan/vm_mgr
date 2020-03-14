@@ -23,6 +23,7 @@ export class LoginComponent implements OnInit {
   }
 
   title = 'test'
+  result = ""
 
   constructor(
     private formBuilder: FormBuilder,
@@ -35,11 +36,10 @@ export class LoginComponent implements OnInit {
   }
 
   onClickSubmit(data) {
-    let result: any
-    result = this.authService.verifyUser(data)
-    console.log(result)
+    console.log(data)
+    this.result = this.authService.verifyUser(data)
 
-    this.router.navigate(['/'])
+    // this.rangular buttonouter.navigate(['/'])
 
     //
     //

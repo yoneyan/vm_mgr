@@ -1,0 +1,18 @@
+<div class="toolbar" role="banner">
+  <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</p>
+  <h1>HomeVPS</h1>
+
+
+  <!--  <span>HomeVPS</span>-->
+  <div class="spacer"></div>
+  <div *ngIf="User != null ">
+    <p>LoginUser: {{User}}</p>
+  </div>
+  <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</p>
+
+  <div class="button" routerLink="/logout" *ngIf="User != null">
+    <button type="button" class="bar-button red">Logout</button>
+  </div>
+  <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</p>
+
+</div>

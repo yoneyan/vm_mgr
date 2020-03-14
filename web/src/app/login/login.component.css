@@ -13,3 +13,7 @@ input[type = submit] {
   border: 1px solid #B3A9A9;
   box-sizing: border-box;
 }
+
+p {
+  color: red;
+}

@@ -1,10 +1,12 @@
-<h2>Login</h2>
+<h1>Login</h1>
 
 <form #userlogin="ngForm" (ngSubmit)="onClickSubmit(userlogin.value)">
   <input id=" name" name="name" type="text" placeholder="username" ngModel>
   <br>
   <input id="pass" name="pass" type="text" placeholder="password" ngModel>
   <br>
-<!--  <div class="button black" (click)="(Login())">保存</div>-->
   <input type = "submit" value = "login">
+  <div *ngIf="result != null ">
+    <p>{{result}}</p>
+  </div>
 </form>

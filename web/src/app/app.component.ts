@@ -9,6 +9,4 @@ import {AuthService} from "./service/auth/auth.service";
 export class AppComponent {
   title = 'web';
 
-
-
 }
