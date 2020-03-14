@@ -1,17 +1,10 @@
 import {Injectable} from '@angular/core';
 import {HttpClient, HttpHeaders} from "@angular/common/http";
-import {Observable, throwError} from "rxjs";
-import {timeout, catchError} from 'rxjs/operators';
 
 @Injectable({
   providedIn: 'root'
 })
-
-export class LoginService {
-
-  // test(){
-  //   return 0;
-  // }
+export class AuthService {
   private r: boolean;
 
   constructor(private http: HttpClient) {
@@ -32,17 +25,21 @@ export class LoginService {
       headers: new HttpHeaders("application/json")
     }
 
-    this.http.post('http://localhost:8081/api/v1/token', body, httpOptions)
+    return this.http.post('http://localhost:8081/api/v1/token', body, httpOptions)
       .toPromise()
       .then((result: any) => {
         if (result.result === true) {
           this.r = true
           localStorage.setItem('id_token', result.token);
+          localStorage.setItem('name', result.name)
           console.log("Auth OK")
           console.log("Token: " + result.token)
+          alert("ok")
+          alert("Token: " + result.token)
         } else {
           this.r = false
           console.log("Auth NG")
+          alert("NG")
           return "NG"
         }
       })
@@ -54,5 +51,14 @@ export class LoginService {
   logout() {
     localStorage.remoteItem('id_token');
   }
+
+  logincheck(): Promise<boolean> {
+    return new Promise(function(resolve, reject){
+      reject(false)
+      // resolve(true)
+
+    })
+  }
+
 
 }

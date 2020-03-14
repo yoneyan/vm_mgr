@@ -1,8 +1,8 @@
 import {Component, OnInit} from '@angular/core';
 import {FormBuilder} from "@angular/forms";
+import { Router } from '@angular/router';
 
-import {LoginService} from "../login.service";
-import {AuthService, Login} from "../auth.service";
+import {AuthService} from "../service/auth/auth.service";
 
 @Component({
   selector: 'app-sign-in',
@@ -26,31 +26,21 @@ export class LoginComponent implements OnInit {
 
   constructor(
     private formBuilder: FormBuilder,
-    private loginService: LoginService,
-    // private loginservice: AuthService,
-  ) {
-
-
-    // this.loginForm = this.formBuilder.group({
-    //   name: '',
-    //   pass: '',
-    // });
-  }
+    private authService: AuthService,
+    private router: Router,
+    // private loginservice: Test,
+  ) { }
 
   ngOnInit() {
   }
 
   onClickSubmit(data) {
     let result: any
-    result = this.loginService.verifyUser(data)
+    result = this.authService.verifyUser(data)
     console.log(result)
 
-    if (result.__zone_symbol__value === false) {
+    this.router.navigate(['/'])
 
-      console.log(result)
-      // alert("Entered UserName : " + data.pass);
-      // alert("Result : " + result);
-    }
     //
     //
     // onClickSubmit(value: any) {
@@ -67,4 +57,13 @@ export class LoginComponent implements OnInit {
     //     });
     // }
   }
+  // Login(): void {
+  //   let result: any
+  //   console.log(this.loginForm);
+  //   // this.router.navigate(['/products']);
+  //   result = this.authService.verifyUser(this.)
+  //   console.log(result)
+  //
+  // }
+
 }

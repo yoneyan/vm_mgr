@@ -7,14 +7,21 @@ import {AppComponent} from './app.component';
 import {LoginComponent} from './login/login.component';
 import {RouterModule} from "@angular/router";
 import {ReactiveFormsModule} from "@angular/forms";
-import {AuthService} from './auth.service';
-import {LoginService} from "./login.service";
+import {Test} from './test';
 import {HttpClientModule} from "@angular/common/http";
+import {NotfoundComponent} from './error/notfound/notfound.component';
+import {AuthGuard} from "./guard/auth.guard";
+import { DashboardComponent } from './dashboard/dashboard.component';
+
+// import { AuthComponent } from './service/auth/auth.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     LoginComponent,
+    NotfoundComponent,
+    DashboardComponent,
+    // AuthComponent,
 
   ],
   imports: [
@@ -23,7 +30,9 @@ import {HttpClientModule} from "@angular/common/http";
     FormsModule,
     HttpClientModule,
     RouterModule.forRoot([
-      {path: '', component: LoginComponent},
+      {path: '', component: DashboardComponent, canActivate: [AuthGuard]},
+      {path: 'login', component: LoginComponent,},
+      {path: '**', component: NotfoundComponent},
     ]),
     ReactiveFormsModule
   ],
