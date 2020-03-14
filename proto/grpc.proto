@@ -176,7 +176,8 @@ message Base {
 
 message AuthResult {
     string token = 1;
-    bool result = 2;
+    string name = 2;
+    bool result = 3;
 }
 
 message TokenData {

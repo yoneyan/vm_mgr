@@ -23,7 +23,7 @@ func (s *server) GenerateToken(ctx context.Context, in *pb.Base) (*pb.AuthResult
 	}
 	uuid, result := data.NewToken(in.GetUser())
 	if result {
-		return &pb.AuthResult{Result: true, Token: uuid}, nil
+		return &pb.AuthResult{Result: true, Token: uuid, Name: in.GetUser()}, nil
 	} else {
 		return &pb.AuthResult{Result: false, Token: uuid}, nil
 	}

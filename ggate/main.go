@@ -3,6 +3,7 @@ package main
 import (
 	"flag"
 	"github.com/golang/protobuf/proto"
+	"github.com/gorilla/handlers"
 	pb "github.com/yoneyan/vm_mgr/proto/proto-go"
 	"net/http"
 
@@ -28,7 +29,13 @@ func run() error {
 		return err
 	}
 
-	return http.ListenAndServe(":8081", mux)
+	newMux := handlers.CORS(
+		handlers.AllowedMethods([]string{"GET", "POST", "OPTIONS"}),
+		//handlers.AllowedOrigins([]string{"http://localhost:3000"}),
+		handlers.AllowedHeaders([]string{"content-type", "application/json"}),
+	)(mux)
+
+	return http.ListenAndServe(":8081", newMux)
 }
 
 func main() {
