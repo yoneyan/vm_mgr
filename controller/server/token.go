@@ -60,6 +60,25 @@ func (s *server) DeleteToken(ctx context.Context, in *pb.Base) (*pb.Result, erro
 	}
 }
 
+func (s *server) CheckToken(ctx context.Context, in *pb.Null) (*pb.Result, error) {
+	md, ok := metadata.FromIncomingContext(ctx)
+	if ok == false {
+		return &pb.Result{Status: false, Info: "Error!!"}, nil
+	}
+	token := data.AuthDataExtraction(md)
+
+	go data.DeleteExpiredToken()
+	log.Println("----TokenCheck----")
+	log.Println("Receive Token    : " + token)
+
+	_, result := db.GetDBToken(token)
+	if result {
+		return &pb.Result{Status: true, Info: "OK!"}, nil
+	} else {
+		return &pb.Result{Status: false, Info: "NG"}, nil
+	}
+}
+
 func (s *server) GetAllToken(d *pb.Base, stream pb.Grpc_GetAllTokenServer) error {
 	md, ok := metadata.FromIncomingContext(stream.Context())
 	if ok == false {

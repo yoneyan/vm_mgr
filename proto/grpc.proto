@@ -161,6 +161,12 @@ service grpc {
             get: "/api/v1/token/{token}"
         };
     }
+    rpc CheckToken(Null) returns (Result){
+        option (google.api.http) = {
+            post: "/api/v1/token/check"
+            body: "*"
+        };
+    }
 }
 
 message Null {

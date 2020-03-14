@@ -22,6 +22,7 @@ func run() error {
 	ctx, cancel := context.WithCancel(ctx)
 	defer cancel()
 
+	//mux := runtime.NewServeMux(runtime.WithIncomingHeaderMatcher(matcher), runtime.WithForwardResponseOption(filter))
 	mux := runtime.NewServeMux(runtime.WithIncomingHeaderMatcher(matcher), runtime.WithForwardResponseOption(filter))
 	opts := []grpc.DialOption{grpc.WithInsecure()}
 	err := pb.RegisterGrpcHandlerFromEndpoint(ctx, mux, *grpcServerEndpoint, opts)
@@ -30,9 +31,13 @@ func run() error {
 	}
 
 	newMux := handlers.CORS(
-		handlers.AllowedMethods([]string{"GET", "POST", "OPTIONS"}),
-		//handlers.AllowedOrigins([]string{"http://localhost:3000"}),
+		handlers.AllowedMethods([]string{"GET", "POST", "DELETE", "OPTIONS"}),
+		handlers.AllowedOrigins([]string{"http://localhost:4200"}),
 		handlers.AllowedHeaders([]string{"content-type", "application/json"}),
+		handlers.AllowedHeaders([]string{"authorization"}),
+		//handlers.ExposedHeaders([]string{"Access-Control-Allow-Credentials", "true"}),
+		//handlers.AllowedHeaders([]string{"Access-Control-Allow-Origin","*"}),
+		handlers.AllowCredentials(),
 	)(mux)
 
 	return http.ListenAndServe(":8081", newMux)
@@ -55,6 +60,8 @@ func matcher(headerName string) (string, bool) {
 }
 
 func filter(ctx context.Context, w http.ResponseWriter, resp proto.Message) error {
-	w.Header().Set("X-Filter", "FilterValue")
+	//w.Header().Set("Access-Control-Allow-Credentials", "true")
+	//w.Header().Set("Access-Control-Allow-Origin","*")
+	//w.Header().Set("Access-Control-Allow-Origin", "*")
 	return nil
 }
