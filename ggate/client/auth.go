@@ -74,3 +74,27 @@ func DeleteTokenClient(token string) bool {
 		return false
 	}
 }
+
+/*
+func GetAllTokenClient(token string) bool {
+	conn, err := grpc.Dial(GetgRPCServerAddress(), grpc.WithInsecure(), grpc.WithBlock())
+	if err != nil {
+		log.Fatalf("Not connect; %v", err)
+	}
+	defer conn.Close()
+	c := pb.NewGrpcClient(conn)
+
+	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
+	defer cancel()
+
+	//r, err := c.GetAllToken(ctx, &pb.Base{Token: token})
+	//if err != nil {
+	//	log.Fatalf("could not greet: %v", err)
+	//}
+	//if r.Status {
+	//	return true
+	//} else {
+	//	return false
+	//}
+}
+*/

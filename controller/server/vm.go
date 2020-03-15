@@ -7,7 +7,6 @@ import (
 	"github.com/yoneyan/vm_mgr/controller/db"
 	pb "github.com/yoneyan/vm_mgr/proto/proto-go"
 	"google.golang.org/grpc"
-	"google.golang.org/grpc/metadata"
 	"io"
 	"log"
 	"strconv"
@@ -304,18 +303,7 @@ func (s *server) GetVMName(ctx context.Context, in *pb.VMName) (*pb.VMData, erro
 */
 
 func (s *server) GetUserVM(base *pb.Base, stream pb.Grpc_GetUserVMServer) error {
-	md, ok := metadata.FromIncomingContext(stream.Context())
-	if ok == false {
-		return nil
-	}
-	token := data.AuthDataExtraction(md)
-	if token == "" {
-		fmt.Println("Mode gRPC")
-		token = base.GetToken()
-	} else {
-		fmt.Println("Mode RestAPI")
-	}
-
+	token := base.GetToken()
 	log.Println("----GetUserVM----")
 	log.Println("Receive AuthUser  : " + base.GetUser() + ", AuthPass: " + base.GetPass() + ", Group: " + base.GetGroup())
 	log.Println("Receive UserID    : " + strconv.Itoa(int(base.GetUserid())))
@@ -330,10 +318,10 @@ func (s *server) GetUserVM(base *pb.Base, stream pb.Grpc_GetUserVMServer) error 
 		fmt.Println("Error GetToken")
 		return nil
 	}
-	if d1.Userid != int(base.GetUserid()) {
-		fmt.Println("Wrong UserID!!")
-		return nil
-	}
+	//if d1.Userid != int(base.GetUserid()) {
+	//	fmt.Println("Wrong UserID!!")
+	//	return nil
+	//}
 	d2, result := db.GetDBUser(d1.Userid)
 	if result == false {
 		fmt.Println("Error GetDBUser")

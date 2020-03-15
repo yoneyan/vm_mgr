@@ -65,23 +65,11 @@ func (s *server) CheckToken(ctx context.Context, in *pb.Base) (*pb.Result, error
 }
 
 func (s *server) GetAllToken(d *pb.Base, stream pb.Grpc_GetAllTokenServer) error {
-	md, ok := metadata.FromIncomingContext(stream.Context())
-	if ok == false {
-		return nil
-	}
-	token := data.AuthDataExtraction(md)
-	if token == "" {
-		fmt.Println("Mode gRPC")
-		token = d.GetToken()
-	} else {
-		fmt.Println("Mode RestAPI")
-	}
-
 	go data.DeleteExpiredToken()
 	log.Println("----GetAllToken----")
 	log.Println("Receive AuthUser : " + d.GetUser() + ", AuthPass: " + d.GetPass())
-	log.Println("Receive Token    : " + token)
-	if data.AdminUserCertification(d.GetUser(), d.GetPass(), token) == false {
+	log.Println("Receive Token    : " + d.GetToken())
+	if data.AdminUserCertification(d.GetUser(), d.GetPass(), d.GetToken()) == false {
 		fmt.Println("Administrator certification failed!!!")
 		return nil
 	}

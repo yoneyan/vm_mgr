@@ -79,3 +79,23 @@ func DeleteToken(w http.ResponseWriter, r *http.Request) {
 
 	RespondWithJSON(w, http.StatusOK, result)
 }
+
+func GetAllToken(w http.ResponseWriter, r *http.Request) {
+	log.Println("------GetAllToken------")
+	var result Result
+
+	token := GetToken(r)
+
+	ok := client.DeleteTokenClient(token)
+	if ok {
+		result.Result = true
+		result.Info = "OK"
+	} else if token == "" {
+		result.Result = false
+	} else {
+		result.Result = false
+		result.Info = "Auth NG"
+	}
+
+	RespondWithJSON(w, http.StatusOK, result)
+}
