@@ -7,6 +7,7 @@ import (
 	"github.com/yoneyan/vm_mgr/controller/db"
 	pb "github.com/yoneyan/vm_mgr/proto/proto-go"
 	"google.golang.org/grpc"
+	"google.golang.org/grpc/metadata"
 	"io"
 	"log"
 	"strconv"
@@ -16,6 +17,8 @@ import (
 
 type VMDataStruct struct {
 	NodeID      int
+	Group       string
+	GroupID     int
 	ID          int
 	Name        string
 	CPU         int
@@ -299,6 +302,102 @@ func (s *server) GetVMName(ctx context.Context, in *pb.VMName) (*pb.VMData, erro
 	}, nil
 }
 */
+
+func (s *server) GetUserVM(base *pb.Base, stream pb.Grpc_GetUserVMServer) error {
+	md, ok := metadata.FromIncomingContext(stream.Context())
+	if ok == false {
+		return nil
+	}
+	token := data.AuthDataExtraction(md)
+	if token == "" {
+		fmt.Println("Mode gRPC")
+		token = base.GetToken()
+	} else {
+		fmt.Println("Mode RestAPI")
+	}
+
+	log.Println("----GetUserVM----")
+	log.Println("Receive AuthUser  : " + base.GetUser() + ", AuthPass: " + base.GetPass() + ", Group: " + base.GetGroup())
+	log.Println("Receive UserID    : " + strconv.Itoa(int(base.GetUserid())))
+	log.Println("Receive Token     : " + token)
+
+	//user := base.GetUser()
+	//pass := base.GetPass()
+	//group := base.GetGroup()
+
+	d1, result := db.GetDBToken(token)
+	if result == false {
+		fmt.Println("Error GetToken")
+		return nil
+	}
+	if d1.Userid != int(base.GetUserid()) {
+		fmt.Println("Wrong UserID!!")
+		return nil
+	}
+	d2, result := db.GetDBUser(d1.Userid)
+	if result == false {
+		fmt.Println("Error GetDBUser")
+		return nil
+	}
+	d3, result := data.SearchUserForAllGroup(d2.Name)
+	if result == false {
+		fmt.Println("Error GetAllGroup")
+		return nil
+	}
+	fmt.Println(d3)
+
+	var d []VMDataStruct
+
+	for _, a := range db.GetDBAllNode() {
+		conn, err := grpc.Dial(a.IP, grpc.WithInsecure(), grpc.WithBlock())
+		if err != nil {
+			fmt.Printf("Not connect; ")
+			fmt.Println(err)
+		}
+		defer conn.Close()
+
+		c := pb.NewGrpcClient(conn)
+		ctx, cancel := context.WithTimeout(context.Background(), time.Second)
+		defer cancel()
+		stream, err := c.GetAllVM(ctx, base)
+		if err != nil {
+			fmt.Println(err)
+		}
+		for {
+			article, err := stream.Recv()
+			if err == io.EOF {
+				break
+			}
+			if err != nil {
+				fmt.Println(err)
+			}
+			s := strings.Split(article.Vmname, "-")
+			for _, b := range d3 {
+				if s[0] == strconv.Itoa(b) {
+					d = append(d, VMDataStruct{
+						GroupID:   b,
+						NodeID:    a.ID,
+						ID:        int(article.Option.Id) + (1000 * a.ID),
+						Name:      article.Vmname,
+						CPU:       int(article.Vcpu),
+						Mem:       int(article.Vmem),
+						Net:       article.Vnet,
+						AutoStart: article.Option.Autostart,
+						Status:    int(article.Option.Status),
+					})
+					break
+				}
+			}
+		}
+	}
+
+	for _, a := range d {
+		if err := stream.Send(&pb.VMData{Option: &pb.Option{Id: int64(a.ID), Autostart: a.AutoStart, Status: int32(a.Status)}, Vmname: a.Name, Node: int32(a.NodeID), Vcpu: int64(a.CPU), Vmem: int64(a.Mem), Vnet: a.Net}); err != nil {
+			return err
+		}
+	}
+	return nil
+}
 
 func (s *server) GetGroupVM(base *pb.Base, stream pb.Grpc_GetGroupVMServer) error {
 	log.Println("----GetGroupVM----")

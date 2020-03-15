@@ -62,14 +62,19 @@ service grpc {
     }
     rpc GetVMName (VMName) returns (VMData) {
     }
+    rpc GetUserVM (Base) returns (stream VMData) {
+        option (google.api.http) = {
+            get: "/api/v1/vm/user/{userid}"
+        };
+    }
     rpc GetGroupVM (Base) returns (stream VMData) {
         option (google.api.http) = {
-            get: "/api/v1/vm/get/group/{group}"
+            get: "/api/v1/vm/group/{group}"
         };
     }
     rpc GetAllVM (Base) returns (stream VMData) {
         option (google.api.http) = {
-            get: "/api/v1/vm/get/all"
+            get: "/api/v1/vm/all"
         };
     }
     rpc AddNode (NodeData) returns (Result) {
@@ -178,12 +183,14 @@ message Base {
     string group = 3;
     string token = 4;
     bool result = 5;
+    int32 userid = 6;
 }
 
 message AuthResult {
     string token = 1;
     string name = 2;
-    bool result = 3;
+    int32 id =3;
+    bool result = 4;
 }
 
 message TokenData {
@@ -251,6 +258,7 @@ message VMID {
 message Result {
     bool status = 1;
     string info = 2;
+    int32 id = 3;
 }
 
 message NodeID {

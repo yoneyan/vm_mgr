@@ -159,20 +159,24 @@ func SearchUserForAllGroup(user string) ([]int, bool) {
 			resultarray = append(resultarray, el)
 		}
 	}
-	return tmp, true
+	return resultarray, true
 }
 func SearchUserForAdminGroup(user string) ([]int, bool) {
 	data := db.GetDBAllGroup()
+	fmt.Println(data)
 	var result []int
 	for _, a := range data {
 		dataarray := strings.Split(a.Admin, ",")
 		for _, d := range dataarray {
 			if d == user {
+				result = append(result, a.ID)
 				break
 			}
 		}
-		result = append(result, a.ID)
+		fmt.Println(a)
 	}
+	fmt.Println("AdminGroup")
+	fmt.Println(result)
 	return result, true
 }
 func SearchUserForUserGroup(user string) ([]int, bool) {
@@ -182,11 +186,13 @@ func SearchUserForUserGroup(user string) ([]int, bool) {
 		dataarray := strings.Split(a.User, ",")
 		for _, d := range dataarray {
 			if d == user {
+				result = append(result, a.ID)
 				break
 			}
 		}
-		result = append(result, a.ID)
 	}
+	fmt.Println("UserGroup")
+	fmt.Println(result)
 	return result, true
 }
 

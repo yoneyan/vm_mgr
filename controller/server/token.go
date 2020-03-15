@@ -21,9 +21,14 @@ func (s *server) GenerateToken(ctx context.Context, in *pb.Base) (*pb.AuthResult
 	if data.UserCertification(in.GetUser(), in.GetPass()) == false {
 		return &pb.AuthResult{Result: false, Token: "Auth Failed!!"}, nil
 	}
+	userid, result := db.GetDBUserID(in.GetUser())
+	if result == false {
+		userid = 0
+	}
+
 	uuid, result := data.NewToken(in.GetUser())
 	if result {
-		return &pb.AuthResult{Result: true, Token: uuid, Name: in.GetUser()}, nil
+		return &pb.AuthResult{Result: true, Token: uuid, Name: in.GetUser(), Id: int32(userid)}, nil
 	} else {
 		return &pb.AuthResult{Result: false, Token: uuid}, nil
 	}
@@ -71,9 +76,9 @@ func (s *server) CheckToken(ctx context.Context, in *pb.Null) (*pb.Result, error
 	log.Println("----TokenCheck----")
 	log.Println("Receive Token    : " + token)
 
-	_, result := db.GetDBToken(token)
+	a, result := db.GetDBToken(token)
 	if result {
-		return &pb.Result{Status: true, Info: "OK!"}, nil
+		return &pb.Result{Status: true, Info: "OK!", Id: int32(a.Userid)}, nil
 	} else {
 		return &pb.Result{Status: false, Info: "NG"}, nil
 	}
