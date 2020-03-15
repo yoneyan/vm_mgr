@@ -35,25 +35,11 @@ func (s *server) GenerateToken(ctx context.Context, in *pb.Base) (*pb.AuthResult
 }
 
 func (s *server) DeleteToken(ctx context.Context, in *pb.Base) (*pb.Result, error) {
-	md, ok := metadata.FromIncomingContext(ctx)
-	if ok == false {
-		return &pb.Result{Status: false, Info: "Error!!"}, nil
-	}
-	token := data.AuthDataExtraction(md)
-	if token == "" {
-		fmt.Println("Mode gRPC")
-		token = in.GetToken()
-	} else {
-		fmt.Println("Mode RestAPI")
-	}
 	go data.DeleteExpiredToken()
 	log.Println("----DeleteToken----")
-	log.Println("Receive Token    : " + token)
+	log.Println("Receive Token    : " + in.Token)
 
-	test, _ := metadata.FromIncomingContext(ctx)
-	fmt.Println(test)
-
-	data, result := db.GetDBToken(token)
+	data, result := db.GetDBToken(in.Token)
 	if result == false {
 		return &pb.Result{Status: false, Info: "DB Search failed!!"}, nil
 	}
@@ -65,18 +51,12 @@ func (s *server) DeleteToken(ctx context.Context, in *pb.Base) (*pb.Result, erro
 	}
 }
 
-func (s *server) CheckToken(ctx context.Context, in *pb.Null) (*pb.Result, error) {
-	md, ok := metadata.FromIncomingContext(ctx)
-	if ok == false {
-		return &pb.Result{Status: false, Info: "Error!!"}, nil
-	}
-	token := data.AuthDataExtraction(md)
-
+func (s *server) CheckToken(ctx context.Context, in *pb.Base) (*pb.Result, error) {
 	go data.DeleteExpiredToken()
 	log.Println("----TokenCheck----")
-	log.Println("Receive Token    : " + token)
+	log.Println("Receive Token    : " + in.Token)
 
-	a, result := db.GetDBToken(token)
+	a, result := db.GetDBToken(in.Token)
 	if result {
 		return &pb.Result{Status: true, Info: "OK!", Id: int32(a.Userid)}, nil
 	} else {

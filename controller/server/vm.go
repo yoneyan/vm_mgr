@@ -392,7 +392,7 @@ func (s *server) GetUserVM(base *pb.Base, stream pb.Grpc_GetUserVMServer) error 
 	}
 
 	for _, a := range d {
-		if err := stream.Send(&pb.VMData{Option: &pb.Option{Id: int64(a.ID), Autostart: a.AutoStart, Status: int32(a.Status)}, Vmname: a.Name, Node: int32(a.NodeID), Vcpu: int64(a.CPU), Vmem: int64(a.Mem), Vnet: a.Net}); err != nil {
+		if err := stream.Send(&pb.VMData{Base: &pb.Base{Groupid: int32(a.GroupID)}, Option: &pb.Option{Id: int64(a.ID), Autostart: a.AutoStart, Status: int32(a.Status)}, Vmname: a.Name, Node: int32(a.NodeID), Vcpu: int64(a.CPU), Vmem: int64(a.Mem), Vnet: a.Net}); err != nil {
 			return err
 		}
 	}
