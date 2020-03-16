@@ -1,11 +1,9 @@
 package data
 
 import (
-	"encoding/json"
+	"github.com/gin-gonic/gin"
 	"github.com/yoneyan/vm_mgr/ggate/client"
-	"io/ioutil"
 	"log"
-	"net/http"
 )
 
 type UserAuth struct {
@@ -13,10 +11,12 @@ type UserAuth struct {
 	Pass string `json:"pass"`
 }
 
-func CheckToken(w http.ResponseWriter, r *http.Request) {
+func CheckToken(c *gin.Context) {
 	log.Println("------CheckToken------")
+
+	token := GetToken(c.Request.Header.Get("Authorization"))
+
 	var result Result
-	token := GetToken(r)
 
 	ok := client.CheckTokenClient(token)
 	if ok {
@@ -24,47 +24,20 @@ func CheckToken(w http.ResponseWriter, r *http.Request) {
 		result.Info = "OK"
 	} else if token == "" {
 		result.Result = false
+		result.Info = "Invalid token"
 	} else {
 		result.Result = false
-		result.Info = "Auth NG"
+		result.Info = "NG"
 	}
 
-	RespondWithJSON(w, http.StatusOK, result)
+	c.JSON(200, result)
 }
 
-func GenerateToken(w http.ResponseWriter, r *http.Request) {
-	log.Println("------GenerateToken------")
-	body, err := ioutil.ReadAll(r.Body)
-	defer r.Body.Close()
-	if err != nil {
-		RespondWithError(w, http.StatusBadRequest, "Invalid request")
-		return
-	}
-
-	var auth UserAuth
-	if err := json.Unmarshal(body, &auth); err != nil {
-		RespondWithError(w, http.StatusBadRequest, "JSON Unmarshaling failed .")
-		return
-	}
-	var result AuthResult
-
-	token, ok := client.GenerateTokenClient(auth.User, auth.Pass)
-	if ok {
-		result.Result = true
-		result.Token = token
-	} else {
-		result.Result = false
-	}
-
-	RespondWithJSON(w, http.StatusOK, result)
-
-}
-
-func DeleteToken(w http.ResponseWriter, r *http.Request) {
+func DeleteToken(c *gin.Context) {
 	log.Println("------DeleteToken------")
 	var result Result
 
-	token := GetToken(r)
+	token := GetToken(c.Request.Header.Get("Authorization"))
 
 	ok := client.DeleteTokenClient(token)
 	if ok {
@@ -77,14 +50,14 @@ func DeleteToken(w http.ResponseWriter, r *http.Request) {
 		result.Info = "Auth NG"
 	}
 
-	RespondWithJSON(w, http.StatusOK, result)
+	c.JSON(200, result)
 }
 
-func GetAllToken(w http.ResponseWriter, r *http.Request) {
+func GetAllToken(c *gin.Context) {
 	log.Println("------GetAllToken------")
 	var result Result
 
-	token := GetToken(r)
+	token := GetToken(c.Request.Header.Get("Authorization"))
 
 	ok := client.DeleteTokenClient(token)
 	if ok {
@@ -97,5 +70,16 @@ func GetAllToken(w http.ResponseWriter, r *http.Request) {
 		result.Info = "Auth NG"
 	}
 
-	RespondWithJSON(w, http.StatusOK, result)
+	c.JSON(200, result)
+}
+
+func GenerateToken(c *gin.Context) {
+	log.Println("------GenerateToken------")
+
+	var auth UserAuth
+	c.BindJSON(&auth)
+
+	result := client.GenerateTokenClient(auth.User, auth.Pass)
+
+	c.JSON(200, result)
 }

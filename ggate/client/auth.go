@@ -9,7 +9,7 @@ import (
 	//a "github.com/yoneyan/vm_mgr/ggate"
 )
 
-func GenerateTokenClient(user, pass string) (string, bool) {
+func GenerateTokenClient(user, pass string) *AuthResult {
 	conn, err := grpc.Dial(GetgRPCServerAddress(), grpc.WithInsecure(), grpc.WithBlock())
 	if err != nil {
 		log.Fatalf("Not connect; %v", err)
@@ -24,11 +24,7 @@ func GenerateTokenClient(user, pass string) (string, bool) {
 	if err != nil {
 		log.Fatalf("could not greet: %v", err)
 	}
-	if r.Result {
-		return r.Token, true
-	} else {
-		return "", false
-	}
+	return &AuthResult{Result: r.Result, Token: r.Token, UserName: r.Name, UserID: int(r.Id)}
 }
 
 func CheckTokenClient(token string) bool {
