@@ -1,10 +1,6 @@
 import {Component, OnInit} from '@angular/core';
-import {HttpClient, HttpHeaders} from "@angular/common/http";
-import {Router} from "@angular/router";
-import {AuthService} from "../../service/auth/auth.service";
-import {Observable} from "rxjs";
-import {retry} from "rxjs/operators";
 import {VmService} from "../../service/vm.service";
+import {RouterModule} from "@angular/router";
 
 
 @Component({
@@ -14,24 +10,25 @@ import {VmService} from "../../service/vm.service";
 })
 export class VmComponent implements OnInit {
 
-  constructor(private VmService: VmService) {
+  constructor(private VmService: VmService,
+              private router: RouterModule) {
   }
 
-  public test: VMData[] ;
-  public a : string[];
-  public b : string;
+  public vms: VMData[];
 
   ngOnInit(): void {
     this.getUserVM()
   }
-    getUserVM():void{
-      this.VmService.getUserVM()
-        .then(d => {
-          // let data:
-          this.test = d
-          console.log(d)
-        })
-    }
+
+  getUserVM(): void {
+    this.VmService.getUserVM()
+      .then(d => {
+        // let data:
+        this.vms = d
+        console.log(d)
+      })
+  }
+
 }
 
 interface VMData {

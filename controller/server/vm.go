@@ -282,7 +282,7 @@ func (s *server) GetVM(ctx context.Context, in *pb.VMID) (*pb.VMData, error) {
 		Vnet:        r.Vnet,
 		Option: &pb.Option{
 			Vnc:       r.Option.Vnc,
-			Id:        vmId,
+			Id:        in.GetId(),
 			Autostart: r.Option.Autostart,
 			Status:    r.Option.Status,
 		},

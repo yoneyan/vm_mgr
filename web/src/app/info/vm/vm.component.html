@@ -1,5 +1,5 @@
-<ng-container *ngFor="let vm of test">
-  <h3>{{vm.name}}</h3>
+<ng-container *ngFor="let vm of vms">
+  <h2>{{vm.name}}</h2>
   <table border="1">
     <tr>
       <th>Spec</th>
@@ -23,12 +23,14 @@
     </tr>
     <tr>
       <td>AutoStart</td>
-      <td>{{vm.status}}</td>
+      <td>{{vm.autostart}}</td>
     </tr>
     <tr>
       <td>Status</td>
       <td>{{vm.status}}</td>
     </tr>
   </table>
+  <a routerLink="/dashboard/vm/{{vm.id}}">detail</a>
+  <!--  (click)="detailVMPage(vm.id)"-->
   <!--    <dd>{{vm.url}}（{{vm.released | date: 'mediumDate'}}）</dd>-->
 </ng-container>

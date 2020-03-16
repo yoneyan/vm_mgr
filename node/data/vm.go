@@ -104,6 +104,7 @@ func (s *server) GetVM(ctx context.Context, in *pb.VMID) (*pb.VMData, error) {
 			Vnc:         int32(result.Vnc),
 			Id:          int64(result.ID),
 			Autostart:   result.AutoStart,
+			Status:      int32(result.Status),
 		},
 		Vmname: result.Name,
 		Vcpu:   int64(result.CPU),
