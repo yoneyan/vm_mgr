@@ -19,16 +19,16 @@ func GetUserVM(c *gin.Context) {
 	c.JSON(200, data)
 }
 
-/*
-func GetVM(c *gin.Context){
+func GetVM(c *gin.Context) {
 	log.Println("------GetVM------")
 
 	id := c.Param("id")
 	token := GetToken(c.Request.Header.Get("Authorization"))
 
-}
+	r := client.GetVMClient(id, token)
 
-*/
+	c.JSON(200, r)
+}
 
 func StartVM(c *gin.Context) {
 	log.Println("------GetUserVM------")

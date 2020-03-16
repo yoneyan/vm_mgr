@@ -18,7 +18,7 @@ func main() {
 	//router.HandleFunc("/api/v1/token",data.GetUserVM).Methods("GET")
 	//vm
 	router.GET("/api/v1/vm", data.GetUserVM)
-	//router.GET("/api/v1/vm/:id", data.GetVM)
+	router.GET("/api/v1/vm/:id", data.GetVM)
 	router.PUT("/api/v1/vm/:id/power", data.StartVM)
 	router.DELETE("/api/v1/vm/:id/power", data.StopVM)
 	router.PUT("/api/v1/vm/:id/reset", data.ResetVM)

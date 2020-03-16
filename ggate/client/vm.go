@@ -208,3 +208,36 @@ func GetUserVMClient(token string) []VMData {
 	fmt.Println(data)
 	return data
 }
+
+func GetVMClient(id, token string) VMData {
+
+	conn, err := grpc.Dial(address, grpc.WithInsecure(), grpc.WithBlock())
+	if err != nil {
+		log.Fatalf("Not connect; %v", err)
+	}
+	defer conn.Close()
+	c := pb.NewGrpcClient(conn)
+
+	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
+	defer cancel()
+
+	vmid, err := strconv.Atoi(id)
+	if err != nil {
+		fmt.Println("vmid error!!")
+	}
+
+	r, err := c.GetVM(ctx, &pb.VMID{Id: int64(vmid), Base: &pb.Base{Token: token}})
+	if err != nil {
+		log.Fatalf("could not greet: %v", err)
+	}
+	return VMData{
+		NodeID:    int(r.Node),
+		ID:        int(r.Option.Id),
+		Name:      r.Vmname,
+		CPU:       int(r.Vcpu),
+		Mem:       int(r.Vmem),
+		Net:       r.Vnet,
+		AutoStart: r.Option.Autostart,
+		Status:    int(r.Option.Status),
+	}
+}

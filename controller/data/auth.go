@@ -278,7 +278,7 @@ func StandardUserVMCertification(d *UserCertData) (string, bool) {
 	n, result := db.GetDBNodeID(d.NodeID)
 	if result == false {
 		fmt.Println("Error: Get NodeData Error")
-		return "", false
+		return "NodeDataError", false
 	}
 
 	conn, err := grpc.Dial(n.IP, grpc.WithInsecure(), grpc.WithBlock())

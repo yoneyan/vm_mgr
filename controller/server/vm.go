@@ -231,30 +231,65 @@ func (s *server) StopVM(ctx context.Context, in *pb.VMID) (*pb.Result, error) {
 	return &pb.Result{Status: r.GetStatus(), Info: r.GetInfo()}, nil
 }
 
-/*
 func (s *server) GetVM(ctx context.Context, in *pb.VMID) (*pb.VMData, error) {
 	fmt.Println("----------GetVMID-----")
 	log.Printf("Receive VMID: %v", in.GetId())
-	result, err := db.VMDBGetData(int(in.GetId()))
-	if err != nil {
-		fmt.Println("Error!!")
-		return &pb.VMData{}, fmt.Errorf("Not Found!!")
+	log.Println("Receive AuthUser  : " + in.Base.GetUser() + ", AuthPass: " + in.Base.GetPass())
+	log.Println("Receive Token     : " + in.Base.GetToken())
 
+	nodeId := in.GetId() / 1000
+	vmId := in.GetId() - (1000 * nodeId)
+
+	user := in.Base.GetUser()
+	pass := in.Base.GetPass()
+
+	address, result := data.StandardUserVMCertification(&data.UserCertData{
+		User:   user,
+		Pass:   pass,
+		Token:  in.Base.GetToken(),
+		VMID:   int(vmId),
+		NodeID: int(nodeId),
+	})
+	if result == false {
+		fmt.Println(address)
+		return &pb.VMData{}, nil
 	}
+
+	conn, err := grpc.Dial(address, grpc.WithInsecure(), grpc.WithBlock())
+	if err != nil {
+		fmt.Printf("Not connect; ")
+		fmt.Println(err)
+	}
+	defer conn.Close()
+	c := pb.NewGrpcClient(conn)
+	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
+	defer cancel()
+	fmt.Println(address)
+
+	r, err := c.GetVM(ctx, &pb.VMID{Id: vmId})
+	if err != nil {
+		fmt.Printf("Not connect; ")
+		fmt.Println(err)
+	}
+	fmt.Println(r)
+
 	return &pb.VMData{
+		Node:        int32(nodeId),
+		Vmname:      r.Vmname,
+		Vcpu:        r.Vcpu,
+		Vmem:        r.Vmem,
+		Storagetype: r.Storagetype,
+		Vnet:        r.Vnet,
 		Option: &pb.Option{
-			StoragePath: result.StoragePath,
-			Vnc:         int32(result.Vnc),
-			Id:          int64(result.ID),
-			Autostart:   result.AutoStart,
+			Vnc:       r.Option.Vnc,
+			Id:        vmId,
+			Autostart: r.Option.Autostart,
+			Status:    r.Option.Status,
 		},
-		Vmname: result.Name,
-		Vcpu:   int64(result.CPU),
-		Vmem:   int64(result.Mem),
-		Vnet:   result.Net,
 	}, nil
 }
 
+/*
 func (s *server) GetVMName(ctx context.Context, in *pb.VMName) (*pb.VMData, error) {
 	fmt.Println("----------GetVMName-----")
 	log.Printf("Receive Name: %v", in.GetVmname())
