@@ -15,6 +15,7 @@ import {LogoutComponent} from './error/logout/logout.component';
 
 import {AuthService} from './service/auth/auth.service';
 import { TopBarComponent } from './bar/top-bar/top-bar.component';
+import { VmComponent } from './info/vm/vm.component';
 
 @NgModule({
   declarations: [
@@ -24,6 +25,7 @@ import { TopBarComponent } from './bar/top-bar/top-bar.component';
     DashboardComponent,
     LogoutComponent,
     TopBarComponent,
+    VmComponent,
     // AuthComponent,
 
   ],
@@ -33,7 +35,7 @@ import { TopBarComponent } from './bar/top-bar/top-bar.component';
     FormsModule,
     HttpClientModule,
     RouterModule.forRoot([
-      {path: '', component: DashboardComponent, canActivate: [AuthGuard]},
+      {path: 'dashboard', component: DashboardComponent, canActivate: [AuthGuard]},
       {path: 'login', component: LoginComponent,},
       {path: 'logout', component: LogoutComponent,},
       {path: '**', component: NotfoundComponent},

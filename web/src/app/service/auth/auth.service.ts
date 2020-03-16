@@ -35,17 +35,18 @@ export class AuthService {
     console.log("pass: " + body.pass)
 
 
-    this.http.post('http://localhost:8081/api/v1/token', body, this.defalutHttpOptions)
+    this.http.post('http://localhost:8080/api/v1/token', body, this.defalutHttpOptions)
       .toPromise()
       .then((result: any) => {
         if (result.result === true) {
           this.r = true
           localStorage.setItem('id_token', result.token);
-          localStorage.setItem('user', result.name)
+          localStorage.setItem('user', result.username)
+          localStorage.setItem('userid', result.userid)
           console.log("Auth OK")
           console.log("Token: " + result.token)
           this.isLogin = true
-          return location.href="/"
+          return location.href="/dashboard"
           // return this.router.navigate(['/'])
         } else {
           this.r = false
@@ -62,6 +63,7 @@ export class AuthService {
 
   logout() {
     localStorage.removeItem("user")
+    localStorage.removeItem("userid")
     localStorage.removeItem("id_token")
     this.isLogin = false
     this.router.navigate([ '/logout' ]);
@@ -77,12 +79,12 @@ export class AuthService {
     }
     const body: any = {
     };
-    return this.http.post('http://localhost:8081/api/v1/token/check', body, httpOptions)
+    return this.http.post('http://localhost:8080/api/v1/token/check', body, httpOptions)
       .toPromise()
       .then((res) => {
         const response: any = res;
         console.log(response)
-        return response.status
+        return response.result
       })
       .catch((err)=> {
         console.log('Error occured.', err);

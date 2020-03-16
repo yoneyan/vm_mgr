@@ -1,0 +1,34 @@
+<ng-container *ngFor="let vm of test">
+  <h3>{{vm.name}}</h3>
+  <table border="1">
+    <tr>
+      <th>Spec</th>
+      <th></th>
+    </tr>
+    <tr>
+      <td>NodeID</td>
+      <td>{{vm.nodeid}}</td>
+    </tr>
+    <tr>
+      <td>ID</td>
+      <td>{{vm.id}}</td>
+    </tr>
+    <tr>
+      <td>vCPU</td>
+      <td>{{vm.cpu}} CPU</td>
+    </tr>
+    <tr>
+      <td>Mem</td>
+      <td>{{vm.mem}} MB</td>
+    </tr>
+    <tr>
+      <td>AutoStart</td>
+      <td>{{vm.status}}</td>
+    </tr>
+    <tr>
+      <td>Status</td>
+      <td>{{vm.status}}</td>
+    </tr>
+  </table>
+  <!--    <dd>{{vm.url}}（{{vm.released | date: 'mediumDate'}}）</dd>-->
+</ng-container>
