@@ -328,7 +328,6 @@ func (s *server) GetUserVM(base *pb.Base, stream pb.Grpc_GetUserVMServer) error 
 
 	//user := base.GetUser()
 	//pass := base.GetPass()
-	//group := base.GetGroup()
 
 	d1, result := db.GetDBToken(token)
 	if result == false {
@@ -351,6 +350,12 @@ func (s *server) GetUserVM(base *pb.Base, stream pb.Grpc_GetUserVMServer) error 
 	}
 	fmt.Println(d3)
 
+	var isAdmin bool
+
+	if data.AdminUserCertification(base.GetUser(), base.GetPass(), base.GetToken()) {
+		isAdmin = true
+	}
+
 	var d []VMDataStruct
 
 	for _, a := range db.GetDBAllNode() {
@@ -368,6 +373,7 @@ func (s *server) GetUserVM(base *pb.Base, stream pb.Grpc_GetUserVMServer) error 
 		if err != nil {
 			fmt.Println(err)
 		}
+
 		for {
 			article, err := stream.Recv()
 			if err == io.EOF {
@@ -378,7 +384,7 @@ func (s *server) GetUserVM(base *pb.Base, stream pb.Grpc_GetUserVMServer) error 
 			}
 			s := strings.Split(article.Vmname, "-")
 			for _, b := range d3 {
-				if s[0] == strconv.Itoa(b) {
+				if s[0] == strconv.Itoa(b) || isAdmin {
 					d = append(d, VMDataStruct{
 						GroupID:   b,
 						NodeID:    a.ID,
