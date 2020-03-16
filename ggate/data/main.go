@@ -5,11 +5,6 @@ import (
 	"strings"
 )
 
-type Result struct {
-	Result bool   `json:"result"`
-	Info   string `json:"info"`
-}
-
 func GetToken(token string) string {
 	d := strings.Split(token, " ")
 

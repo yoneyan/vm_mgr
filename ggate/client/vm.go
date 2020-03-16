@@ -7,6 +7,7 @@ import (
 	"google.golang.org/grpc"
 	"io"
 	"log"
+	"strconv"
 	"time"
 )
 
@@ -21,11 +22,161 @@ type VMData struct {
 	Status    int    `json:"status"`
 }
 
+func StartVMClient(token, vmid string) Result {
+	id, err := strconv.Atoi(vmid)
+	if err != nil {
+		log.Println("id error!!")
+	}
+
+	conn, err := grpc.Dial(address, grpc.WithInsecure(), grpc.WithBlock())
+	if err != nil {
+		log.Println("Not connect; %v", err)
+	}
+	defer conn.Close()
+	c := pb.NewGrpcClient(conn)
+
+	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
+	defer cancel()
+	r, err := c.StartVM(ctx, &pb.VMID{Base: &pb.Base{Token: token}, Id: int64(id)})
+	if err != nil {
+		log.Println("could not greet: %v", err)
+	}
+	return Result{
+		Result: r.GetStatus(),
+		Info:   r.GetInfo(),
+	}
+}
+
+func ResetVMClient(token, vmid string) Result {
+	id, err := strconv.Atoi(vmid)
+	if err != nil {
+		log.Println("id error!!")
+	}
+
+	conn, err := grpc.Dial(address, grpc.WithInsecure(), grpc.WithBlock())
+	if err != nil {
+		log.Println("Not connect; %v", err)
+	}
+	defer conn.Close()
+	c := pb.NewGrpcClient(conn)
+
+	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
+	defer cancel()
+	r, err := c.ResetVM(ctx, &pb.VMID{Base: &pb.Base{Token: token}, Id: int64(id)})
+	if err != nil {
+		log.Println("could not greet: %v", err)
+	}
+	return Result{
+		Result: r.GetStatus(),
+		Info:   r.GetInfo(),
+	}
+}
+
+func StopVMClient(token, vmid string) Result {
+	id, err := strconv.Atoi(vmid)
+	if err != nil {
+		log.Println("id error!!")
+	}
+
+	conn, err := grpc.Dial(address, grpc.WithInsecure(), grpc.WithBlock())
+	if err != nil {
+		log.Println("Not connect; %v", err)
+	}
+	defer conn.Close()
+	c := pb.NewGrpcClient(conn)
+
+	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
+	defer cancel()
+	r, err := c.StopVM(ctx, &pb.VMID{Base: &pb.Base{Token: token}, Id: int64(id)})
+	if err != nil {
+		log.Println("could not greet: %v", err)
+	}
+	return Result{
+		Result: r.GetStatus(),
+		Info:   r.GetInfo(),
+	}
+}
+
+func ShutdownVMClient(token, vmid string) Result {
+	id, err := strconv.Atoi(vmid)
+	if err != nil {
+		log.Println("id error!!")
+	}
+
+	conn, err := grpc.Dial(address, grpc.WithInsecure(), grpc.WithBlock())
+	if err != nil {
+		log.Println("Not connect; %v", err)
+	}
+	defer conn.Close()
+	c := pb.NewGrpcClient(conn)
+
+	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
+	defer cancel()
+	r, err := c.ShutdownVM(ctx, &pb.VMID{Base: &pb.Base{Token: token}, Id: int64(id)})
+	if err != nil {
+		log.Println("could not greet: %v", err)
+	}
+	return Result{
+		Result: r.GetStatus(),
+		Info:   r.GetInfo(),
+	}
+}
+
+func PauseVMClient(token, vmid string) Result {
+	id, err := strconv.Atoi(vmid)
+	if err != nil {
+		log.Println("id error!!")
+	}
+
+	conn, err := grpc.Dial(address, grpc.WithInsecure(), grpc.WithBlock())
+	if err != nil {
+		log.Println("Not connect; %v", err)
+	}
+	defer conn.Close()
+	c := pb.NewGrpcClient(conn)
+
+	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
+	defer cancel()
+	r, err := c.PauseVM(ctx, &pb.VMID{Base: &pb.Base{Token: token}, Id: int64(id)})
+	if err != nil {
+		log.Println("could not greet: %v", err)
+	}
+	return Result{
+		Result: r.GetStatus(),
+		Info:   r.GetInfo(),
+	}
+}
+
+func ResumeVMClient(token, vmid string) Result {
+	id, err := strconv.Atoi(vmid)
+	if err != nil {
+		log.Println("id error!!")
+	}
+
+	conn, err := grpc.Dial(address, grpc.WithInsecure(), grpc.WithBlock())
+	if err != nil {
+		log.Println("Not connect; %v", err)
+	}
+	defer conn.Close()
+	c := pb.NewGrpcClient(conn)
+
+	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
+	defer cancel()
+	r, err := c.ResumeVM(ctx, &pb.VMID{Base: &pb.Base{Token: token}, Id: int64(id)})
+	if err != nil {
+		log.Println("could not greet: %v", err)
+	}
+	return Result{
+		Result: r.GetStatus(),
+		Info:   r.GetInfo(),
+	}
+}
+
 func GetUserVMClient(token string) []VMData {
 
 	conn, err := grpc.Dial(GetgRPCServerAddress(), grpc.WithInsecure(), grpc.WithBlock())
 	if err != nil {
-		log.Fatalf("Not connect; %v", err)
+		log.Println("Not connect; %v", err)
 	}
 	defer conn.Close()
 	c := pb.NewGrpcClient(conn)

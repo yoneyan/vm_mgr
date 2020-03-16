@@ -9,6 +9,11 @@ type AuthResult struct {
 	UserID   int    `json:"userid"`
 }
 
+type Result struct {
+	Result bool   `json:"result"`
+	Info   string `json:"info"`
+}
+
 func RegistergRPCServerAddress(ip string) {
 	address = ip
 }

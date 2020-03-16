@@ -16,43 +16,22 @@ func CheckToken(c *gin.Context) {
 
 	token := GetToken(c.Request.Header.Get("Authorization"))
 
-	var result Result
-
-	ok := client.CheckTokenClient(token)
-	if ok {
-		result.Result = true
-		result.Info = "OK"
-	} else if token == "" {
-		result.Result = false
-		result.Info = "Invalid token"
-	} else {
-		result.Result = false
-		result.Info = "NG"
-	}
+	result := client.CheckTokenClient(token)
 
 	c.JSON(200, result)
 }
 
 func DeleteToken(c *gin.Context) {
 	log.Println("------DeleteToken------")
-	var result Result
 
 	token := GetToken(c.Request.Header.Get("Authorization"))
 
-	ok := client.DeleteTokenClient(token)
-	if ok {
-		result.Result = true
-		result.Info = "OK"
-	} else if token == "" {
-		result.Result = false
-	} else {
-		result.Result = false
-		result.Info = "Auth NG"
-	}
+	result := client.DeleteTokenClient(token)
 
 	c.JSON(200, result)
 }
 
+/*
 func GetAllToken(c *gin.Context) {
 	log.Println("------GetAllToken------")
 	var result Result
@@ -72,6 +51,8 @@ func GetAllToken(c *gin.Context) {
 
 	c.JSON(200, result)
 }
+
+*/
 
 func GenerateToken(c *gin.Context) {
 	log.Println("------GenerateToken------")

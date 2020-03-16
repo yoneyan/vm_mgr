@@ -18,9 +18,13 @@ func main() {
 	//router.HandleFunc("/api/v1/token",data.GetUserVM).Methods("GET")
 	//vm
 	router.GET("/api/v1/vm", data.GetUserVM)
-	//router.StrictSlash(true)
-	//router.HandleFunc("/api/v1/vm/group", data.GetUserVM).Methods("GET")
-	//router.HandleFunc("/api/v1/vm", data.GetUserVM).Methods("GET")
+	//router.GET("/api/v1/vm/:id", data.GetVM)
+	router.PUT("/api/v1/vm/:id/power", data.StartVM)
+	router.DELETE("/api/v1/vm/:id/power", data.StopVM)
+	router.PUT("/api/v1/vm/:id/reset", data.ResetVM)
+	router.PUT("/api/v1/vm/:id/pause", data.ResumeVM)
+	router.DELETE("/api/v1/vm/:id/pause", data.PauseVM)
+
 	log.Fatal(http.ListenAndServe(":8080", router))
 }
 

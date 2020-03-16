@@ -27,7 +27,7 @@ func GenerateTokenClient(user, pass string) *AuthResult {
 	return &AuthResult{Result: r.Result, Token: r.Token, UserName: r.Name, UserID: int(r.Id)}
 }
 
-func CheckTokenClient(token string) bool {
+func CheckTokenClient(token string) Result {
 	conn, err := grpc.Dial(GetgRPCServerAddress(), grpc.WithInsecure(), grpc.WithBlock())
 	if err != nil {
 		log.Fatalf("Not connect; %v", err)
@@ -42,14 +42,14 @@ func CheckTokenClient(token string) bool {
 	if err != nil {
 		log.Fatalf("could not greet: %v", err)
 	}
-	if r.Status {
-		return true
-	} else {
-		return false
+
+	return Result{
+		Result: r.Status,
+		Info:   r.Info,
 	}
 }
 
-func DeleteTokenClient(token string) bool {
+func DeleteTokenClient(token string) Result {
 	conn, err := grpc.Dial(GetgRPCServerAddress(), grpc.WithInsecure(), grpc.WithBlock())
 	if err != nil {
 		log.Fatalf("Not connect; %v", err)
@@ -64,10 +64,9 @@ func DeleteTokenClient(token string) bool {
 	if err != nil {
 		log.Fatalf("could not greet: %v", err)
 	}
-	if r.Status {
-		return true
-	} else {
-		return false
+	return Result{
+		Result: r.Status,
+		Info:   r.Info,
 	}
 }
 
