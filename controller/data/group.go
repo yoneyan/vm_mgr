@@ -210,7 +210,7 @@ func SearchAllGroupUser(basedata, searchnamedata string) bool {
 }
 
 //mode 0:admin 1:user
-func SearchGroupUser(searchnamedata, group string, mode int) bool {
+func SearchGroupUser(name, group string, mode int) bool {
 	id, result := db.GetDBGroupID(group)
 	if result == false {
 		fmt.Println("Error: Not found group")
@@ -223,14 +223,14 @@ func SearchGroupUser(searchnamedata, group string, mode int) bool {
 	if mode == 0 {
 		d := strings.Split(data.Admin, ",")
 		for _, a := range d {
-			if a == searchnamedata {
+			if a == name {
 				return true
 			}
 		}
 	} else if mode == 1 {
 		d := strings.Split(data.User, ",")
 		for _, a := range d {
-			if a == searchnamedata {
+			if a == name {
 				return true
 			}
 		}
