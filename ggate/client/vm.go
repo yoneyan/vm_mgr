@@ -213,7 +213,7 @@ func GetVMClient(id, token string) VMData {
 
 	conn, err := grpc.Dial(address, grpc.WithInsecure(), grpc.WithBlock())
 	if err != nil {
-		log.Fatalf("Not connect; %v", err)
+		log.Println("Not connect; %v", err)
 	}
 	defer conn.Close()
 	c := pb.NewGrpcClient(conn)
@@ -228,7 +228,7 @@ func GetVMClient(id, token string) VMData {
 
 	r, err := c.GetVM(ctx, &pb.VMID{Id: int64(vmid), Base: &pb.Base{Token: token}})
 	if err != nil {
-		log.Fatalf("could not greet: %v", err)
+		log.Println("could not greet: %v", err)
 	}
 	return VMData{
 		NodeID:    int(r.Node),

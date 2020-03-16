@@ -12,7 +12,7 @@ import (
 func GenerateTokenClient(user, pass string) *AuthResult {
 	conn, err := grpc.Dial(GetgRPCServerAddress(), grpc.WithInsecure(), grpc.WithBlock())
 	if err != nil {
-		log.Fatalf("Not connect; %v", err)
+		log.Println("Not connect; %v", err)
 	}
 	defer conn.Close()
 	c := pb.NewGrpcClient(conn)
@@ -22,7 +22,7 @@ func GenerateTokenClient(user, pass string) *AuthResult {
 
 	r, err := c.GenerateToken(ctx, &pb.Base{User: user, Pass: pass})
 	if err != nil {
-		log.Fatalf("could not greet: %v", err)
+		log.Println("could not greet: %v", err)
 	}
 	return &AuthResult{Result: r.Result, Token: r.Token, UserName: r.Name, UserID: int(r.Id)}
 }
@@ -30,7 +30,7 @@ func GenerateTokenClient(user, pass string) *AuthResult {
 func CheckTokenClient(token string) Result {
 	conn, err := grpc.Dial(GetgRPCServerAddress(), grpc.WithInsecure(), grpc.WithBlock())
 	if err != nil {
-		log.Fatalf("Not connect; %v", err)
+		log.Println("Not connect; %v", err)
 	}
 	defer conn.Close()
 	c := pb.NewGrpcClient(conn)
@@ -40,7 +40,7 @@ func CheckTokenClient(token string) Result {
 
 	r, err := c.CheckToken(ctx, &pb.Base{Token: token})
 	if err != nil {
-		log.Fatalf("could not greet: %v", err)
+		log.Println("could not greet: %v", err)
 	}
 
 	return Result{
@@ -52,7 +52,7 @@ func CheckTokenClient(token string) Result {
 func DeleteTokenClient(token string) Result {
 	conn, err := grpc.Dial(GetgRPCServerAddress(), grpc.WithInsecure(), grpc.WithBlock())
 	if err != nil {
-		log.Fatalf("Not connect; %v", err)
+		log.Println("Not connect; %v", err)
 	}
 	defer conn.Close()
 	c := pb.NewGrpcClient(conn)
@@ -62,7 +62,7 @@ func DeleteTokenClient(token string) Result {
 
 	r, err := c.DeleteToken(ctx, &pb.Base{Token: token})
 	if err != nil {
-		log.Fatalf("could not greet: %v", err)
+		log.Println("could not greet: %v", err)
 	}
 	return Result{
 		Result: r.Status,
@@ -74,7 +74,7 @@ func DeleteTokenClient(token string) Result {
 func GetAllTokenClient(token string) bool {
 	conn, err := grpc.Dial(GetgRPCServerAddress(), grpc.WithInsecure(), grpc.WithBlock())
 	if err != nil {
-		log.Fatalf("Not connect; %v", err)
+		log.Println("Not connect; %v", err)
 	}
 	defer conn.Close()
 	c := pb.NewGrpcClient(conn)
@@ -84,7 +84,7 @@ func GetAllTokenClient(token string) bool {
 
 	//r, err := c.GetAllToken(ctx, &pb.Base{Token: token})
 	//if err != nil {
-	//	log.Fatalf("could not greet: %v", err)
+	//	log.Println("could not greet: %v", err)
 	//}
 	//if r.Status {
 	//	return true
