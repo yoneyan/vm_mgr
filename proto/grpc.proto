@@ -74,7 +74,13 @@ service grpc {
     }
     rpc GetToken (Base) returns (TokenData) {
     }
-    rpc CheckToken(Base) returns (Result){
+    rpc CheckToken (Base) returns (Result) {
+    }
+    rpc GetImage (Base) returns (stream ImageData) {
+    }
+    rpc UploadImage (ImageTransferData) returns (stream ImageResult){
+    }
+    rpc DownloadImage (ImageTransferData) returns (stream ImageResult){
     }
 }
 
@@ -89,13 +95,37 @@ message Base {
     bool result = 5;
     int32 userid = 6;
     int32 groupid = 7;
+    bool isadmin = 8;
 }
 
 message AuthResult {
     string token = 1;
     string name = 2;
-    int32 id =3;
+    int32 id = 3;
     bool result = 4;
+}
+
+message ImageResult {
+    int32 percent = 1;
+    bool result = 2;
+    string info = 3;
+}
+
+message ImageTransferData {
+    string ip = 1;
+    int32 port = 2;
+    string path = 3; //remote path
+    ImageData image = 4;
+}
+
+message ImageData {
+    int32 id = 1;
+    string name = 2;
+    int32 type = 3;
+    int64 capacity = 4;
+    int64 addtime = 5;
+    int32 minmem = 6;
+    bool onlyadmin = 7;
 }
 
 message TokenData {

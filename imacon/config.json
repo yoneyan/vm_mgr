@@ -1,0 +1,11 @@
+{
+  "image": {
+    "path": [
+      {"type": 0, "path": "/home/yoneyan/image/iso"},
+      {"type": 1, "path": "/home/yoneyan/image/disk"}
+    ]
+  },
+  "node": {
+    "key": "./id.rsa.pam"
+  }
+}
