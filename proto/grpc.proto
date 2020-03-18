@@ -146,6 +146,7 @@ message ImageData {
     string filename = 10;
     string uuid = 11;
     Base base =12;
+    int32 imaconid = 13;
 }
 
 message TokenData {
