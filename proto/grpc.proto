@@ -82,6 +82,20 @@ service grpc {
     }
     rpc DownloadImage (ImageTransferData) returns (ImageResult) {
     }
+    rpc ExistImage (ImageData) returns (ImageResult) {
+    }
+    rpc ProgressImage (ImageData) returns (ImageResult) {
+    }
+    rpc GetAllProgressImage (Base) returns (stream ImageResult) {
+    }
+    rpc AddImage (ImageData) returns (ImageResult) {
+    }
+    rpc DeleteImage (ImageData) returns (ImageResult) {
+    }
+    rpc ChangeNameImage (ImageData) returns (ImageResult) {
+    }
+    rpc ChangeTagImage (ImageData) returns (ImageResult) {
+    }
 }
 
 message Null {
