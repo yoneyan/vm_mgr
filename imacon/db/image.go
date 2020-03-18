@@ -32,7 +32,7 @@ func RemoveDBImage(id int) bool {
 	return true
 }
 
-func GetNameDBImage(name string) []Image {
+func GetAllDBImage() []Image {
 	db := connectDB()
 	rows, err := db.Query("SELECT * FROM image")
 	if err != nil {
