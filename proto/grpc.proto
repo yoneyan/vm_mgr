@@ -76,11 +76,11 @@ service grpc {
     }
     rpc CheckToken (Base) returns (Result) {
     }
-    rpc GetImage (Base) returns (stream ImageData) {
+    rpc GetAllImage (Base) returns (stream ImageData) {
     }
-    rpc UploadImage (ImageTransferData) returns (stream ImageResult){
+    rpc UploadImage (ImageTransferData) returns (ImageResult) {
     }
-    rpc DownloadImage (ImageTransferData) returns (stream ImageResult){
+    rpc DownloadImage (ImageTransferData) returns (ImageResult) {
     }
 }
 
@@ -109,23 +109,28 @@ message ImageResult {
     int32 percent = 1;
     bool result = 2;
     string info = 3;
+    string uuid = 4;
 }
 
 message ImageTransferData {
     string ip = 1;
-    int32 port = 2;
+    string port = 2;
     string path = 3; //remote path
     ImageData image = 4;
 }
 
 message ImageData {
     int32 id = 1;
-    string name = 2;
-    int32 type = 3;
-    int64 capacity = 4;
-    int64 addtime = 5;
-    int32 minmem = 6;
-    bool onlyadmin = 7;
+    string path = 2;
+    string name = 3;
+    string tag = 4;
+    int32 type = 5;
+    int64 capacity = 6;
+    int64 addtime = 7;
+    int32 minmem = 8;
+    int32 authority = 9;
+    string filename = 10;
+    string uuid = 11;
 }
 
 message TokenData {
