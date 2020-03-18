@@ -3,7 +3,6 @@ package server
 import (
 	"context"
 	"fmt"
-	"github.com/yoneyan/vm_mgr/controller/data"
 	"github.com/yoneyan/vm_mgr/imacon/db"
 	"github.com/yoneyan/vm_mgr/imacon/etc"
 	pb "github.com/yoneyan/vm_mgr/proto/proto-go"
@@ -13,7 +12,7 @@ import (
 )
 
 func (s *server) AddImage(ctx context.Context, in *pb.ImageData) (*pb.ImageResult, error) {
-	log.Println("----ChangeNameImage----")
+	log.Println("----AddImage----")
 	log.Println("Receive FileName : " + in.GetFilename())
 	log.Println("Receive Type     : " + strconv.Itoa(int(in.GetType())))
 	log.Println("Receive Name     : " + in.GetName())
@@ -66,7 +65,6 @@ func (s *server) DeleteImage(ctx context.Context, in *pb.ImageData) (*pb.ImageRe
 func (s *server) ChangeNameImage(ctx context.Context, in *pb.ImageData) (*pb.ImageResult, error) {
 	log.Println("----ChangeNameImage----")
 	log.Println("Receive FileName : " + in.GetFilename())
-	log.Println("Receive Type     : " + strconv.Itoa(int(in.GetType())))
 	log.Println("Receive Name     : " + in.GetName())
 
 	d, result := db.GetDBImageFileName(in.GetFilename())
@@ -81,7 +79,7 @@ func (s *server) ChangeNameImage(ctx context.Context, in *pb.ImageData) (*pb.Ima
 }
 
 func (s *server) ChangeTagImage(ctx context.Context, in *pb.ImageData) (*pb.ImageResult, error) {
-	log.Println("----ChangeNameImage----")
+	log.Println("----ChangeTagImage----")
 	log.Println("Receive FileName : " + in.GetFilename())
 	log.Println("Receive Type     : " + strconv.Itoa(int(in.GetType())))
 	log.Println("Receive Tag      : " + in.GetTag())
@@ -122,13 +120,8 @@ func (s *server) ProgressImage(ctx context.Context, in *pb.ImageData) (*pb.Image
 }
 
 func (s *server) GetAllImage(d *pb.Base, stream pb.Grpc_GetAllImageServer) error {
-	go data.DeleteExpiredToken()
 	log.Println("----GetAllImage----")
 
-	if data.AdminUserCertification(d.GetUser(), d.GetPass(), d.GetToken()) == false {
-		fmt.Println("Administrator certification failed!!!")
-		return nil
-	}
 	result := db.GetAllDBImage()
 	fmt.Printf("DBstruct: ")
 	fmt.Println(result)
@@ -153,13 +146,8 @@ func (s *server) GetAllImage(d *pb.Base, stream pb.Grpc_GetAllImageServer) error
 }
 
 func (s *server) GetAllProgressImage(d *pb.Base, stream pb.Grpc_GetAllProgressImageServer) error {
-	go data.DeleteExpiredToken()
 	log.Println("----GetAllProgressImage----")
 
-	if data.AdminUserCertification(d.GetUser(), d.GetPass(), d.GetToken()) == false {
-		fmt.Println("Administrator certification failed!!!")
-		return nil
-	}
 	result := db.GetAllDBTransfer()
 	fmt.Printf("DBstruct: ")
 	fmt.Println(result)
