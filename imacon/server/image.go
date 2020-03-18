@@ -18,7 +18,7 @@ func (s *server) AddImage(ctx context.Context, in *pb.ImageData) (*pb.ImageResul
 	log.Println("Receive Type     : " + strconv.Itoa(int(in.GetType())))
 	log.Println("Receive Name     : " + in.GetName())
 
-	d, result := db.GetDBImageFileName(in.GetFilename())
+	_, result := db.GetDBImageFileName(in.GetFilename())
 	if result == false {
 		return &pb.ImageResult{Result: false, Info: "DB Error"}, nil
 	}
