@@ -24,15 +24,19 @@ VMを管理するという意味を込めてvm_mgrとしています。
 
 ## 仕組み
 ![vm_mgr](https://user-images.githubusercontent.com/40447529/76900943-a6940100-68dd-11ea-9d1c-801bdecbb7f1.png)  
-ClientはコマンドをControllerやNodeに命令を送る部分  
-Controllerはユーザやグループやノード管理などを担う部分  
-ggateはRestAPIを提供  
-imaconはImageを提供  
-Nodeはqemuを使って実際にVMを動かしている部分    
 
-## 使用Port
+|名称|中身|
+|---|---|
+|Client|コマンドによる操作|
+|Controller|ユーザやグループやノード管理など|
+|ggate|RestAPIの提供|  
+|imacon|Imageの提供|  
+|Node|VMホスト|
+
+## 使用Port(gRPC)
 |機能|ポート|
 |---|---|
+|imacon|50300/tcp|
 |Controller|50200/tcp|
 |Node| 50100/tcp|
 
