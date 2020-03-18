@@ -52,10 +52,10 @@ func GetAllDBTransfer() []Transfer {
 	return bg
 }
 
-func GetDBTransfer(id int) (Transfer, bool) {
+func GetDBTransfer(uuid string) (Transfer, bool) {
 	db := connectDB()
 
-	rows := db.QueryRow("SELECT * FROM transfer WHERE id = ?", id)
+	rows := db.QueryRow("SELECT * FROM transfer WHERE uuid = ?", uuid)
 	var b Transfer
 	err := rows.Scan(&b.ID, &b.ImageID, &b.UUID, &b.Status)
 
@@ -72,10 +72,10 @@ func GetDBTransfer(id int) (Transfer, bool) {
 	}
 }
 
-func ChangeDBTransferStatus(id, status int) bool {
+func ChangeDBTransferStatus(uuid string, status int) bool {
 	db := connectDB()
 
-	_, err := db.Exec("UPDATE image SET status = ? WHERE id = ?", status, id)
+	_, err := db.Exec("UPDATE image SET status = ? WHERE uuid = ?", status, uuid)
 	if err != nil {
 		fmt.Println("Error: DBUpdate Error (Group Name)")
 		return false

@@ -3,6 +3,7 @@ package sftp
 import (
 	"fmt"
 	"github.com/pkg/sftp"
+	"github.com/yoneyan/vm_mgr/imacon/db"
 	"golang.org/x/crypto/ssh"
 	"io"
 	"io/ioutil"
@@ -57,4 +58,6 @@ func DataUpload(filedata *FileData, sshdata *SSHInfo) {
 		log.Println(err)
 	}
 	fmt.Printf("%d bytes copied\n", bytes)
+
+	fmt.Println(db.RemoveDBTransfer(filedata.ProgressUUID))
 }

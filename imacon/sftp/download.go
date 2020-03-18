@@ -3,11 +3,14 @@ package sftp
 import (
 	"fmt"
 	"github.com/pkg/sftp"
+	"github.com/yoneyan/vm_mgr/imacon/db"
+	"github.com/yoneyan/vm_mgr/imacon/etc"
 	"golang.org/x/crypto/ssh"
 	"io"
 	"io/ioutil"
 	"log"
 	"os"
+	"time"
 )
 
 func DataDownload(filedata *FileData, sshdata *SSHInfo) {
@@ -57,4 +60,19 @@ func DataDownload(filedata *FileData, sshdata *SSHInfo) {
 		log.Println(err)
 	}
 	fmt.Printf("%d bytes copied\n", bytes)
+
+	fmt.Printf("RemoveDBTransfer: ")
+	fmt.Println(db.RemoveDBTransfer(filedata.ProgressUUID))
+	fmt.Printf("AddDBImage: ")
+	db.AddDBImage(db.Image{
+		FileName:  filedata.Name,
+		Name:      "",
+		Tag:       "",
+		Type:      filedata.Type,
+		Capacity:  etc.FileSize(filedata.LocalPath),
+		AddTime:   int(time.Now().Unix()),
+		Authority: filedata.Authority,
+		MinMem:    filedata.MinMem,
+		Status:    0,
+	})
 }

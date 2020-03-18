@@ -72,6 +72,26 @@ func GetDBImage(name, tag string) (Image, bool) {
 	}
 }
 
+func GetDBImageFileName(filename string) (Image, bool) {
+	db := connectDB()
+
+	rows := db.QueryRow("SELECT * FROM image WHERE filename = ?", filename)
+	var b Image
+	err := rows.Scan(&b.ID, &b.FileName, &b.Name, &b.Tag, &b.Type, &b.Capacity, &b.AddTime, &b.MinMem, &b.Authority, &b.Status)
+
+	switch {
+	case err == sql.ErrNoRows:
+		fmt.Printf("Not found")
+		return b, false
+	case err != nil:
+		fmt.Println(err)
+		fmt.Println("Error: DBError")
+		return b, false
+	default:
+		return b, true
+	}
+}
+
 func ChangeDBImageName(id int, data string) bool {
 	db := connectDB()
 
