@@ -145,6 +145,7 @@ message ImageData {
     int32 authority = 9;
     string filename = 10;
     string uuid = 11;
+    Base base =12;
 }
 
 message TokenData {
