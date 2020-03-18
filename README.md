@@ -23,10 +23,11 @@ VMを管理するという意味を込めてvm_mgrとしています。
 * cliライブラリとしてspf13/cobraの使用
 
 ## 仕組み
-![vm_mgr](https://user-images.githubusercontent.com/40447529/76597729-7ac2f500-6544-11ea-9747-bef12200cdab.png)
-
+![vm_mgr](https://user-images.githubusercontent.com/40447529/76900943-a6940100-68dd-11ea-9d1c-801bdecbb7f1.png)  
 ClientはコマンドをControllerやNodeに命令を送る部分  
 Controllerはユーザやグループやノード管理などを担う部分  
+ggateはRestAPIを提供  
+imaconはImageを提供  
 Nodeはqemuを使って実際にVMを動かしている部分    
 
 ## 使用Port
