@@ -164,8 +164,8 @@ message VMData {
     string vmname = 3;
     int64 vcpu = 4;
     int64 vmem = 5;
-    int32 storagetype = 6; //1: Normal Disk 2: SSD 3: NVMe 4: iSCSI
-    int64 storage = 7;
+    int32 storagetype = 6; //0: custom 1: Normal Disk 2: SSD 3: NVMe 4: iSCSI
+    string storage = 7;
     string cdrom = 8;
     string vnet = 9;
     Option option = 10;
