@@ -3,8 +3,10 @@ package manage
 import (
 	"fmt"
 	"github.com/yoneyan/vm_mgr/node/etc"
+	pb "github.com/yoneyan/vm_mgr/proto/proto-go"
 	"os/exec"
 	"strconv"
+	"strings"
 )
 
 type Storage struct {
@@ -19,13 +21,44 @@ func RunStorageCmd(cmd []string) {
 	fmt.Println(string(out))
 }
 
+func StorageProcess(data *pb.VMData) string {
+	s := strings.Split(data.GetStorage(), ",")
+	sp := strings.Split(data.Option.GetStoragePath(), ",")
+	j := 0
+	var result []string
+	fmt.Println(sp)
+	for i, a := range sp {
+		if i%2 != 0 {
+			path := a
+			fmt.Println("path: " + path)
+			if FileExistsCheck(path+"/"+data.GetVmname()+"-"+strconv.Itoa(j)+".img") == false {
+				size, result := strconv.Atoi(s[j])
+				if result != nil {
+					fmt.Println("Error: string to int")
+				}
+				storage := Storage{
+					Path:   path,
+					Name:   data.GetVmname() + "-" + strconv.Itoa(j),
+					Format: "qcow2",
+					Size:   size,
+				}
+				CreateStorage(&storage)
+			}
+			result = append(result, path+"/"+data.GetVmname()+"-"+strconv.Itoa(j)+".img")
+			j++
+		} else {
+			result = append(result, a)
+		}
+	}
+	return strings.Join(result, ",")
+}
+
 //path, name string, format, size int
 func CreateStorage(s *Storage) error {
 	fmt.Println("----storage create----")
 	if s.Size < 0 {
 		return fmt.Errorf("Wrong storage size !!")
 	}
-
 	if s.Format != "qcow2" && s.Format != "raw" {
 		return fmt.Errorf("Wrong storage format !!")
 	}

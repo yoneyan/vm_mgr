@@ -28,22 +28,17 @@ func (s *server) CreateVM(ctx context.Context, in *pb.VMData) (*pb.Result, error
 	r.Name = in.GetVmname()
 	r.CPU = int(in.GetVcpu())
 	r.Mem = int(in.GetVmem())
-	r.StoragePath = in.GetOption().StoragePath
+	r.Storage = in.GetStorage()
 	r.CDROM = in.GetOption().CdromPath
 	r.Net = in.GetVnet()
 	r.VNC = int(in.GetOption().Vnc)
 	r.AutoStart = in.GetOption().Autostart
 
-	if manage.FileExistsCheck(in.GetOption().StoragePath+"/"+in.GetVmname()+".img") == false {
-		fmt.Println("Not storage file exists")
-		storage := manage.Storage{
-			Path:   in.GetOption().StoragePath,
-			Name:   in.GetVmname(),
-			Format: "qcow2",
-			Size:   int(in.GetStorage()),
-		}
-		manage.CreateStorage(&storage)
+	if manage.InputCheck(in.Option.GetStoragePath(), r.Storage) == false {
+		return &pb.Result{Status: false, Info: "Input Error!!"}, nil
 	}
+
+	r.StoragePath = manage.StorageProcess(in)
 
 	info, result := vm.CreateVMProcess(&r)
 	if result {
@@ -134,10 +129,11 @@ func (s *server) GetVMName(ctx context.Context, in *pb.VMName) (*pb.VMData, erro
 			Id:          int64(result.ID),
 			Autostart:   result.AutoStart,
 		},
-		Vmname: result.Name,
-		Vcpu:   int64(result.CPU),
-		Vmem:   int64(result.Mem),
-		Vnet:   result.Net,
+		Vmname:  result.Name,
+		Vcpu:    int64(result.CPU),
+		Vmem:    int64(result.Mem),
+		Vnet:    result.Net,
+		Storage: result.Storage,
 	}, nil
 }
 
@@ -154,7 +150,7 @@ func (s *server) GetAllVM(base *pb.Base, stream pb.Grpc_GetAllVMServer) error {
 	fmt.Println(db.VMDBGetAll())
 	result := db.VMDBGetAll()
 	for _, a := range result {
-		if err := stream.Send(&pb.VMData{Option: &pb.Option{Id: int64(a.ID), Autostart: a.AutoStart, Status: int32(a.Status)}, Vmname: a.Name, Vcpu: int64(a.CPU), Vmem: int64(a.Mem), Vnet: a.Net}); err != nil {
+		if err := stream.Send(&pb.VMData{Option: &pb.Option{Id: int64(a.ID), Autostart: a.AutoStart, Status: int32(a.Status)}, Vmname: a.Name, Vcpu: int64(a.CPU), Vmem: int64(a.Mem), Vnet: a.Net, Storage: a.Storage}); err != nil {
 			return err
 		}
 	}

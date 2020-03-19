@@ -55,21 +55,35 @@ func RunQEMUCmd(command []string) error {
 }
 
 func CreateGenerateCmd(c *CreateVMInformation) []string {
+	var diskindex int
 	var cmd []string
-	begin := []string{"-enable-kvm", "-name", c.Name, "-smp", strconv.Itoa(c.CPU), "-m", strconv.Itoa(c.Mem), "-monitor", etc.SocketGenerate(c.Name), "-hda", c.StoragePath + "/" + c.Name + ".img", "-vnc", ":" + strconv.Itoa(c.VNC)}
-	cmdarray := []string{"-boot"}
+	begin := []string{"-enable-kvm", "-name", c.Name, "-smp", strconv.Itoa(c.CPU), "-m", strconv.Itoa(c.Mem), "-monitor", etc.SocketGenerate(c.Name), "-vnc", ":" + strconv.Itoa(c.VNC)}
 
 	cmd = append(cmd, begin...)
 
 	if c.CDROM != "" {
-		cmd = append(cmd, cmdarray[0])
+		cmd = append(cmd, "-boot")
 		cmd = append(cmd, "order=d")
-		cmd = append(cmd, "-cdrom")
-		cmd = append(cmd, c.CDROM)
+		index, cdromdata := GenerateCDROMCmd(c.CDROM)
+		for _, a := range cdromdata {
+			cmd = append(cmd, a)
+		}
+		diskindex = index
+	}
+
+	if c.StoragePath != "" {
+		if c.CDROM == "" {
+			cmd = append(cmd, "-boot")
+			cmd = append(cmd, "order=c")
+			diskindex = 0
+		}
+		diskdata := GenerateDiskCmd(c.StoragePath, diskindex)
+		for _, a := range diskdata {
+			cmd = append(cmd, a)
+		}
 	}
 	if len(c.Net) != 0 {
 		netdata := GenerateNetworkCmd(c.Net)
-		fmt.Println("safa")
 		//add qemu network command
 		for _, a := range netdata {
 			cmd = append(cmd, a)
@@ -82,8 +96,64 @@ func CreateGenerateCmd(c *CreateVMInformation) []string {
 	return cmd
 }
 
+func GenerateCDROMCmd(cdrom string) (int, []string) {
+	fmt.Println("GenerateCDROMCommand")
+	data := strings.Split(cdrom, ",")
+	fmt.Println(data)
+
+	var cmd []string
+	var index int
+
+	//-drive file=/images/cdrom.iso,index=2,media=cdrom
+	for index, a := range data {
+		cmd = append(cmd, "-drive")
+		cmd = append(cmd, "file="+a+",index="+strconv.Itoa(index)+",media=cdrom")
+	}
+	return index, cmd
+}
+
+//Generate Disk Command
+func GenerateDiskCmd(storagepath string, index int) []string {
+	fmt.Println("GenerateDiskCommand")
+	data := strings.Split(storagepath, ",")
+	fmt.Println(data)
+
+	index++
+	mode := 0
+	var cmd []string
+
+	for i, a := range data {
+		if i%2 == 0 {
+			m, err := strconv.Atoi(a)
+			if err != nil {
+				mode = 0
+			}
+			mode = m
+		} else {
+			if mode == 0 {
+				//default disk mount mode
+				//-drive file=/images/image2.raw,index=1,media=disk
+				cmd = append(cmd, "-drive")
+				cmd = append(cmd, "file="+a+",index="+strconv.Itoa(index)+",media=disk")
+				index++
+			} else if mode == 1 {
+				//disk mount mode is using virtio
+				//-drive file=/images/image2.raw,index=1,media=disk,if=virtio
+				cmd = append(cmd, "-drive")
+				cmd = append(cmd, "file="+a+",index="+strconv.Itoa(index)+",media=disk,if=virtio")
+				index++
+			} else {
+				fmt.Println("mode error!!")
+				fmt.Println("mode is " + strconv.Itoa(mode))
+			}
+		}
+	}
+	return cmd
+}
+
 //Generate Network Command
 func GenerateNetworkCmd(net string) []string {
+	fmt.Println("GenerateNetworkCommand")
 	data := strings.Split(net, ",")
 	fmt.Println(data)
 	mode, err := strconv.Atoi(data[0])
@@ -113,23 +183,25 @@ func GenerateNetworkCmd(net string) []string {
 	//-net nic,macaddr=52:54:01:11:22:33 -net bridge,br=br0
 	//2 Network
 	//-net nic,macaddr=52:54:01:11:22:33 -net bridge,br=br0 -net nic,macaddr=52:54:02:11:22:33 -net bridge,br=br0
+
+	//-netdev tap,helper=/usr/lib/qemu/qemu-bridge-helper,id=br0 -device virtio-net-pci,netdev=br0,id=net1,mac=52:54:85:98:60:93
+	//-netdev tap,helper=/usr/lib/qemu/qemu-bridge-helper,id=br100 -device virtio-net-pci,netdev=br100,id=net2,mac=52:54:85:98:60:94
+	//-netdev tap,helper=/usr/lib/qemu/qemu-bridge-helper,id=br200 -device virtio-net-pci,netdev=br200,id=net3,mac=52:54:85:98:60:95
 	if mode == 0 {
-		//default Network
-		cmd = append(cmd, "-net")
-		cmd = append(cmd, "nic,macaddr="+mac[0])
-		cmd = append(cmd, "-net")
-		cmd = append(cmd, "bridge,br="+bridge[0])
-		for i, _ := range mac {
-			if i > 0 {
-				cmd = append(cmd, "-net")
-				cmd = append(cmd, "nic,macaddr="+mac[i]+",vlan="+strconv.Itoa(i))
-				cmd = append(cmd, "-net")
-				cmd = append(cmd, "bridge,br="+bridge[i]+",vlan="+strconv.Itoa(i))
-			}
+		//default Network(VirtIO)
+		for i, m := range mac {
+			cmd = append(cmd, "-netdev")
+			cmd = append(cmd, "tap,helper=/usr/lib/qemu/qemu-bridge-helper,id="+bridge[i])
+			cmd = append(cmd, "-device")
+			cmd = append(cmd, "virtio-net-pci,netdev="+bridge[i]+",id=net"+strconv.Itoa(i)+",mac="+m)
 		}
 	} else if mode == 1 {
-		//rtl8139
-
+		for i, m := range mac {
+			cmd = append(cmd, "-netdev")
+			cmd = append(cmd, "tap,helper=/usr/lib/qemu/qemu-bridge-helper,id="+bridge[i])
+			cmd = append(cmd, "-device")
+			cmd = append(cmd, "e1000,netdev="+bridge[i]+",id=net"+strconv.Itoa(i)+",mac="+m)
+		}
 	}
 
 	fmt.Printf("GenerateNetwork: ")

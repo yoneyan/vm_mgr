@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/yoneyan/vm_mgr/node/db"
 	"os"
+	"strings"
 )
 
 func VMExistsName(name string) bool {
@@ -46,6 +47,29 @@ func FileExistsCheck(filename string) bool {
 	} else {
 		return true
 	}
+}
+
+func InputCheck(inputstoragepath, inputstorage string) bool {
+	storagepath := len(strings.Split(inputstoragepath, ","))
+	storage := len(strings.Split(inputstorage, ","))
+
+	if storagepath != 0 && storage*2 != storagepath {
+		fmt.Println("StoragePath or Storage InputError!!")
+		return false
+	}
+
+	var tmp []string
+
+	for _, a := range strings.Split(inputstoragepath, ",") {
+		tmp = append(tmp, a)
+		for _, b := range tmp {
+			if a == b {
+				fmt.Println("Error Same Virtual NIC!!")
+				return false
+			}
+		}
+	}
+	return true
 }
 
 func VMIDCheck(id int) bool {

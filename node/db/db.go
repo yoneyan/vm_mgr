@@ -9,11 +9,12 @@ import (
 
 const dbName = "./main.db"
 
-type NodeVM struct {
+type VM struct {
 	ID          int
 	Name        string
 	CPU         int
 	Mem         int
+	Storage     string
 	StoragePath string
 	Net         string
 	Vnc         int
@@ -37,7 +38,7 @@ func connectdb() *sql.DB {
 func Createdb() bool {
 	db := *connectdb()
 
-	_, err := db.Exec(`CREATE TABLE IF NOT EXISTS "nodevm" ("id" INTEGER PRIMARY KEY, "name" VARCHAR(255), "cpu" INT,"memory" INT, "storagepath" VARCHAR(255),"net" VARCHAR(255),"vnc" INT, "socket" VARCHAR(255),"status" INT,"autostart" boolean)`)
+	_, err := db.Exec(`CREATE TABLE IF NOT EXISTS "vm" ("id" INTEGER PRIMARY KEY, "name" VARCHAR(255), "cpu" INT,"memory" INT, "storage" VARCHAR(500),"storagepath" VARCHAR(500),"net" VARCHAR(255),"vnc" INT, "socket" VARCHAR(255),"status" INT,"autostart" boolean)`)
 	if err != nil {
 		fmt.Println(err)
 		fmt.Println("Error: SQL open Error")
@@ -46,25 +47,19 @@ func Createdb() bool {
 	return true
 }
 
-//func Initdb() bool {
-//	//nodevm data
-//	createdb(`CREATE TABLE IF NOT EXISTS "nodevm" ("id" INTEGER PRIMARY KEY, "name" VARCHAR(255), "cpu" INT,"memory" INT, "storagepath" VARCHAR(255),"net" VARCHAR(255),"vnc" INT, "socket" VARCHAR(255),"status" INT,"autostart" boolean)`)
-//	return true
-//}
+//VM
 
-//NodeVM
-
-func AddDBVM(data NodeVM) bool {
+func AddDBVM(data VM) bool {
 	fmt.Println("add database: " + data.Name)
 	db := *connectdb()
-	addDb, err := db.Prepare(`INSERT INTO "nodevm" ("name","cpu","memory","storagepath","net","vnc","socket","status","autostart") VALUES (?,?,?,?,?,?,?,?,?)`)
+	addDb, err := db.Prepare(`INSERT INTO "vm" ("name","cpu","memory","storage","storagepath","net","vnc","socket","status","autostart") VALUES (?,?,?,?,?,?,?,?,?,?)`)
 	if err != nil {
 		fmt.Println(err)
 		fmt.Println("Error: SQL Prepare Error")
 		return false
 	}
 
-	if _, err := addDb.Exec(data.Name, data.CPU, data.Mem, data.StoragePath, data.Net, data.Vnc, data.Socket, data.Status, data.AutoStart); err != nil {
+	if _, err := addDb.Exec(data.Name, data.CPU, data.Mem, data.Storage, data.StoragePath, data.Net, data.Vnc, data.Socket, data.Status, data.AutoStart); err != nil {
 		fmt.Println(err)
 		fmt.Println("Error: SQL Exec Error")
 		return false
@@ -74,7 +69,7 @@ func AddDBVM(data NodeVM) bool {
 
 func DeleteDBVM(id int) bool {
 	db := connectdb()
-	deleteDb := "DELETE FROM nodevm WHERE id = ?"
+	deleteDb := "DELETE FROM vm WHERE id = ?"
 	_, err := db.Exec(deleteDb, id)
 	if err != nil {
 		fmt.Println(err)
@@ -84,18 +79,18 @@ func DeleteDBVM(id int) bool {
 	return true
 }
 
-func VMDBGetAll() []NodeVM {
+func VMDBGetAll() []VM {
 	db := *connectdb()
 
-	cmd := "SELECT * FROM nodevm"
+	cmd := "SELECT * FROM vm"
 	rows, _ := db.Query(cmd)
 
 	defer rows.Close()
 
-	var bg []NodeVM
+	var bg []VM
 	for rows.Next() {
-		var b NodeVM
-		err := rows.Scan(&b.ID, &b.Name, &b.CPU, &b.Mem, &b.StoragePath, &b.Net, &b.Vnc, &b.Socket, &b.Status, &b.AutoStart)
+		var b VM
+		err := rows.Scan(&b.ID, &b.Name, &b.CPU, &b.Mem, &b.Storage, &b.StoragePath, &b.Net, &b.Vnc, &b.Socket, &b.Status, &b.AutoStart)
 		if err != nil {
 			fmt.Println(err)
 		}
@@ -130,7 +125,7 @@ func VMDBGetVMStatus(id int) (int, error) {
 func VMDBStatusUpdate(id, status int) bool {
 	db := *connectdb()
 
-	cmd := "UPDATE nodevm SET status = ? WHERE id = ?"
+	cmd := "UPDATE vm SET status = ? WHERE id = ?"
 	_, err := db.Exec(cmd, status, id)
 	if err != nil {
 		log.Fatalln(err)
@@ -140,9 +135,9 @@ func VMDBStatusUpdate(id, status int) bool {
 	return true
 }
 
-func VMDBGetData(id int) (*NodeVM, error) {
+func VMDBGetData(id int) (*VM, error) {
 	data := VMDBGetAll()
-	var result NodeVM
+	var result VM
 	for i, _ := range data {
 		if data[i].ID == id {
 			result = data[i]
@@ -153,7 +148,7 @@ func VMDBGetData(id int) (*NodeVM, error) {
 	return &result, fmt.Errorf("Not Found")
 }
 
-func VMDBUpdate(data *NodeVM) {
+func VMDBUpdate(data *VM) {
 }
 
 func VMDBStatusStop(id int) {
