@@ -31,7 +31,7 @@ storagetype
 storagemode
 0: Default
 1: VirtIOMode 
-->For example: (-N 0,br100,1,br200)
+->For example: (-N 0,br100,br200)
 networkmode
 0: Default
 1: VirtIOMode
@@ -385,8 +385,8 @@ func init() {
 	vmCreateCmd.PersistentFlags().Int64P("cpu", "c", 1, "virtual cpu")
 	vmCreateCmd.PersistentFlags().Int64P("mem", "m", 512, "virtual memory")
 	vmCreateCmd.PersistentFlags().StringP("storage_path", "P", "", "storage path")
-	vmCreateCmd.PersistentFlags().Int64P("storage", "s", 1024, "storage capacity")
-	vmCreateCmd.PersistentFlags().Int32P("storagetype", "t", 0, "storage capacity")
+	vmCreateCmd.PersistentFlags().StringP("storage", "s", "1024", "storage capacity")
+	vmCreateCmd.PersistentFlags().Int32P("storagetype", "T", 0, "storage capacity")
 	vmCreateCmd.PersistentFlags().StringP("cdrom", "C", "", "cdrom path")
 	vmCreateCmd.PersistentFlags().StringP("vnet", "N", "", "virtual net")
 	vmCreateCmd.PersistentFlags().Int64P("vnc", "v", 0, "vnc port")
