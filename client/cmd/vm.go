@@ -22,30 +22,67 @@ var vmCreateCmd = &cobra.Command{
 	Use:   "create",
 	Short: "create vm",
 	Long: `VM create tool
+storagetype
+0: Custom
+1: Normal Disk 
+2: SSD 
+3: NVMe 
+4: iSCSI
+storagemode
+0: Default
+1: VirtIOMode 
+->For example: (-N 0,br100,1,br200)
+networkmode
+0: Default
+1: VirtIOMode
+->For example: (-P 1,/home/yoneyan,0,/home/yoneyan)
+
 For example:
-vm create -n test -c 1 -m 1024 -p /home/yoneyan/test.qcow2 -s 1024 -N br100 -v 200 -C /home/yoneyan/Downloads/ubuntu-18.04.4-live-server-amd64.iso -a 1
+//default connect (contorller)
+vm create -n te -c 1 -m 1024 -t 1 -s 10240 -N br0 -v 200 -C ubuntu.iso -a false -r 10 -H 127.0.0.1:50200 -u test -p test -g otaku
+//direct connect(node)
+vm create -n te -c 1 -m 1024 -t 0 -P 1,/home/yoneyan,1,home/yoneyan -s 10240,10240 -N br0 -v 200 -C windows.iso,virtio.iso -a false -r 10 -H 127.0.0.1:50100
 `,
 	RunE: func(cmd *cobra.Command, args []string) error {
-		stringArray := []string{"name", "storage_path", "cdrom", "vnet"}
-		int64Array := []string{"cpu", "mem", "storage", "vnc", "node"}
-		var resultStringArray [4]string
-		var resultInt64Array [5]int64
-		for i, b := range stringArray {
-			result, err := cmd.PersistentFlags().GetString(b)
-			if err != nil {
-				log.Fatalf("could not greet: %v", err)
-				return nil
-			}
-			resultStringArray[i] = result
+		name, err := cmd.Flags().GetString("name")
+		if err != nil {
+			log.Fatalf("could not greet: %v", err)
 		}
-		for i, b := range int64Array {
-			result, err := cmd.PersistentFlags().GetInt64(b)
-			if err != nil {
-				log.Fatalf("could not greet: %v", err)
-				return nil
-			}
-
-			resultInt64Array[i] = result
+		storage, err := cmd.Flags().GetString("storage")
+		if err != nil {
+			log.Fatalf("could not greet: %v", err)
+		}
+		storagepath, err := cmd.Flags().GetString("storage_path")
+		if err != nil {
+			log.Fatalf("could not greet: %v", err)
+		}
+		cdrom, err := cmd.Flags().GetString("cdrom")
+		if err != nil {
+			log.Fatalf("could not greet: %v", err)
+		}
+		vnet, err := cmd.Flags().GetString("vnet")
+		if err != nil {
+			log.Fatalf("could not greet: %v", err)
+		}
+		cpu, err := cmd.Flags().GetInt64("cpu")
+		if err != nil {
+			log.Fatalf("could not greet: %v", err)
+		}
+		mem, err := cmd.Flags().GetInt64("mem")
+		if err != nil {
+			log.Fatalf("could not greet: %v", err)
+		}
+		storagetype, err := cmd.Flags().GetInt32("storagetype")
+		if err != nil {
+			log.Fatalf("could not greet: %v", err)
+		}
+		vnc, err := cmd.Flags().GetInt64("vnc")
+		if err != nil {
+			log.Fatalf("could not greet: %v", err)
+		}
+		node, err := cmd.Flags().GetInt64("node")
+		if err != nil {
+			log.Fatalf("could not greet: %v", err)
 		}
 
 		autostart, err := cmd.PersistentFlags().GetBool("autostart")
@@ -63,17 +100,9 @@ vm create -n test -c 1 -m 1024 -p /home/yoneyan/test.qcow2 -s 1024 -N br100 -v 2
 				Group: d.Group,
 				Token: d.Token,
 			},
-			Vmname:  resultStringArray[0],
-			Node:    int32(resultInt64Array[4]),
-			Vcpu:    resultInt64Array[0],
-			Vmem:    resultInt64Array[1],
-			Storage: resultInt64Array[2],
-			Vnet:    resultStringArray[3],
-			Option: &grpc.Option{
-				StoragePath: resultStringArray[1],
-				CdromPath:   resultStringArray[2],
-				Vnc:         int32(resultInt64Array[3]),
-				Autostart:   autostart,
+			Vmname: name, Node: int32(node), Vcpu: cpu, Vmem: mem, Storage: storage, Vnet: vnet, Storagetype: storagetype,
+			Option: &grpc.Option{StoragePath: storagepath,
+				CdromPath: cdrom, Vnc: int32(vnc), Autostart: autostart,
 			},
 		}
 		data.CreateVM(&c, d.Host)
@@ -357,6 +386,7 @@ func init() {
 	vmCreateCmd.PersistentFlags().Int64P("mem", "m", 512, "virtual memory")
 	vmCreateCmd.PersistentFlags().StringP("storage_path", "P", "", "storage path")
 	vmCreateCmd.PersistentFlags().Int64P("storage", "s", 1024, "storage capacity")
+	vmCreateCmd.PersistentFlags().Int32P("storagetype", "t", 0, "storage capacity")
 	vmCreateCmd.PersistentFlags().StringP("cdrom", "C", "", "cdrom path")
 	vmCreateCmd.PersistentFlags().StringP("vnet", "N", "", "virtual net")
 	vmCreateCmd.PersistentFlags().Int64P("vnc", "v", 0, "vnc port")
