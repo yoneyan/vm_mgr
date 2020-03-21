@@ -13,9 +13,11 @@ import (
 	"time"
 )
 
+// Type 0:AddISO 1:AddDISK 10:JoinISO 11:JoinDISK
 func (s *server) AddImage(ctx context.Context, in *pb.ImageData) (*pb.ImageResult, error) {
 	log.Println("----AddImage----")
 	log.Println("Receive FileName : " + in.GetFilename())
+	log.Println("Receive ImaConID : " + strconv.Itoa(int(in.GetId())))
 	log.Println("Receive Type     : " + strconv.Itoa(int(in.GetType())))
 	log.Println("Receive Name     : " + in.GetName())
 	log.Println("Receive AuthUser : " + in.GetBase().User + ", AuthPass: " + in.GetBase().Pass)
@@ -28,9 +30,9 @@ func (s *server) AddImage(ctx context.Context, in *pb.ImageData) (*pb.ImageResul
 	if in.GetImaconid() < 0 {
 		return &pb.ImageResult{Result: false, Info: "imacon id is wrong!!"}, nil
 	}
-	ip := data.GetImaConHostIP()
+	ip := data.GetImaConHostIP(int(in.GetImaconid()))
 
-	conn, err := grpc.Dial(ip[in.GetImaconid()], grpc.WithInsecure(), grpc.WithBlock())
+	conn, err := grpc.Dial(ip, grpc.WithInsecure(), grpc.WithBlock())
 	if err != nil {
 		fmt.Printf("Not connect; ")
 		fmt.Println(err)
@@ -40,20 +42,43 @@ func (s *server) AddImage(ctx context.Context, in *pb.ImageData) (*pb.ImageResul
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
 	defer cancel()
 
-	r, err := c.AddImage(ctx, &pb.ImageData{
-		Name:      in.GetName(),
-		Tag:       in.GetTag(),
-		Type:      in.GetType(),
-		Minmem:    in.GetMinmem(),
-		Authority: in.GetAuthority(),
-		Filename:  in.GetFilename(),
-	})
-	if err != nil {
-		fmt.Printf("Not connect; ")
-		fmt.Println(err)
+	if in.GetType() == 10 || in.GetType() == 11 {
+		r, err := c.AddImage(ctx, &pb.ImageData{
+			Name:      in.GetName(),
+			Tag:       in.GetTag(),
+			Type:      in.GetType(),
+			Minmem:    in.GetMinmem(),
+			Authority: in.GetAuthority(),
+			Filename:  in.GetFilename(),
+		})
+		if err != nil {
+			fmt.Printf("Not connect; ")
+			fmt.Println(err)
+		}
+		return &pb.ImageResult{Result: r.Result, Info: r.Info}, nil
+	} else if in.GetType() == 1 {
+		d := data.GetNodeDISK(in.GetFilename())
+		if d.Path == "0" {
+			return &pb.ImageResult{Result: false, Info: "Not Found!!"}, nil
+		}
+		r, err := c.AddImage(ctx, &pb.ImageData{
+			Name:      in.GetName(),
+			Path:      d.Path,
+			Tag:       in.GetTag(),
+			Type:      in.GetType(),
+			Minmem:    in.GetMinmem(),
+			Authority: in.GetAuthority(),
+			Filename:  in.GetFilename(),
+			Raddr:     d.Address,
+		})
+		if err != nil {
+			fmt.Printf("Not connect; ")
+			fmt.Println(err)
+		}
+		return &pb.ImageResult{Result: r.Result, Info: r.Info}, nil
 	}
 
-	return &pb.ImageResult{Result: r.Result, Info: r.Info}, nil
+	return &pb.ImageResult{Result: false, Info: "Failed"}, nil
 }
 
 func (s *server) DeleteImage(ctx context.Context, in *pb.ImageData) (*pb.ImageResult, error) {
@@ -103,9 +128,9 @@ func (s *server) ChangeNameImage(ctx context.Context, in *pb.ImageData) (*pb.Ima
 	if in.GetImaconid() < 0 {
 		return &pb.ImageResult{Result: false, Info: "imacon id is wrong!!"}, nil
 	}
-	ip := data.GetImaConHostIP()
+	ip := data.GetImaConHostIP(int(in.GetImaconid()))
 
-	conn, err := grpc.Dial(ip[in.GetImaconid()], grpc.WithInsecure(), grpc.WithBlock())
+	conn, err := grpc.Dial(ip, grpc.WithInsecure(), grpc.WithBlock())
 	if err != nil {
 		fmt.Printf("Not connect; ")
 		fmt.Println(err)
@@ -141,9 +166,9 @@ func (s *server) ChangeTagImage(ctx context.Context, in *pb.ImageData) (*pb.Imag
 	if in.GetImaconid() < 0 {
 		return &pb.ImageResult{Result: false, Info: "imacon id is wrong!!"}, nil
 	}
-	ip := data.GetImaConHostIP()
+	ip := data.GetImaConHostIP(int(in.GetImaconid()))
 
-	conn, err := grpc.Dial(ip[in.GetImaconid()], grpc.WithInsecure(), grpc.WithBlock())
+	conn, err := grpc.Dial(ip, grpc.WithInsecure(), grpc.WithBlock())
 	if err != nil {
 		fmt.Printf("Not connect; ")
 		fmt.Println(err)
@@ -180,9 +205,9 @@ func (s *server) ExistImage(ctx context.Context, in *pb.ImageData) (*pb.ImageRes
 	if in.GetImaconid() < 0 {
 		return &pb.ImageResult{Result: false, Info: "imacon id is wrong!!"}, nil
 	}
-	ip := data.GetImaConHostIP()
+	ip := data.GetImaConHostIP(int(in.GetImaconid()))
 
-	conn, err := grpc.Dial(ip[in.GetImaconid()], grpc.WithInsecure(), grpc.WithBlock())
+	conn, err := grpc.Dial(ip, grpc.WithInsecure(), grpc.WithBlock())
 	if err != nil {
 		fmt.Printf("Not connect; ")
 		fmt.Println(err)
