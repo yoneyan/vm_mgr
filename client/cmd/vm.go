@@ -8,6 +8,7 @@ import (
 	"github.com/yoneyan/vm_mgr/proto/proto-go"
 	"log"
 	"strconv"
+	"strings"
 )
 
 // vmDirectCmd represents the vm command
@@ -22,26 +23,25 @@ var vmCreateCmd = &cobra.Command{
 	Use:   "create",
 	Short: "create vm",
 	Long: `VM create tool
-storagetype
-0: Custom
-1: Normal Disk 
-2: SSD 
-3: NVMe 
-4: iSCSI
-storagemode
-0: Default
-1: VirtIOMode 
+type(-t)
+0: Manual 1: Auto
+storagepath(-P)
+Type0: [disktype],[diskpath] ...
+Type1: [disktype],[diskpath] ...
+storagemode(
+0: Default 1: VirtIOMode 
 ->For example: (-N 0,br100,br200)
 networkmode
-0: Default
-1: VirtIOMode
+0: Default 1: VirtIOMode
 ->For example: (-P 1,/home/yoneyan,0,/home/yoneyan)
 
 For example:
-//default connect (contorller)
-vm create -n te -c 1 -m 1024 -t 1 -s 10240 -N br0 -v 200 -C ubuntu.iso -a false -r 10 -H 127.0.0.1:50200 -u test -p test -g otaku
+//default connect (contorller user)
+vm create -n te -c 1 -m 1024 -T 1 -s 10240 -i ubuntu,18.04 -a false -r 10 -H 127.0.0.1:50200 -u test -p test -g otaku
+vm create -n te -c 1 -m 1024 -T 1 -s 1,10240,2,20480 -i ubuntu,18.04 -a false -r 10 -H 127.0.0.1:50200 -u test -p test -g otaku
+
 //direct connect(node)
-vm create -n te -c 1 -m 1024 -t 0 -P 1,/home/yoneyan,1,home/yoneyan -s 10240,10240 -N br0 -v 200 -C windows.iso,virtio.iso -a false -r 10 -H 127.0.0.1:50100
+vm create -n te -c 1 -m 1024 -T 0 -P 1,/home/yoneyan,1,home/yoneyan -s 10240,10240 -N 1,br0,br100 -v 200 -C windows.iso,virtio.iso -a false -r 10 -H 127.0.0.1:50100
 `,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		name, err := cmd.Flags().GetString("name")
@@ -72,7 +72,7 @@ vm create -n te -c 1 -m 1024 -t 0 -P 1,/home/yoneyan,1,home/yoneyan -s 10240,102
 		if err != nil {
 			log.Fatalf("could not greet: %v", err)
 		}
-		storagetype, err := cmd.Flags().GetInt32("storagetype")
+		vmtype, err := cmd.Flags().GetInt32("type")
 		if err != nil {
 			log.Fatalf("could not greet: %v", err)
 		}
@@ -80,7 +80,11 @@ vm create -n te -c 1 -m 1024 -t 0 -P 1,/home/yoneyan,1,home/yoneyan -s 10240,102
 		if err != nil {
 			log.Fatalf("could not greet: %v", err)
 		}
-		node, err := cmd.Flags().GetInt64("node")
+		node, err := cmd.Flags().GetInt32("node")
+		if err != nil {
+			log.Fatalf("could not greet: %v", err)
+		}
+		image, err := cmd.Flags().GetString("image")
 		if err != nil {
 			log.Fatalf("could not greet: %v", err)
 		}
@@ -91,19 +95,17 @@ vm create -n te -c 1 -m 1024 -t 0 -P 1,/home/yoneyan,1,home/yoneyan -s 10240,102
 			return nil
 		}
 
+		iarray := strings.Split(image, ",")
+
 		d := Base(cmd)
 
 		c := grpc.VMData{
-			Base: &grpc.Base{
-				User:  d.User,
-				Pass:  d.Pass,
-				Group: d.Group,
-				Token: d.Token,
-			},
-			Vmname: name, Node: int32(node), Vcpu: cpu, Vmem: mem, Storage: storage, Vnet: vnet, Storagetype: storagetype,
+			Base:   &grpc.Base{User: d.User, Pass: d.Pass, Group: d.Group, Token: d.Token},
+			Vmname: name, Node: node, Vcpu: cpu, Vmem: mem, Storage: storage, Vnet: vnet, Type: vmtype,
 			Option: &grpc.Option{StoragePath: storagepath,
 				CdromPath: cdrom, Vnc: int32(vnc), Autostart: autostart,
 			},
+			Image: &grpc.Image{Name: iarray[0], Tag: iarray[1]},
 		}
 		data.CreateVM(&c, d.Host)
 		fmt.Println("Process End")
@@ -380,17 +382,18 @@ var vmGetAllCmd = &cobra.Command{
 }
 
 func init() {
-	vmCreateCmd.PersistentFlags().Int64P("node", "r", 1, "nodeid")
+	vmCreateCmd.PersistentFlags().Int32P("node", "r", 1, "nodeid")
 	vmCreateCmd.PersistentFlags().StringP("name", "n", "", "vm name")
 	vmCreateCmd.PersistentFlags().Int64P("cpu", "c", 1, "virtual cpu")
 	vmCreateCmd.PersistentFlags().Int64P("mem", "m", 512, "virtual memory")
 	vmCreateCmd.PersistentFlags().StringP("storage_path", "P", "", "storage path")
 	vmCreateCmd.PersistentFlags().StringP("storage", "s", "1024", "storage capacity")
-	vmCreateCmd.PersistentFlags().Int32P("storagetype", "T", 0, "storage capacity")
+	vmCreateCmd.PersistentFlags().Int32P("type", "T", 0, "type")
 	vmCreateCmd.PersistentFlags().StringP("cdrom", "C", "", "cdrom path")
 	vmCreateCmd.PersistentFlags().StringP("vnet", "N", "", "virtual net")
 	vmCreateCmd.PersistentFlags().Int64P("vnc", "v", 0, "vnc port")
 	vmCreateCmd.PersistentFlags().BoolP("autostart", "a", false, "autostart")
+	vmCreateCmd.PersistentFlags().StringP("image", "i", "", "image")
 
 	rootCmd.AddCommand(vmCmd)
 	vmCmd.AddCommand(vmCreateCmd)
