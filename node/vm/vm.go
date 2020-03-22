@@ -119,32 +119,52 @@ func GenerateDiskCmd(storagepath string, index int) []string {
 	fmt.Println(data)
 
 	index++
-	mode := 0
+	diskmode := 0
+	pathmode := 0
 	var cmd []string
 
 	for i, a := range data {
 		if i%2 == 0 {
 			m, err := strconv.Atoi(a)
 			if err != nil {
-				mode = 0
+				diskmode = 0
+				pathmode = 0
 			}
-			mode = m
+			diskmode = m % 10
+			pathmode = m / 10
 		} else {
-			if mode == 0 {
-				//default disk mount mode
+			if diskmode == 0 {
+				//default disk mount diskmode
 				//-drive file=/images/image2.raw,index=1,media=disk
 				cmd = append(cmd, "-drive")
-				cmd = append(cmd, "file="+a+",index="+strconv.Itoa(index)+",media=disk")
+				if pathmode != 0 {
+					basepath := etc.GetDiskPath(pathmode)
+					if basepath == "" {
+						fmt.Println("diskpath config error!!")
+					}
+					cmd = append(cmd, "file="+basepath+"/"+a+",index="+strconv.Itoa(index)+",media=disk")
+				} else {
+					cmd = append(cmd, "file="+a+",index="+strconv.Itoa(index)+",media=disk")
+				}
+
 				index++
-			} else if mode == 1 {
-				//disk mount mode is using virtio
+			} else if diskmode == 1 {
+				//disk mount diskmode is using virtio
 				//-drive file=/images/image2.raw,index=1,media=disk,if=virtio
 				cmd = append(cmd, "-drive")
-				cmd = append(cmd, "file="+a+",index="+strconv.Itoa(index)+",media=disk,if=virtio")
+				if pathmode != 0 {
+					basepath := etc.GetDiskPath(pathmode)
+					if basepath == "" {
+						fmt.Println("diskpath config error!!")
+					}
+					cmd = append(cmd, "file="+basepath+"/"+a+",index="+strconv.Itoa(index)+",media=disk,if=virtio")
+				} else {
+					cmd = append(cmd, "file="+a+",index="+strconv.Itoa(index)+",media=disk,if=virtio")
+				}
 				index++
 			} else {
-				fmt.Println("mode error!!")
-				fmt.Println("mode is " + strconv.Itoa(mode))
+				fmt.Println("diskmode error!!")
+				fmt.Println("diskmode is " + strconv.Itoa(diskmode))
 			}
 		}
 	}

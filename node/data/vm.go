@@ -38,6 +38,12 @@ func (s *server) CreateVM(ctx context.Context, in *pb.VMData) (*pb.Result, error
 		return &pb.Result{Status: false, Info: "Input Error!!"}, nil
 	}
 
+	if in.GetType()%10 == 1 {
+		//Disk copy process
+		go vm.CreateAutoVMProcess(in)
+		return &pb.Result{Status: true, Info: "Add process.. wait...."}, nil
+	}
+
 	r.StoragePath = manage.StorageProcess(in)
 
 	info, result := vm.CreateVMProcess(&r)

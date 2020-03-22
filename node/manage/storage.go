@@ -21,35 +21,54 @@ func RunStorageCmd(cmd []string) {
 	fmt.Println(string(out))
 }
 
+func GetMainStorage(data *pb.VMData) string {
+	sp := strings.Split(data.Option.GetStoragePath(), ",")
+	return sp[1] + "/" + data.GetVmname() + "-" + "0.img"
+}
+
 func StorageProcess(data *pb.VMData) string {
 	s := strings.Split(data.GetStorage(), ",")
 	sp := strings.Split(data.Option.GetStoragePath(), ",")
 	j := 0
+	var path string
 	var result []string
-	fmt.Println(sp)
+	var mode int
 	for i, a := range sp {
-		if i%2 != 0 {
-			path := a
+		fmt.Println(a + "a")
+		if i%2 == 0 {
+			result = append(result, a)
+			mode, _ = strconv.Atoi(a)
+		} else {
+			if mode/10 == 0 {
+				path = a
+				fmt.Println("path: " + path)
+			} else {
+				path = etc.GetDiskPath(mode / 10)
+				if path == "" {
+					fmt.Println("Config DiskPath Error")
+					return ""
+				}
+				fmt.Println("basepath: " + path)
+			}
+			path = path + "/" + data.GetVmname() + "-" + strconv.Itoa(j) + ".img"
 			fmt.Println("path: " + path)
-			if FileExistsCheck(path+"/"+data.GetVmname()+"-"+strconv.Itoa(j)+".img") == false {
+			if FileExistsCheck(path) == false {
 				size, result := strconv.Atoi(s[j])
 				if result != nil {
 					fmt.Println("Error: string to int")
 				}
-				storage := Storage{
-					Path:   path,
-					Name:   data.GetVmname() + "-" + strconv.Itoa(j),
-					Format: "qcow2",
-					Size:   size,
-				}
-				CreateStorage(&storage)
+				CreateStorage(&Storage{Path: path, Format: "qcow2", Size: size})
 			}
-			result = append(result, path+"/"+data.GetVmname()+"-"+strconv.Itoa(j)+".img")
+			fmt.Println(mode)
+			if mode/10 == 0 {
+				result = append(result, path)
+			} else {
+				result = append(result, data.GetVmname()+"-"+strconv.Itoa(j)+".img")
+			}
 			j++
-		} else {
-			result = append(result, a)
 		}
 	}
+	fmt.Println(result)
 	return strings.Join(result, ",")
 }
 
@@ -67,7 +86,7 @@ func CreateStorage(s *Storage) error {
 
 	//qemu-img create [-f format] filename [size]
 
-	cmdarray := []string{"create", "-f", s.Format, etc.GeneratePath(s.Path, s.Name) + ".img", strconv.Itoa(s.Size) + "M"}
+	cmdarray := []string{"create", "-f", s.Format, s.Path, strconv.Itoa(s.Size) + "M"}
 
 	fmt.Println(cmdarray)
 

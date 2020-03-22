@@ -6,6 +6,7 @@ import (
 	"github.com/yoneyan/vm_mgr/node/db"
 	"github.com/yoneyan/vm_mgr/node/etc"
 	"github.com/yoneyan/vm_mgr/node/manage"
+	pb "github.com/yoneyan/vm_mgr/proto/proto-go"
 	"log"
 	"strings"
 )
@@ -23,6 +24,30 @@ type CreateVMInformation struct {
 	AutoStart   bool
 }
 
+func CreateAutoVMProcess(c *pb.VMData) (string, bool) {
+	if etc.FileCopy(c.Image.GetPath(), manage.GetMainStorage(c)) == false {
+		return "File Copy Failed...", false
+	}
+	var r CreateVMInformation
+
+	r.ID = int(c.GetOption().Id)
+	r.Name = c.GetVmname()
+	r.CPU = int(c.GetVcpu())
+	r.Mem = int(c.GetVmem())
+	r.Storage = c.GetStorage()
+	r.CDROM = c.GetOption().CdromPath
+	r.Net = c.GetVnet()
+	r.VNC = int(c.GetOption().Vnc)
+	r.AutoStart = c.GetOption().Autostart
+	r.StoragePath = manage.StorageProcess(c)
+
+	info, result := CreateVMProcess(&r)
+	if result == false {
+		fmt.Println("Error: " + info)
+	}
+	return info, result
+}
+
 func CreateVMProcess(c *CreateVMInformation) (string, bool) {
 	fmt.Println("----VMNewCreate")
 
@@ -32,7 +57,7 @@ func CreateVMProcess(c *CreateVMInformation) (string, bool) {
 	}
 	if manage.VMExistsName(c.Name) {
 		fmt.Println("A VM with the same name exists. So, change the name of the VM.")
-		return "same vnc port!!", false
+		return "same vm name!!", false
 	}
 
 	if len(c.Net) != 0 {
