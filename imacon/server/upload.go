@@ -14,7 +14,7 @@ func (s *server) UploadImage(ctx context.Context, in *pb.ImageTransferData) (*pb
 	log.Println("----UploadImage----")
 	log.Println("Receive GetIP : " + in.GetIp() + ", Port: " + in.GetPort())
 	log.Println("Receive Path  : " + in.GetPath())
-	log.Println("Receive Type  : " + strconv.Itoa(int(in.Image.GetType())))
+	log.Println("Receive ID  : " + strconv.Itoa(int(in.Image.GetType())))
 
 	data, result := db.GetDBImage(in.Image.GetName(), in.Image.GetTag())
 	if result == false {

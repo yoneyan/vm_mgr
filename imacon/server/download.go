@@ -14,7 +14,7 @@ func (s *server) DownloadImage(ctx context.Context, in *pb.ImageTransferData) (*
 	log.Println("----DownloadImage----")
 	log.Println("Receive GetIP : " + in.GetIp() + ", Port: " + in.GetPort())
 	log.Println("Receive Path  : " + in.GetPath())
-	log.Println("Receive Type  : " + strconv.Itoa(int(in.Image.GetType())))
+	log.Println("Receive ID  : " + strconv.Itoa(int(in.Image.GetType())))
 
 	var path, name string
 	uuid := sftp.GenerateUUID()

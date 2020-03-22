@@ -2,17 +2,13 @@ package etc
 
 import (
 	"fmt"
+	"github.com/google/uuid"
+	"github.com/yoneyan/vm_mgr/node/etc"
 	"os"
 )
 
 func GeneratePath(imagetype int, filename string) string {
-	var path string
-	if imagetype == 0 {
-		path = ConfigData.ISOPath + "/" + filename
-	} else if imagetype == 1 {
-		path = ConfigData.ImagePath + "/" + filename
-	}
-	return path
+	return etc.GetDiskPath(imagetype) + "/" + filename
 }
 
 func FileSize(path string) int {
@@ -30,4 +26,14 @@ func FileSize(path string) int {
 		return 0
 	}
 	return int(fileinfo.Size())
+}
+
+func GenerateUUID() string {
+	u, err := uuid.NewRandom()
+	if err != nil {
+		fmt.Println(err)
+		return "0"
+	}
+	uu := u.String()
+	fmt.Println(uu)
 }

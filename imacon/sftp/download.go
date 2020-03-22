@@ -14,8 +14,16 @@ import (
 )
 
 func DataDownload(filedata *FileData, sshdata *SSHInfo) {
+	uuid := GenerateUUID()
+	if filedata.Type == 0 {
+		filedata.LocalPath = etc.ConfigData.ImagePath + "/" + uuid + ".iso"
+		filedata.Name = uuid + ".iso"
+	} else if filedata.Type == 1 {
+		filedata.LocalPath = etc.ConfigData.ImagePath + "/" + uuid + ".img"
+		filedata.Name = uuid + ".img"
+	}
 
-	buf, err := ioutil.ReadFile(sshdata.KeyPath)
+	buf, err := ioutil.ReadFile(etc.ConfigData.KeyPath)
 	if err != nil {
 		log.Println(err)
 	}
@@ -61,8 +69,8 @@ func DataDownload(filedata *FileData, sshdata *SSHInfo) {
 	}
 	fmt.Printf("%d bytes copied\n", bytes)
 
-	fmt.Printf("RemoveDBTransfer: ")
-	fmt.Println(db.RemoveDBTransfer(filedata.ProgressUUID))
+	//fmt.Printf("RemoveDBTransfer: ")
+	//fmt.Println(db.RemoveDBTransfer(filedata.ProgressUUID))
 	fmt.Printf("AddDBImage: ")
 	db.AddDBImage(db.Image{
 		FileName:  filedata.Name,

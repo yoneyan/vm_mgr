@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"github.com/yoneyan/vm_mgr/imacon/db"
 	"github.com/yoneyan/vm_mgr/imacon/etc"
+	"github.com/yoneyan/vm_mgr/imacon/sftp"
 	pb "github.com/yoneyan/vm_mgr/proto/proto-go"
 	"log"
 	"strconv"
@@ -14,7 +15,7 @@ import (
 func (s *server) AddImage(ctx context.Context, in *pb.ImageData) (*pb.ImageResult, error) {
 	log.Println("----AddImage----")
 	log.Println("Receive FileName : " + in.GetFilename())
-	log.Println("Receive Type     : " + strconv.Itoa(int(in.GetType())))
+	log.Println("Receive ID     : " + strconv.Itoa(int(in.GetType())))
 	log.Println("Receive Name     : " + in.GetName())
 
 	_, result := db.GetDBImageFileName(in.GetFilename())
@@ -25,28 +26,43 @@ func (s *server) AddImage(ctx context.Context, in *pb.ImageData) (*pb.ImageResul
 	if etc.FileExists(path) == false {
 		return &pb.ImageResult{Result: false, Info: "File not exist..."}, nil
 	}
-	if db.AddDBImage(db.Image{
-		ID:        0,
-		FileName:  in.GetFilename(),
-		Name:      "",
-		Tag:       "",
-		Type:      int(in.GetType()),
-		Capacity:  etc.FileSize(path),
-		AddTime:   int(time.Now().Unix()),
-		Authority: int(in.GetAuthority()),
-		MinMem:    int(in.GetMinmem()),
-		Status:    0,
-	}) == false {
-		return &pb.ImageResult{Result: false, Info: "DB Error: Change Error!!"}, nil
+
+	if in.GetType() == 0 || in.GetType() == 1 {
+		sftp.DataDownload(&sftp.FileData{
+			Type:       0,
+			Name:       "",
+			Path:       in.GetPath(),
+			RemotePath: in.GetPath(),
+			Authority:  int(in.GetAuthority()),
+			MinMem:     int(in.GetMinmem()),
+		}, &sftp.SSHInfo{IP: in.GetRaddr(), Port: "22", User: "root"})
 	}
 
-	return &pb.ImageResult{Result: true, Info: "ok"}, nil
+	if in.GetType() == 10 || in.GetType() == 11 {
+		if etc.FileExists(etc.GeneratePath(int(in.GetType()%10), in.GetFilename())) == false {
+			return &pb.ImageResult{Result: false, Info: "File Not Exists!!"}, nil
+		}
+		if db.AddDBImage(db.Image{
+			FileName:  in.GetFilename(),
+			Name:      in.GetName(),
+			Tag:       in.GetTag(),
+			Type:      int(in.GetType() % 10),
+			Capacity:  etc.FileSize(path),
+			AddTime:   int(time.Now().Unix()),
+			Authority: int(in.GetAuthority()),
+			MinMem:    int(in.GetMinmem()),
+			Status:    0,
+		}) == false {
+			return &pb.ImageResult{Result: false, Info: "DB Error: Change Error!!"}, nil
+		}
+	}
+	return &pb.ImageResult{Result: true, Info: "Request acceptance!!"}, nil
 }
 
 func (s *server) DeleteImage(ctx context.Context, in *pb.ImageData) (*pb.ImageResult, error) {
 	log.Println("----DeleteImage----")
 	log.Println("Receive FileName : " + in.GetFilename())
-	log.Println("Receive Type     : " + strconv.Itoa(int(in.GetType())))
+	log.Println("Receive ID     : " + strconv.Itoa(int(in.GetType())))
 
 	d, result := db.GetDBImageFileName(in.GetFilename())
 	if result == false {
@@ -81,7 +97,7 @@ func (s *server) ChangeNameImage(ctx context.Context, in *pb.ImageData) (*pb.Ima
 func (s *server) ChangeTagImage(ctx context.Context, in *pb.ImageData) (*pb.ImageResult, error) {
 	log.Println("----ChangeTagImage----")
 	log.Println("Receive FileName : " + in.GetFilename())
-	log.Println("Receive Type     : " + strconv.Itoa(int(in.GetType())))
+	log.Println("Receive ID     : " + strconv.Itoa(int(in.GetType())))
 	log.Println("Receive Tag      : " + in.GetTag())
 
 	d, result := db.GetDBImageFileName(in.GetFilename())
@@ -97,15 +113,22 @@ func (s *server) ChangeTagImage(ctx context.Context, in *pb.ImageData) (*pb.Imag
 
 func (s *server) ExistImage(ctx context.Context, in *pb.ImageData) (*pb.ImageResult, error) {
 	log.Println("----ExistImage----")
-	log.Println("Receive Type : " + strconv.Itoa(int(in.GetType())))
+	log.Println("Receive ID : " + strconv.Itoa(int(in.GetType())))
 	log.Println("Receive Name : " + in.GetName())
 	log.Println("Receive Tag  : " + in.GetTag())
 
-	_, result := db.GetDBImage(in.GetName(), in.GetTag())
+	var path string
+
+	r, result := db.GetDBImage(in.GetName(), in.GetTag())
 	if result == false {
 		return &pb.ImageResult{Result: false, Info: "no found"}, nil
 	}
-	return &pb.ImageResult{Result: true, Info: "ok"}, nil
+	if r.Type == 0 {
+		path = "iso/" + r.FileName
+	} else if r.Type == 1 {
+		path = "image/" + r.FileName
+	}
+	return &pb.ImageResult{Result: true, Info: "ok", Path: path}, nil
 }
 func (s *server) ProgressImage(ctx context.Context, in *pb.ImageData) (*pb.ImageResult, error) {
 	log.Println("----ProgressImage----")
