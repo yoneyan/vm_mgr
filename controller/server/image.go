@@ -239,7 +239,7 @@ func (s *server) GetAllImage(d *pb.Base, stream pb.Grpc_GetAllImageServer) error
 
 	if data.AdminUserCertification(d.GetUser(), d.GetPass(), d.GetToken()) == false {
 		_, _, r := data.TokenCertification(d.GetToken())
-		if r == false {
+		if r {
 			isAdmin = false
 		} else {
 			return nil

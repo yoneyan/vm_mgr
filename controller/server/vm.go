@@ -26,7 +26,7 @@ func (s *server) CreateVM(ctx context.Context, in *pb.VMData) (*pb.Result, error
 	log.Printf("Receive vnc: %v", in.GetOption().Vnc)
 	log.Printf("Receive net: %v", in.GetVnet())
 	log.Printf("Receive change: %v", in.GetOption().Autostart)
-	log.Println("Receive Image Name : " + in.Image.GetName() + ", AuthPass: " + in.Image.GetTag())
+	log.Println("Receive Controller Name : " + in.Image.GetName() + ", AuthPass: " + in.Image.GetTag())
 	log.Println("Receive AuthUser: " + in.Base.GetUser() + ", AuthPass: " + in.Base.GetPass())
 	log.Println("Receive Group     : " + in.Base.GetGroup())
 	log.Println("Receive Token     : " + in.Base.GetToken())
@@ -64,8 +64,8 @@ func (s *server) CreateVM(ctx context.Context, in *pb.VMData) (*pb.Result, error
 
 		image = data.GetImagePath(in)
 		if image == "" {
-			fmt.Println("Image Path Error!!")
-			return &pb.Result{Status: false, Info: "Image Path Error!!"}, nil
+			fmt.Println("Controller Path Error!!")
+			return &pb.Result{Status: false, Info: "Controller Path Error!!"}, nil
 		}
 		vnet = data.GetNetworkName(in)
 	} else if isAdmin == false {
@@ -74,8 +74,8 @@ func (s *server) CreateVM(ctx context.Context, in *pb.VMData) (*pb.Result, error
 
 		image = data.GetImagePath(in)
 		if image == "" {
-			fmt.Println("Image Path Error!!")
-			return &pb.Result{Status: false, Info: "Image Path Error!!"}, nil
+			fmt.Println("Controller Path Error!!")
+			return &pb.Result{Status: false, Info: "Controller Path Error!!"}, nil
 		}
 		vnet = data.GetNetworkName(in)
 	} else {
