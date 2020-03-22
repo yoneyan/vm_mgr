@@ -235,9 +235,18 @@ func (s *server) GetAllImage(d *pb.Base, stream pb.Grpc_GetAllImageServer) error
 	log.Println("Receive AuthUser : " + d.GetUser() + ", AuthPass: " + d.GetPass())
 	log.Println("Receive Token    : " + d.GetToken())
 
+	isAdmin := true
+
 	if data.AdminUserCertification(d.GetUser(), d.GetPass(), d.GetToken()) == false {
-		return nil
+		_, _, r := data.TokenCertification(d.GetToken())
+		if r == false {
+			isAdmin = false
+		} else {
+			return nil
+		}
 	}
+	fmt.Printf("isAdmin: ")
+	fmt.Println(isAdmin)
 
 	var data []pb.ImageData
 
@@ -273,10 +282,21 @@ func (s *server) GetAllImage(d *pb.Base, stream pb.Grpc_GetAllImageServer) error
 		}
 	}
 
-	for _, a := range data {
-		if err := stream.Send(&a); err != nil {
-			return err
+	if isAdmin {
+		for _, a := range data {
+			if err := stream.Send(&a); err != nil {
+				return err
+			}
+		}
+	} else {
+		for _, a := range data {
+			if a.Authority == 0 {
+				if err := stream.Send(&a); err != nil {
+					return err
+				}
+			}
 		}
 	}
+
 	return nil
 }
