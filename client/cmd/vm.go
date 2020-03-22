@@ -95,7 +95,14 @@ vm create -n te -c 1 -m 1024 -T 0 -P 1,/home/yoneyan,1,home/yoneyan -s 10240,102
 			return nil
 		}
 
-		iarray := strings.Split(image, ",")
+		var iarray []string
+
+		if image != "" {
+			iarray = strings.Split(image, ",")
+		} else {
+			iarray = append(iarray, "")
+			iarray = append(iarray, "")
+		}
 
 		d := Base(cmd)
 

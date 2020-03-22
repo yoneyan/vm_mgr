@@ -304,12 +304,12 @@ func GetAllVM(d *pb.Base, address string) {
 			log.Fatal(err)
 		}
 		tmp := []string{strconv.Itoa(int(article.Node)), strconv.Itoa(int(article.Option.Id)), article.Vmname,
-			strconv.Itoa(int(article.Vcpu)), strconv.Itoa(int(article.Vmem)), article.Vnet,
+			strconv.Itoa(int(article.Vcpu)), strconv.Itoa(int(article.Vmem)), article.Option.StoragePath, article.Vnet,
 			strconv.FormatBool(article.Option.Autostart), StatusConversion(int(article.Option.Status))}
 		data = append(data, tmp)
 	}
 	table := tablewriter.NewWriter(os.Stdout)
-	table.SetHeader([]string{"NodeID", "ID", "Name", "CPU", "Mem", "Net", "AutoStart", "Status"})
+	table.SetHeader([]string{"NodeID", "ID", "Name", "CPU", "Mem", "StoragePath", "Net", "AutoStart", "Status"})
 
 	for _, v := range data {
 		table.Append(v)
