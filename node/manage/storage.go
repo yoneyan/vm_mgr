@@ -22,8 +22,24 @@ func RunStorageCmd(cmd []string) {
 }
 
 func GetMainStorage(data *pb.VMData) string {
+	var basepath, path string
 	sp := strings.Split(data.Option.GetStoragePath(), ",")
-	return sp[1] + "/" + data.GetVmname() + "-" + "0.img"
+	if len(sp) < 1 {
+		return ""
+	}
+	mode, _ := strconv.Atoi(sp[0])
+	if mode/10 == 0 {
+		path = sp[1] + "/" + data.GetVmname() + "-" + "0.img"
+	} else {
+		basepath = etc.GetDiskPath(mode / 10)
+		if basepath == "" {
+			fmt.Println("Config DiskPath Error")
+			return ""
+		}
+		fmt.Println("basepath: " + basepath)
+		return basepath + "/" + data.GetVmname() + "-" + "0.img"
+	}
+	return path
 }
 
 func StorageProcess(data *pb.VMData) string {
@@ -34,7 +50,6 @@ func StorageProcess(data *pb.VMData) string {
 	var result []string
 	var mode int
 	for i, a := range sp {
-		fmt.Println(a + "a")
 		if i%2 == 0 {
 			result = append(result, a)
 			mode, _ = strconv.Atoi(a)
@@ -59,7 +74,6 @@ func StorageProcess(data *pb.VMData) string {
 				}
 				CreateStorage(&Storage{Path: path, Format: "qcow2", Size: size})
 			}
-			fmt.Println(mode)
 			if mode/10 == 0 {
 				result = append(result, path)
 			} else {
@@ -68,6 +82,7 @@ func StorageProcess(data *pb.VMData) string {
 			j++
 		}
 	}
+	fmt.Println("StorageProcess Result: ")
 	fmt.Println(result)
 	return strings.Join(result, ",")
 }

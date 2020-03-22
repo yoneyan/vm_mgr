@@ -25,9 +25,10 @@ type CreateVMInformation struct {
 }
 
 func CreateAutoVMProcess(c *pb.VMData) (string, bool) {
-	if etc.FileCopy(c.Image.GetPath(), manage.GetMainStorage(c)) == false {
+	if etc.FileCopy(etc.GetImagePath()+"/"+c.Image.GetPath(), manage.GetMainStorage(c)) == false {
 		return "File Copy Failed...", false
 	}
+
 	var r CreateVMInformation
 
 	r.ID = int(c.GetOption().Id)
@@ -37,7 +38,7 @@ func CreateAutoVMProcess(c *pb.VMData) (string, bool) {
 	r.Storage = c.GetStorage()
 	r.CDROM = c.GetOption().CdromPath
 	r.Net = c.GetVnet()
-	r.VNC = int(c.GetOption().Vnc)
+	r.VNC = etc.GenerateVNCPort()
 	r.AutoStart = c.GetOption().Autostart
 	r.StoragePath = manage.StorageProcess(c)
 

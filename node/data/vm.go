@@ -12,16 +12,17 @@ import (
 
 func (s *server) CreateVM(ctx context.Context, in *pb.VMData) (*pb.Result, error) {
 	fmt.Println("----------CreateVM-----")
-	log.Printf("Receive VMID: %v", in.GetOption().GetId())
-	log.Printf("Receive name: %v", in.GetVmname())
-	log.Printf("Receive cpu: %v", in.GetVcpu())
-	log.Printf("Receive mem: %v", in.GetVmem())
-	log.Printf("Receive StoragePath: %v", in.GetOption().StoragePath)
-	log.Printf("Receive Storage: %v", in.GetStorage())
-	log.Printf("Receive CDROM: %v", in.GetCdrom())
-	log.Printf("Receive vnc: %v", in.GetOption().Vnc)
-	log.Printf("Receive net: %v", in.GetVnet())
-	log.Printf("Receive change: %v", in.GetOption().Autostart)
+	log.Printf("Receive VMID        : %v", in.GetOption().GetId())
+	log.Printf("Receive Type        : %v", in.GetType())
+	log.Printf("Receive name        : %v", in.GetVmname())
+	log.Printf("Receive cpu         : %v", in.GetVcpu())
+	log.Printf("Receive mem         : %v", in.GetVmem())
+	log.Printf("Receive StoragePath : %v", in.GetOption().StoragePath)
+	log.Printf("Receive Storage     : %v", in.GetStorage())
+	log.Printf("Receive CDROM       : %v", in.GetCdrom())
+	log.Printf("Receive vnc         : %v", in.GetOption().Vnc)
+	log.Printf("Receive net         : %v", in.GetVnet())
+	log.Printf("Receive autostart   : %v", in.GetOption().Autostart)
 	var r vm.CreateVMInformation
 
 	r.ID = int(in.GetOption().Id)
@@ -38,6 +39,7 @@ func (s *server) CreateVM(ctx context.Context, in *pb.VMData) (*pb.Result, error
 		return &pb.Result{Status: false, Info: "Input Error!!"}, nil
 	}
 
+	//
 	if in.GetType()%10 == 1 {
 		//Disk copy process
 		go vm.CreateAutoVMProcess(in)
