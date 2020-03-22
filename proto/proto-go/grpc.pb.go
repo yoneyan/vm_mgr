@@ -1638,7 +1638,7 @@ func init() {
 	proto.RegisterType((*TokenData)(nil), "TokenData")
 	proto.RegisterType((*VMData)(nil), "VMData")
 	proto.RegisterType((*Option)(nil), "Option")
-	proto.RegisterType((*Image)(nil), "Image")
+	proto.RegisterType((*Image)(nil), "Controller")
 	proto.RegisterType((*SnapshotOperationData)(nil), "SnapshotOperationData")
 	proto.RegisterType((*SnapshotData)(nil), "SnapshotData")
 	proto.RegisterType((*VMName)(nil), "VMName")
