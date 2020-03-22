@@ -22,7 +22,7 @@ type ImageData struct {
 }
 
 // imageCmd represents the image command
-var imagecmd = &cobra.Command{
+var imageCmd = &cobra.Command{
 	Use:   "image",
 	Short: "image",
 	Long:  `image command. `,
@@ -94,13 +94,13 @@ image get all -u test -p test -H 127.0.0.1:50200`,
 	},
 }
 
-var imagechangeCmd = &cobra.Command{
+var imageChangeCmd = &cobra.Command{
 	Use:   "change",
 	Short: "change tool for image",
 	Long:  "change tool for image",
 }
 
-var imagetagchangeCmd = &cobra.Command{
+var imageTagChangeCmd = &cobra.Command{
 	Use:   "tag",
 	Short: "change tag",
 	Long: `change tag tool for image
@@ -114,7 +114,7 @@ image change tag -f [filename] -T [newtag] -I [imaconid] [auth...]`,
 		i := Image(cmd)
 
 		data.ImageTagChange(&grpc.ImageData{
-			Tag: i.Tag, Imaconid: i.ImaconID, Filename: i.FileName,
+			Tag: i.Tag, Imaconid: i.ImaconID, Filename: i.FileName, Name: i.Name,
 			Base: &grpc.Base{User: d.User, Pass: d.Pass, Token: d.Group},
 		}, d.Host)
 
@@ -123,22 +123,22 @@ image change tag -f [filename] -T [newtag] -I [imaconid] [auth...]`,
 	},
 }
 
-var imagenamechangeCmd = &cobra.Command{
+var imageNameChangeCmd = &cobra.Command{
 	Use:   "name",
 	Short: "change name",
 	Long: `change name tool for image
 for example:
 
 (direct)
-image change tag -f [filename] -T [newname] [auth...]
+image change tag -f [filename] -N [newname] [auth...]
 (controller)
-image change tag -f [filename] -T [newname] -I [imaconid] [auth...]`,
+image change tag -f [filename] -N [newname] -I [imaconid] [auth...]`,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		d := Base(cmd)
 		i := Image(cmd)
 
-		data.ImageTagChange(&grpc.ImageData{
-			Tag: i.Tag, Imaconid: i.ImaconID, Filename: i.FileName,
+		data.ImageNameChange(&grpc.ImageData{
+			Imaconid: i.ImaconID, Filename: i.FileName, Name: i.Name,
 			Base: &grpc.Base{User: d.User, Pass: d.Pass, Token: d.Group},
 		}, d.Host)
 
@@ -148,26 +148,26 @@ image change tag -f [filename] -T [newname] -I [imaconid] [auth...]`,
 }
 
 func init() {
-	rootCmd.AddCommand(imagecmd)
-	imagecmd.AddCommand(imageaddcmd)
-	imagecmd.AddCommand(imageremovecmd)
-	imagecmd.AddCommand(imageGetCmd)
-	imagecmd.AddCommand(imagechangeCmd)
+	rootCmd.AddCommand(imageCmd)
+	imageCmd.AddCommand(imageaddcmd)
+	imageCmd.AddCommand(imageremovecmd)
+	imageCmd.AddCommand(imageGetCmd)
+	imageCmd.AddCommand(imageChangeCmd)
 
 	imageGetCmd.AddCommand(imageGetAllCmd)
-	imagechangeCmd.AddCommand(imagenamechangeCmd)
-	imagechangeCmd.AddCommand(imagetagchangeCmd)
+	imageChangeCmd.AddCommand(imageNameChangeCmd)
+	imageChangeCmd.AddCommand(imageTagChangeCmd)
 
-	imagecmd.PersistentFlags().Int32P("imaconid", "I", 0, "imaconid")
-	imagecmd.PersistentFlags().Int32P("id", "i", 0, "id")
-	imagecmd.PersistentFlags().StringP("filename", "f", "", "filename")
-	imagecmd.PersistentFlags().StringP("name", "N", "", "name")
-	imagecmd.PersistentFlags().StringP("tag", "T", "", "tag")
-	imagecmd.PersistentFlags().Int32P("type", "y", 0, "image type")
-	imagecmd.PersistentFlags().StringP("path", "P", "", "path")
-	imagecmd.PersistentFlags().StringP("raddr", "r", "", "remoteaddress")
-	imagecmd.PersistentFlags().Int32P("minmem", "m", 0, "minimum memory")
-	imagecmd.PersistentFlags().Int32P("authority", "a", 0, "authority")
+	imageCmd.PersistentFlags().Int32P("imaconid", "I", 0, "imaconid")
+	imageCmd.PersistentFlags().Int32P("id", "i", 0, "id")
+	imageCmd.PersistentFlags().StringP("filename", "f", "", "filename")
+	imageCmd.PersistentFlags().StringP("name", "N", "", "name")
+	imageCmd.PersistentFlags().StringP("tag", "T", "", "tag")
+	imageCmd.PersistentFlags().Int32P("type", "y", 0, "image type")
+	imageCmd.PersistentFlags().StringP("path", "P", "", "path")
+	imageCmd.PersistentFlags().StringP("raddr", "r", "", "remoteaddress")
+	imageCmd.PersistentFlags().Int32P("minmem", "m", 0, "minimum memory")
+	imageCmd.PersistentFlags().Int32P("authority", "a", 0, "authority")
 
 }
 

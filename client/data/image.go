@@ -102,7 +102,7 @@ func ImageTagChange(d *pb.ImageData, address string) {
 
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
 	defer cancel()
-	r, err := c.DeleteImage(ctx, d)
+	r, err := c.ChangeTagImage(ctx, d)
 	if err != nil {
 		log.Fatalf("could not greet: %v", err)
 	}
@@ -122,7 +122,7 @@ func ImageNameChange(d *pb.ImageData, address string) {
 
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
 	defer cancel()
-	r, err := c.DeleteImage(ctx, d)
+	r, err := c.ChangeNameImage(ctx, d)
 	if err != nil {
 		log.Fatalf("could not greet: %v", err)
 	}

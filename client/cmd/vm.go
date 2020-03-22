@@ -8,7 +8,6 @@ import (
 	"github.com/yoneyan/vm_mgr/proto/proto-go"
 	"log"
 	"strconv"
-	"strings"
 )
 
 // vmDirectCmd represents the vm command
@@ -23,17 +22,6 @@ var vmCreateCmd = &cobra.Command{
 	Use:   "create",
 	Short: "create vm",
 	Long: `VM create tool
-type(-t)
-0: Manual 1: Auto
-storagepath(-P)
-Type0: [disktype],[diskpath] ...
-Type1: [disktype],[diskpath] ...
-storagemode(
-0: Default 1: VirtIOMode 
-->For example: (-N 0,br100,br200)
-networkmode
-0: Default 1: VirtIOMode
-->For example: (-P 1,/home/yoneyan,0,/home/yoneyan)
 
 For example:
 //default connect (contorller user)
@@ -84,7 +72,11 @@ vm create -n te -c 1 -m 1024 -T 0 -P 1,/home/yoneyan,1,home/yoneyan -s 10240,102
 		if err != nil {
 			log.Fatalf("could not greet: %v", err)
 		}
-		image, err := cmd.Flags().GetString("image")
+		imagename, err := cmd.Flags().GetString("imagename")
+		if err != nil {
+			log.Fatalf("could not greet: %v", err)
+		}
+		imagetag, err := cmd.Flags().GetString("imagetag")
 		if err != nil {
 			log.Fatalf("could not greet: %v", err)
 		}
@@ -95,15 +87,6 @@ vm create -n te -c 1 -m 1024 -T 0 -P 1,/home/yoneyan,1,home/yoneyan -s 10240,102
 			return nil
 		}
 
-		var iarray []string
-
-		if image != "" {
-			iarray = strings.Split(image, ",")
-		} else {
-			iarray = append(iarray, "")
-			iarray = append(iarray, "")
-		}
-
 		d := Base(cmd)
 
 		c := grpc.VMData{
@@ -112,7 +95,7 @@ vm create -n te -c 1 -m 1024 -T 0 -P 1,/home/yoneyan,1,home/yoneyan -s 10240,102
 			Option: &grpc.Option{StoragePath: storagepath,
 				CdromPath: cdrom, Vnc: int32(vnc), Autostart: autostart,
 			},
-			Image: &grpc.Image{Name: iarray[0], Tag: iarray[1]},
+			Image: &grpc.Image{Name: imagename, Tag: imagetag},
 		}
 		data.CreateVM(&c, d.Host)
 		fmt.Println("Process End")
@@ -400,7 +383,8 @@ func init() {
 	vmCreateCmd.PersistentFlags().StringP("vnet", "N", "", "virtual net")
 	vmCreateCmd.PersistentFlags().Int64P("vnc", "v", 0, "vnc port")
 	vmCreateCmd.PersistentFlags().BoolP("autostart", "a", false, "autostart")
-	vmCreateCmd.PersistentFlags().StringP("image", "i", "", "image")
+	vmCreateCmd.PersistentFlags().StringP("imagename", "I", "", "image name")
+	vmCreateCmd.PersistentFlags().StringP("imagetag", "i", "", "image tag")
 
 	rootCmd.AddCommand(vmCmd)
 	vmCmd.AddCommand(vmCreateCmd)
