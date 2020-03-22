@@ -58,6 +58,7 @@ func AdminUserCertification(name, pass, token string) bool {
 			return false
 		}
 	}
+
 	if SearchGroupUser(name, "admin", 0) {
 		fmt.Println("Certification OK!! (Administrator)")
 		return true
@@ -250,9 +251,11 @@ func SuperUserVMCertification(d *UserCertData) (string, bool) {
 				return n.IP, true
 			}
 		}
+	} else {
+		return n.IP, true
 	}
 
-	return "", false
+	return "", true
 }
 
 func StandardUserVMCertification(d *UserCertData) (string, bool) {
@@ -309,7 +312,8 @@ func StandardUserVMCertification(d *UserCertData) (string, bool) {
 				return n.IP, true
 			}
 		}
+	} else {
+		return n.IP, true
 	}
-
 	return "", false
 }

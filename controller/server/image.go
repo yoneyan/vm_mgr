@@ -13,11 +13,11 @@ import (
 	"time"
 )
 
-// Type 0:AddISO 1:AddDISK 10:JoinISO 11:JoinDISK
+// ID 0:AddISO 1:AddDISK 10:JoinISO 11:JoinDISK
 func (s *server) AddImage(ctx context.Context, in *pb.ImageData) (*pb.ImageResult, error) {
 	log.Println("----AddImage----")
 	log.Println("Receive FileName : " + in.GetFilename())
-	log.Println("Receive ImaConID : " + strconv.Itoa(int(in.GetId())))
+	log.Println("Receive ImaConID : " + strconv.Itoa(int(in.GetImaconid())))
 	log.Println("Receive Type     : " + strconv.Itoa(int(in.GetType())))
 	log.Println("Receive Name     : " + in.GetName())
 	log.Println("Receive AuthUser : " + in.GetBase().User + ", AuthPass: " + in.GetBase().Pass)
@@ -84,7 +84,7 @@ func (s *server) AddImage(ctx context.Context, in *pb.ImageData) (*pb.ImageResul
 func (s *server) DeleteImage(ctx context.Context, in *pb.ImageData) (*pb.ImageResult, error) {
 	log.Println("----DeleteImage----")
 	log.Println("Receive FileName : " + in.GetFilename())
-	log.Println("Receive Type     : " + strconv.Itoa(int(in.GetType())))
+	log.Println("Receive ID     : " + strconv.Itoa(int(in.GetType())))
 	log.Println("Receive AuthUser : " + in.GetBase().User + ", AuthPass: " + in.GetBase().Pass)
 	log.Println("Receive Token    : " + in.GetBase().GetToken())
 	log.Println("Receive ImaConID : " + strconv.Itoa(int(in.GetImaconid())))
@@ -192,7 +192,7 @@ func (s *server) ChangeTagImage(ctx context.Context, in *pb.ImageData) (*pb.Imag
 
 func (s *server) ExistImage(ctx context.Context, in *pb.ImageData) (*pb.ImageResult, error) {
 	log.Println("----ExistImage----")
-	log.Println("Receive Type : " + strconv.Itoa(int(in.GetType())))
+	log.Println("Receive ID : " + strconv.Itoa(int(in.GetType())))
 	log.Println("Receive Name : " + in.GetName())
 	log.Println("Receive Tag  : " + in.GetTag())
 	log.Println("Receive AuthUser : " + in.GetBase().User + ", AuthPass: " + in.GetBase().Pass)

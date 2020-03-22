@@ -14,25 +14,6 @@ import (
 	"time"
 )
 
-type VMDataStruct struct {
-	NodeID      int
-	Group       string
-	GroupID     int
-	ID          int
-	Name        string
-	CPU         int
-	Mem         int
-	Storage     string
-	StoragePath string
-	CDROM       string
-	StorageType int
-	Image       int
-	Net         string
-	VNC         int
-	AutoStart   bool
-	Status      int
-}
-
 func (s *server) CreateVM(ctx context.Context, in *pb.VMData) (*pb.Result, error) {
 	fmt.Println("----------CreateVM-----")
 	log.Printf("Receive VMID: %v", in.GetOption().GetId())
@@ -45,36 +26,76 @@ func (s *server) CreateVM(ctx context.Context, in *pb.VMData) (*pb.Result, error
 	log.Printf("Receive vnc: %v", in.GetOption().Vnc)
 	log.Printf("Receive net: %v", in.GetVnet())
 	log.Printf("Receive change: %v", in.GetOption().Autostart)
+	log.Println("Receive Image Name : " + in.Image.GetName() + ", AuthPass: " + in.Image.GetTag())
 	log.Println("Receive AuthUser: " + in.Base.GetUser() + ", AuthPass: " + in.Base.GetPass())
+	log.Println("Receive Group     : " + in.Base.GetGroup())
 	log.Println("Receive Token     : " + in.Base.GetToken())
 
 	if in.Base.GetGroup() == "" {
 		return &pb.Result{Status: false, Info: "Group is not specified!!"}, nil
 	}
-
-	user := in.Base.GetUser()
-	pass := in.Base.GetPass()
-	group := in.Base.GetGroup()
-
-	var image string
+	var image, vnet string
 	var createtype int32
 
-	if data.SuperUserCertification(&data.UserCertData{User: user, Pass: pass, Group: group, Token: in.Base.GetToken()}) == false {
-		return &pb.Result{Status: false, Info: "Auth Failed!!"}, nil
-	}
 	isAdmin := false
-	if data.AdminUserCertification(user, pass, in.Base.GetToken()) {
+
+	fmt.Println(1)
+
+	if data.AdminUserCertification(in.Base.GetUser(), in.Base.GetPass(), in.Base.GetToken()) {
 		isAdmin = true
+		fmt.Println("dsaf")
 	} else {
-		if data.CheckMaxSpec(in) == false {
+		if data.SuperUserCertification(&data.UserCertData{User: in.Base.GetUser(), Pass: in.Base.GetPass(), Group: in.Base.GetGroup(), Token: in.Base.GetToken()}) == false {
+			return &pb.Result{Status: false, Info: "Auth Failed!!"}, nil
+		}
+		fmt.Println(1.5)
+		if data.CheckMaxSpec(in, data.GetAllVMData(in.Base.GetGroup())) == false {
 			return &pb.Result{Status: false, Info: "Spec has reached the upper limit...."}, nil
 		}
 	}
+	fmt.Println(2)
 
 	if data.CheckOnlyAdmin(int(in.GetNode())) && isAdmin == false {
 		return &pb.Result{Status: false, Info: "Node is only Admin...."}, nil
 	}
+	fmt.Println(3)
 
+	if isAdmin && in.GetType() == 0 {
+		createtype = 0
+		fmt.Println("Admin Mode(manual)")
+		vnet = in.GetVnet()
+	} else if isAdmin {
+		fmt.Println("Admin Mode(auto)")
+		createtype = 1
+
+		image = data.GetImagePath(in)
+		if image == "" {
+			fmt.Println("Image Path Error!!")
+			return &pb.Result{Status: false, Info: "Image Path Error!!"}, nil
+		}
+		vnet = data.GetNetworkName(in)
+	} else if isAdmin == false {
+		fmt.Println("User Mode(auto)")
+		createtype = 11
+
+		image = data.GetImagePath(in)
+		if image == "" {
+			fmt.Println("Image Path Error!!")
+			return &pb.Result{Status: false, Info: "Image Path Error!!"}, nil
+		}
+		vnet = data.GetNetworkName(in)
+	} else {
+		fmt.Println("Type Error!!")
+		return &pb.Result{Status: false, Info: "Error: StorageType Error!!"}, nil
+	}
+	fmt.Println("sasafasfsafsaf")
+
+	groupid, result := db.GetDBGroupID(in.Base.GetGroup())
+	if result == false {
+		return &pb.Result{Status: false, Info: "GroupID Not Found!!"}, nil
+	}
+	name := strconv.Itoa(groupid) + "-" + strconv.Itoa(0) + "-" + in.GetVmname()
+	fmt.Println("Name: " + name)
 	address, result := data.CheckNodeID(isAdmin, int(in.GetNode()))
 	if result == false {
 		return &pb.Result{Status: false, Info: "Node Not Found!!"}, nil
@@ -90,47 +111,6 @@ func (s *server) CreateVM(ctx context.Context, in *pb.VMData) (*pb.Result, error
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
 	defer cancel()
 
-	if isAdmin && in.GetType() == 0 {
-		createtype = 0
-		fmt.Println("Admin Mode(manual)")
-	} else if isAdmin {
-		createtype = 1
-		image = data.GetImagePath(in)
-		if image == "" {
-			fmt.Println("Image Path Error!!")
-			return &pb.Result{Status: false, Info: "Image Path Error!!"}, nil
-		}
-		sdata := data.GenerateDiskPath(in)
-		if sdata.Result == false {
-			return &pb.Result{Status: false, Info: "GenerateDiskPath Error!!"}, nil
-		}
-		in.Option.StoragePath = sdata.Path
-		in.Storage = sdata.Size
-	} else if isAdmin == false {
-		createtype = 11
-		image = data.GetImagePath(in)
-		if image == "" {
-			fmt.Println("Image Path Error!!")
-			return &pb.Result{Status: false, Info: "Image Path Error!!"}, nil
-		}
-		sdata := data.GenerateDiskPath(in)
-		if sdata.Result == false {
-			return &pb.Result{Status: false, Info: "GenerateDiskPath Error!!"}, nil
-		}
-		in.Option.StoragePath = sdata.Path
-		in.Storage = sdata.Size
-	} else {
-		fmt.Println("StorageType Error!!")
-		return &pb.Result{Status: false, Info: "Error: StorageType Error!!"}, nil
-
-	}
-	groupid, result := db.GetDBGroupID(group)
-	if result == false {
-		return &pb.Result{Status: false, Info: "GroupID Not Found!!"}, nil
-	}
-	name := strconv.Itoa(groupid) + "-" + strconv.Itoa(0) + "-" + in.GetVmname()
-	fmt.Println("Name: " + name)
-
 	r, err := c.CreateVM(ctx, &pb.VMData{
 		Node:    in.GetNode(),
 		Vmname:  name,
@@ -139,10 +119,10 @@ func (s *server) CreateVM(ctx context.Context, in *pb.VMData) (*pb.Result, error
 		Type:    createtype,
 		Storage: in.GetStorage(),
 		Cdrom:   in.GetCdrom(),
-		Vnet:    in.GetVnet(),
+		Vnet:    vnet,
 		Option: &pb.Option{
 			StoragePath: in.GetOption().GetStoragePath(),
-			Vnc:         in.GetOption().GetVnc(),
+			Vnc:         in.Option.GetVnc(),
 			Autostart:   in.GetOption().GetAutostart(),
 		},
 		Image: &pb.Image{Path: image},
@@ -173,6 +153,7 @@ func (s *server) DeleteVM(ctx context.Context, in *pb.VMID) (*pb.Result, error) 
 		VMID:   int(vmId),
 		NodeID: int(nodeId),
 	})
+	fmt.Println(address)
 	if result == false {
 		return &pb.Result{Status: false, Info: "Auth Failed!!"}, nil
 	}
@@ -405,7 +386,7 @@ func (s *server) GetUserVM(base *pb.Base, stream pb.Grpc_GetUserVMServer) error 
 		isAdmin = true
 	}
 
-	var d []VMDataStruct
+	var d []data.VMDataStruct
 
 	for _, a := range db.GetDBAllNode() {
 		conn, err := grpc.Dial(a.IP, grpc.WithInsecure(), grpc.WithBlock())
@@ -434,7 +415,7 @@ func (s *server) GetUserVM(base *pb.Base, stream pb.Grpc_GetUserVMServer) error 
 			s := strings.Split(article.Vmname, "-")
 			for _, b := range d3 {
 				if s[0] == strconv.Itoa(b) || isAdmin {
-					d = append(d, VMDataStruct{
+					d = append(d, data.VMDataStruct{
 						GroupID:   b,
 						NodeID:    a.ID,
 						ID:        int(article.Option.Id) + (1000 * a.ID),
@@ -480,7 +461,7 @@ func (s *server) GetGroupVM(base *pb.Base, stream pb.Grpc_GetGroupVMServer) erro
 		return nil
 	}
 
-	var d []VMDataStruct
+	var d []data.VMDataStruct
 
 	groupid, result := db.GetDBGroupID(group)
 	if result == false {
@@ -513,7 +494,7 @@ func (s *server) GetGroupVM(base *pb.Base, stream pb.Grpc_GetGroupVMServer) erro
 			}
 			s := strings.Split(article.Vmname, "-")
 			if s[0] == strconv.Itoa(groupid) {
-				d = append(d, VMDataStruct{
+				d = append(d, data.VMDataStruct{
 					NodeID:    a.ID,
 					ID:        int(article.Option.Id) + (1000 * a.ID),
 					Name:      article.Vmname,
@@ -544,7 +525,7 @@ func (s *server) GetAllVM(base *pb.Base, stream pb.Grpc_GetAllVMServer) error {
 		return nil
 	}
 
-	var d []VMDataStruct
+	var d []data.VMDataStruct
 
 	for _, a := range db.GetDBAllNode() {
 		conn, err := grpc.Dial(a.IP, grpc.WithInsecure(), grpc.WithBlock())
@@ -569,7 +550,7 @@ func (s *server) GetAllVM(base *pb.Base, stream pb.Grpc_GetAllVMServer) error {
 			if err != nil {
 				fmt.Println(err)
 			}
-			d = append(d, VMDataStruct{
+			d = append(d, data.VMDataStruct{
 				NodeID:    a.ID,
 				ID:        int(article.Option.Id) + (1000 * a.ID),
 				Name:      article.Vmname,

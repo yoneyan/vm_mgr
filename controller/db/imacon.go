@@ -9,17 +9,29 @@ import (
 func AddDBImaCon(data ImaCon) bool {
 	fmt.Println(data)
 	db := *connectdb()
-	addDb, err := db.Prepare(`INSERT INTO "imacon" ("hostname","ip","status") VALUES (?,?,?)`)
-	if err != nil {
-		fmt.Println("DBError!!")
-		return false
-	}
+	if data.ID == 0 {
+		addDb, err := db.Prepare(`INSERT INTO "imacon" ("hostname","ip","status") VALUES (?,?,?)`)
+		if err != nil {
+			fmt.Println("DBError!!")
+			return false
+		}
 
-	if _, err := addDb.Exec(data.HostName, data.IP, data.Status); err != nil {
-		fmt.Println("Add Error!!")
-		return false
-	}
+		if _, err := addDb.Exec(data.HostName, data.IP, data.Status); err != nil {
+			fmt.Println("Add Error!!")
+			return false
+		}
+	} else {
+		addDb, err := db.Prepare(`INSERT INTO "imacon" ("id","hostname","ip","status") VALUES (?,?,?,?)`)
+		if err != nil {
+			fmt.Println("DBError!!")
+			return false
+		}
 
+		if _, err := addDb.Exec(data.ID, data.HostName, data.IP, data.Status); err != nil {
+			fmt.Println("Add Error!!")
+			return false
+		}
+	}
 	return true
 }
 

@@ -6,7 +6,7 @@ import (
 	_ "github.com/mattn/go-sqlite3"
 )
 
-const DBPath = "./main.db"
+const DBPath = "./controller.db"
 
 type Node struct {
 	ID        int

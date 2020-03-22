@@ -4,7 +4,6 @@ import (
 	"context"
 	"fmt"
 	"github.com/yoneyan/vm_mgr/controller/db"
-	"github.com/yoneyan/vm_mgr/controller/server"
 	pb "github.com/yoneyan/vm_mgr/proto/proto-go"
 	"google.golang.org/grpc"
 	"io"
@@ -12,6 +11,25 @@ import (
 	"strings"
 	"time"
 )
+
+type VMDataStruct struct {
+	NodeID      int
+	Group       string
+	GroupID     int
+	ID          int
+	Name        string
+	CPU         int
+	Mem         int
+	Storage     string
+	StoragePath string
+	CDROM       string
+	StorageType int
+	Image       int
+	Net         string
+	VNC         int
+	AutoStart   bool
+	Status      int
+}
 
 type SpecData struct {
 	cpu     int
@@ -39,8 +57,8 @@ func CheckNodeID(isadmin bool, nodeid int) (string, bool) {
 	return d.IP, true
 }
 
-func CheckMaxSpec(d *pb.VMData) bool {
-	data := TotalSpec(d.Base.GetGroup())
+func CheckMaxSpec(d *pb.VMData, s []VMDataStruct) bool {
+	data := TotalSpec(s)
 	id, r := db.GetDBGroupID(d.Base.GetGroup())
 	if r == false {
 		fmt.Println("NodeDB Error!!")
@@ -57,8 +75,8 @@ func CheckMaxSpec(d *pb.VMData) bool {
 	return true
 }
 
-func TotalSpec(group string) SpecData {
-	var d []server.VMDataStruct
+func GetAllVMData(group string) []VMDataStruct {
+	var d []VMDataStruct
 
 	groupid, result := db.GetDBGroupID(group)
 	if result == false {
@@ -91,13 +109,14 @@ func TotalSpec(group string) SpecData {
 			s := strings.Split(article.Vmname, "-")
 			if s[0] == strconv.Itoa(groupid) {
 
-				d = append(d, server.VMDataStruct{
+				d = append(d, VMDataStruct{
 					NodeID:    a.ID,
 					ID:        int(article.Option.Id) + (1000 * a.ID),
 					Name:      article.Vmname,
 					CPU:       int(article.Vcpu),
 					Mem:       int(article.Vmem),
 					Net:       article.Vnet,
+					VNC:       int(article.Option.Vnc),
 					Storage:   article.Storage,
 					AutoStart: article.Option.Autostart,
 					Status:    int(article.Option.Status),
@@ -105,6 +124,10 @@ func TotalSpec(group string) SpecData {
 			}
 		}
 	}
+	return d
+}
+
+func TotalSpec(d []VMDataStruct) SpecData {
 	var cpu, mem, storage int
 
 	for _, a := range d {
@@ -151,6 +174,20 @@ func GenerateDiskPath(d *pb.VMData) StorageData {
 		Path: path,
 		Size: size,
 	}
+}
+
+func GetNetworkName(d *pb.VMData) string {
+	id, result := db.GetDBGroupID(d.Base.GetGroup())
+	if result == false {
+		fmt.Println("Error!! Group Not Found.....")
+		return ""
+	}
+	group, result := db.GetDBGroup(id)
+	if result == false {
+		fmt.Println("Error!! Group Not Found.....")
+		return ""
+	}
+	return "1," + group.Net
 }
 
 func GetNodePath(node, path int) string {

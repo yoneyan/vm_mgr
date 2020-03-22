@@ -132,7 +132,7 @@ func UnRegistImgae(name, group string) (string, bool) {
 }
 
 func GetImagePath(d *pb.VMData) string {
-	for _, a := range db.GetDBAllNode() {
+	for _, a := range db.GetDBAllImaCon() {
 		conn, err := grpc.Dial(a.IP, grpc.WithInsecure(), grpc.WithBlock())
 		if err != nil {
 			fmt.Printf("Not connect; ")
