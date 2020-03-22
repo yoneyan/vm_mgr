@@ -15,7 +15,7 @@ func main() {
 	router.POST("/api/v1/token", data.GenerateToken)
 	router.POST("/api/v1/token/check", data.CheckToken)
 	router.DELETE("/api/v1/token", data.DeleteToken)
-	//router.HandleFunc("/api/v1/token",data.GetUserVM).Methods("GET")
+	//router.HandleFunc("/api/v1/token",server.GetUserVM).Methods("GET")
 	//vm
 	router.PUT("/api/v1/vm", data.CreateVM)
 	router.DELETE("/api/v1/vm/:id", data.DeleteVM)
