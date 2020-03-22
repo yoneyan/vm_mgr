@@ -29,7 +29,7 @@ type NodeData struct {
 	Key string `json:"key"`
 }
 
-func GetISOImage(id int) string {
+func GetImagePath(id int) string {
 	file, err := ioutil.ReadFile("./config.json")
 	if err != nil {
 		panic(err)
@@ -37,22 +37,7 @@ func GetISOImage(id int) string {
 	var config Config
 	json.Unmarshal(file, &config)
 	for _, v := range config.Image.Path {
-		if v.Type == 0 {
-			return v.Path
-		}
-	}
-	return ""
-}
-
-func GetDiskImage(id int) string {
-	file, err := ioutil.ReadFile("./config.json")
-	if err != nil {
-		panic(err)
-	}
-	var config Config
-	json.Unmarshal(file, &config)
-	for _, v := range config.Image.Path {
-		if v.Type == 1 {
+		if v.Type == id {
 			return v.Path
 		}
 	}

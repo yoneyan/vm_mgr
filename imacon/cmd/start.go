@@ -3,7 +3,6 @@ package cmd
 import (
 	"fmt"
 	"github.com/spf13/cobra"
-	"github.com/yoneyan/vm_mgr/imacon/etc"
 	"github.com/yoneyan/vm_mgr/imacon/server"
 )
 
@@ -13,7 +12,6 @@ var startCmd = &cobra.Command{
 	Short: "start image controller",
 	Long:  ``,
 	Run: func(cmd *cobra.Command, args []string) {
-		etc.ConfigGet()
 		server.Server()
 		fmt.Println("end")
 	},

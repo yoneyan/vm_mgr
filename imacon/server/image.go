@@ -19,13 +19,10 @@ func (s *server) AddImage(ctx context.Context, in *pb.ImageData) (*pb.ImageResul
 	log.Println("Receive Name     : " + in.GetName())
 
 	_, result := db.GetDBImageFileName(in.GetFilename())
-	if result == false {
-		return &pb.ImageResult{Result: false, Info: "DB Error"}, nil
+	if result {
+		return &pb.ImageResult{Result: false, Info: "File Exist..."}, nil
 	}
-	path := etc.GeneratePath(int(in.GetType()), in.GetFilename())
-	if etc.FileExists(path) == false {
-		return &pb.ImageResult{Result: false, Info: "File not exist..."}, nil
-	}
+	path := etc.GeneratePath(int(in.GetType()%10), in.GetFilename())
 
 	if in.GetType() == 0 || in.GetType() == 1 {
 		sftp.DataDownload(&sftp.FileData{
@@ -39,7 +36,7 @@ func (s *server) AddImage(ctx context.Context, in *pb.ImageData) (*pb.ImageResul
 	}
 
 	if in.GetType() == 10 || in.GetType() == 11 {
-		if etc.FileExists(etc.GeneratePath(int(in.GetType()%10), in.GetFilename())) == false {
+		if etc.FileExists(path) == false {
 			return &pb.ImageResult{Result: false, Info: "File Not Exists!!"}, nil
 		}
 		if db.AddDBImage(db.Image{
@@ -56,7 +53,7 @@ func (s *server) AddImage(ctx context.Context, in *pb.ImageData) (*pb.ImageResul
 			return &pb.ImageResult{Result: false, Info: "DB Error: Change Error!!"}, nil
 		}
 	}
-	return &pb.ImageResult{Result: true, Info: "Request acceptance!!"}, nil
+	return &pb.ImageResult{Result: true, Info: "OK!!"}, nil
 }
 
 func (s *server) DeleteImage(ctx context.Context, in *pb.ImageData) (*pb.ImageResult, error) {
