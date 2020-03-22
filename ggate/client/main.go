@@ -1,6 +1,6 @@
 package client
 
-var address = "127.0.0.1:50200"
+import "github.com/yoneyan/vm_mgr/ggate/etc"
 
 type AuthResult struct {
 	Result   bool   `json:"result"`
@@ -14,10 +14,6 @@ type Result struct {
 	Info   string `json:"info"`
 }
 
-func RegistergRPCServerAddress(ip string) {
-	address = ip
-}
-
 func GetgRPCServerAddress() string {
-	return address
+	return etc.GetControllerIP()
 }

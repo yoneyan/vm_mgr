@@ -10,6 +10,28 @@ type ShutdownData struct {
 	Force bool `json:"force"`
 }
 
+func CreateVM(c *gin.Context) {
+	log.Println("------CreateVM------")
+
+	var vmdata client.CreateVMData
+	c.BindJSON(&vmdata)
+
+	token := GetToken(c.Request.Header.Get("Authorization"))
+	data := client.CreateVM(vmdata, token)
+
+	c.JSON(200, data)
+}
+
+func DeleteVM(c *gin.Context) {
+	log.Println("------DeleteVM------")
+
+	id := c.Param("id")
+	token := GetToken(c.Request.Header.Get("Authorization"))
+	data := client.DeleteVM(id, token)
+
+	c.JSON(200, data)
+}
+
 func GetUserVM(c *gin.Context) {
 	log.Println("------GetUserVM------")
 

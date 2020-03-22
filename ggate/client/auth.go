@@ -2,6 +2,7 @@ package client
 
 import (
 	"context"
+	"fmt"
 	pb "github.com/yoneyan/vm_mgr/proto/proto-go"
 	"google.golang.org/grpc"
 	"log"
@@ -10,6 +11,7 @@ import (
 )
 
 func GenerateTokenClient(user, pass string) *AuthResult {
+	fmt.Println(GetgRPCServerAddress())
 	conn, err := grpc.Dial(GetgRPCServerAddress(), grpc.WithInsecure(), grpc.WithBlock())
 	if err != nil {
 		log.Println("Not connect; %v", err)

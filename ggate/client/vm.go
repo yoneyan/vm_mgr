@@ -11,7 +11,7 @@ import (
 	"time"
 )
 
-type VMData struct {
+type VMDataResult struct {
 	NodeID    int    `json:"nodeid"`
 	ID        int    `json:"id"`
 	Name      string `json:"name"`
@@ -22,13 +22,85 @@ type VMData struct {
 	Status    int    `json:"status"`
 }
 
+type CreateVMData struct {
+	NodeID      int    `json:"nodeid"`
+	VMName      string `json:"vmname"`
+	Group       string `json:"group"`
+	CPU         int    `json:"cpu"`
+	Mem         int    `json:"mem"`
+	Storage     int    `json:"storage"`
+	StorageType int    `json:"storagetype"`
+	AutoStart   bool   `json:"autostart"`
+	ImageName   string `json:"imagename"`
+	ImageType   string `json:"imagetype"`
+}
+
+func CreateVM(vm CreateVMData, token string) Result {
+
+	conn, err := grpc.Dial(GetgRPCServerAddress(), grpc.WithInsecure(), grpc.WithBlock())
+	if err != nil {
+		log.Println("Not connect; %v", err)
+	}
+	defer conn.Close()
+	c := pb.NewGrpcClient(conn)
+
+	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
+	defer cancel()
+
+	r, err := c.CreateVM(ctx, &pb.VMData{
+		Base:    &pb.Base{Token: token, Group: vm.Group},
+		Node:    int32(vm.NodeID),
+		Vmname:  vm.VMName,
+		Vcpu:    int64(vm.CPU),
+		Vmem:    int64(vm.Mem),
+		Type:    1,
+		Storage: strconv.Itoa(vm.Storage),
+		Option:  &pb.Option{StoragePath: strconv.Itoa(vm.StorageType) + ",", Autostart: vm.AutoStart},
+		Image:   &pb.Image{Name: vm.ImageName, Tag: vm.ImageType},
+	})
+	if err != nil {
+		log.Println("could not greet: %v", err)
+	}
+	return Result{
+		Result: r.GetStatus(),
+		Info:   r.GetInfo(),
+	}
+}
+
+func DeleteVM(id, token string) Result {
+
+	conn, err := grpc.Dial(GetgRPCServerAddress(), grpc.WithInsecure(), grpc.WithBlock())
+	if err != nil {
+		log.Println("Not connect; %v", err)
+	}
+	defer conn.Close()
+	c := pb.NewGrpcClient(conn)
+
+	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
+	defer cancel()
+
+	vmid, err := strconv.Atoi(id)
+	if err != nil {
+		fmt.Println("vmid error!!")
+	}
+
+	r, err := c.DeleteVM(ctx, &pb.VMID{Id: int64(vmid), Base: &pb.Base{Token: token}})
+	if err != nil {
+		log.Println("could not greet: %v", err)
+	}
+	return Result{
+		Result: r.GetStatus(),
+		Info:   r.GetInfo(),
+	}
+}
+
 func StartVMClient(token, vmid string) Result {
 	id, err := strconv.Atoi(vmid)
 	if err != nil {
 		log.Println("id error!!")
 	}
 
-	conn, err := grpc.Dial(address, grpc.WithInsecure(), grpc.WithBlock())
+	conn, err := grpc.Dial(GetgRPCServerAddress(), grpc.WithInsecure(), grpc.WithBlock())
 	if err != nil {
 		log.Println("Not connect; %v", err)
 	}
@@ -53,7 +125,7 @@ func ResetVMClient(token, vmid string) Result {
 		log.Println("id error!!")
 	}
 
-	conn, err := grpc.Dial(address, grpc.WithInsecure(), grpc.WithBlock())
+	conn, err := grpc.Dial(GetgRPCServerAddress(), grpc.WithInsecure(), grpc.WithBlock())
 	if err != nil {
 		log.Println("Not connect; %v", err)
 	}
@@ -78,7 +150,7 @@ func StopVMClient(token, vmid string) Result {
 		log.Println("id error!!")
 	}
 
-	conn, err := grpc.Dial(address, grpc.WithInsecure(), grpc.WithBlock())
+	conn, err := grpc.Dial(GetgRPCServerAddress(), grpc.WithInsecure(), grpc.WithBlock())
 	if err != nil {
 		log.Println("Not connect; %v", err)
 	}
@@ -103,7 +175,7 @@ func ShutdownVMClient(token, vmid string) Result {
 		log.Println("id error!!")
 	}
 
-	conn, err := grpc.Dial(address, grpc.WithInsecure(), grpc.WithBlock())
+	conn, err := grpc.Dial(GetgRPCServerAddress(), grpc.WithInsecure(), grpc.WithBlock())
 	if err != nil {
 		log.Println("Not connect; %v", err)
 	}
@@ -128,7 +200,7 @@ func PauseVMClient(token, vmid string) Result {
 		log.Println("id error!!")
 	}
 
-	conn, err := grpc.Dial(address, grpc.WithInsecure(), grpc.WithBlock())
+	conn, err := grpc.Dial(GetgRPCServerAddress(), grpc.WithInsecure(), grpc.WithBlock())
 	if err != nil {
 		log.Println("Not connect; %v", err)
 	}
@@ -153,7 +225,7 @@ func ResumeVMClient(token, vmid string) Result {
 		log.Println("id error!!")
 	}
 
-	conn, err := grpc.Dial(address, grpc.WithInsecure(), grpc.WithBlock())
+	conn, err := grpc.Dial(GetgRPCServerAddress(), grpc.WithInsecure(), grpc.WithBlock())
 	if err != nil {
 		log.Println("Not connect; %v", err)
 	}
@@ -172,7 +244,7 @@ func ResumeVMClient(token, vmid string) Result {
 	}
 }
 
-func GetUserVMClient(token string) []VMData {
+func GetUserVMClient(token string) []VMDataResult {
 
 	conn, err := grpc.Dial(GetgRPCServerAddress(), grpc.WithInsecure(), grpc.WithBlock())
 	if err != nil {
@@ -189,7 +261,7 @@ func GetUserVMClient(token string) []VMData {
 		log.Fatal(err)
 	}
 
-	var data []VMData
+	var data []VMDataResult
 
 	for {
 		article, err := stream.Recv()
@@ -200,7 +272,7 @@ func GetUserVMClient(token string) []VMData {
 			log.Fatal(err)
 		}
 
-		tmp := VMData{int(article.Node), int(article.Option.Id), article.Vmname,
+		tmp := VMDataResult{int(article.Node), int(article.Option.Id), article.Vmname,
 			int(article.Vcpu), int(article.Vmem), article.Vnet,
 			article.Option.Autostart, int(article.Option.Status)}
 		data = append(data, tmp)
@@ -209,9 +281,9 @@ func GetUserVMClient(token string) []VMData {
 	return data
 }
 
-func GetVMClient(id, token string) VMData {
+func GetVMClient(id, token string) VMDataResult {
 
-	conn, err := grpc.Dial(address, grpc.WithInsecure(), grpc.WithBlock())
+	conn, err := grpc.Dial(GetgRPCServerAddress(), grpc.WithInsecure(), grpc.WithBlock())
 	if err != nil {
 		log.Println("Not connect; %v", err)
 	}
@@ -230,7 +302,7 @@ func GetVMClient(id, token string) VMData {
 	if err != nil {
 		log.Println("could not greet: %v", err)
 	}
-	return VMData{
+	return VMDataResult{
 		NodeID:    int(r.Node),
 		ID:        int(r.Option.Id),
 		Name:      r.Vmname,

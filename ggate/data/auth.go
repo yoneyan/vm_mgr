@@ -11,12 +11,13 @@ type UserAuth struct {
 	Pass string `json:"pass"`
 }
 
-func CheckToken(c *gin.Context) {
-	log.Println("------CheckToken------")
+func GenerateToken(c *gin.Context) {
+	log.Println("------GenerateToken------")
 
-	token := GetToken(c.Request.Header.Get("Authorization"))
+	var auth UserAuth
+	c.BindJSON(&auth)
 
-	result := client.CheckTokenClient(token)
+	result := client.GenerateTokenClient(auth.User, auth.Pass)
 
 	c.JSON(200, result)
 }
@@ -25,8 +26,16 @@ func DeleteToken(c *gin.Context) {
 	log.Println("------DeleteToken------")
 
 	token := GetToken(c.Request.Header.Get("Authorization"))
-
 	result := client.DeleteTokenClient(token)
+
+	c.JSON(200, result)
+}
+
+func CheckToken(c *gin.Context) {
+	log.Println("------CheckToken------")
+
+	token := GetToken(c.Request.Header.Get("Authorization"))
+	result := client.CheckTokenClient(token)
 
 	c.JSON(200, result)
 }
@@ -53,14 +62,3 @@ func GetAllToken(c *gin.Context) {
 }
 
 */
-
-func GenerateToken(c *gin.Context) {
-	log.Println("------GenerateToken------")
-
-	var auth UserAuth
-	c.BindJSON(&auth)
-
-	result := client.GenerateTokenClient(auth.User, auth.Pass)
-
-	c.JSON(200, result)
-}
