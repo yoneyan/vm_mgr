@@ -77,7 +77,6 @@ func GetDBGroupID(name string) (int, bool) {
 	db := connectdb()
 
 	var id int
-	fmt.Println(name)
 	if err := db.QueryRow("SELECT id FROM groupdata WHERE name = ?", name).Scan(&id); err != nil {
 		fmt.Println(err)
 		return -1, false

@@ -39,26 +39,20 @@ func (s *server) CreateVM(ctx context.Context, in *pb.VMData) (*pb.Result, error
 
 	isAdmin := false
 
-	fmt.Println(1)
-
 	if data.AdminUserCertification(in.Base.GetUser(), in.Base.GetPass(), in.Base.GetToken()) {
 		isAdmin = true
-		fmt.Println("dsaf")
 	} else {
 		if data.SuperUserCertification(&data.UserCertData{User: in.Base.GetUser(), Pass: in.Base.GetPass(), Group: in.Base.GetGroup(), Token: in.Base.GetToken()}) == false {
 			return &pb.Result{Status: false, Info: "Auth Failed!!"}, nil
 		}
-		fmt.Println(1.5)
 		if data.CheckMaxSpec(in, data.GetAllVMData(in.Base.GetGroup())) == false {
 			return &pb.Result{Status: false, Info: "Spec has reached the upper limit...."}, nil
 		}
 	}
-	fmt.Println(2)
 
 	if data.CheckOnlyAdmin(int(in.GetNode())) && isAdmin == false {
 		return &pb.Result{Status: false, Info: "Node is only Admin...."}, nil
 	}
-	fmt.Println(3)
 
 	if isAdmin && in.GetType() == 0 {
 		createtype = 0
@@ -88,14 +82,13 @@ func (s *server) CreateVM(ctx context.Context, in *pb.VMData) (*pb.Result, error
 		fmt.Println("Type Error!!")
 		return &pb.Result{Status: false, Info: "Error: StorageType Error!!"}, nil
 	}
-	fmt.Println("sasafasfsafsaf")
 
 	groupid, result := db.GetDBGroupID(in.Base.GetGroup())
 	if result == false {
 		return &pb.Result{Status: false, Info: "GroupID Not Found!!"}, nil
 	}
 	name := strconv.Itoa(groupid) + "-" + strconv.Itoa(0) + "-" + in.GetVmname()
-	fmt.Println("Name: " + name)
+	fmt.Println("VMFileName: " + name)
 	address, result := data.CheckNodeID(isAdmin, int(in.GetNode()))
 	if result == false {
 		return &pb.Result{Status: false, Info: "Node Not Found!!"}, nil

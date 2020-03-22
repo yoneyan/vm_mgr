@@ -69,10 +69,19 @@ func CheckMaxSpec(d *pb.VMData, s []VMDataStruct) bool {
 		fmt.Println("NodeDB Error!!")
 		return false
 	}
-	if group.MaxMem >= data.mem && group.MaxStorage >= data.storage {
-		return false
+	fmt.Printf("maxmemory: ")
+	fmt.Println(group.MaxMem)
+	fmt.Printf("maxvm: ")
+	fmt.Println(group.MaxVM)
+	fmt.Printf("memory: ")
+	fmt.Println(strconv.Itoa(data.mem))
+	fmt.Printf("vm: ")
+	fmt.Println(strconv.Itoa(len(s)))
+
+	if group.MaxMem >= data.mem || group.MaxVM >= len(s) {
+		return true
 	}
-	return true
+	return false
 }
 
 func GetAllVMData(group string) []VMDataStruct {
