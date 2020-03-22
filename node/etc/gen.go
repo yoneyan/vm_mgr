@@ -31,7 +31,7 @@ func GeneratePath(path, name string) string {
 
 func RandomGenerateValue() int {
 	rand.Seed(time.Now().UnixNano())
-	return rand.Intn(300)
+	return rand.Intn(600)
 }
 
 func GenerateVNCPort() int {
@@ -45,6 +45,7 @@ func GenerateVNCPort() int {
 	var vnc int
 	for {
 		vnc = RandomGenerateValue()
+		vnc = vnc + 200
 		if valuecontain(vncarray, vnc) == false {
 			break
 		}
