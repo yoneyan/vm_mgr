@@ -185,9 +185,10 @@ message Option {
     string cdrom_path = 2;
     int32 image = 3;
     int32 vnc = 4;
-    int64 id = 5;
-    bool autostart = 6;
-    int32 status = 7;
+    string vncurl = 5;
+    int64 id = 6;
+    bool autostart = 7;
+    int32 status = 8;
 }
 
 message Image {
