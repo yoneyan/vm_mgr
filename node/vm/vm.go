@@ -57,7 +57,9 @@ func RunQEMUCmd(command []string) error {
 func CreateGenerateCmd(c *CreateVMInformation) []string {
 	var diskindex int
 	var cmd []string
-	begin := []string{"-enable-kvm", "-name", c.Name, "-smp", strconv.Itoa(c.CPU), "-m", strconv.Itoa(c.Mem), "-monitor", etc.SocketGenerate(c.Name), "-vnc", ":" + strconv.Itoa(c.VNC)}
+	begin := []string{"-enable-kvm", "-name", c.Name, "-smp", strconv.Itoa(c.CPU), "-m",
+		strconv.Itoa(c.Mem), "-monitor", etc.SocketGenerate(c.Name),
+		"-vnc", "0.0.0.0:" + strconv.Itoa(c.VNC) + ",websocket=" + strconv.Itoa(c.VNC+7000)}
 
 	cmd = append(cmd, begin...)
 
