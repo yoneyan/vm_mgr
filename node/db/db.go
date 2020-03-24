@@ -7,7 +7,7 @@ import (
 	"log"
 )
 
-const dbName = "./main.db"
+const dbName = "./node.db"
 
 type VM struct {
 	ID          int
