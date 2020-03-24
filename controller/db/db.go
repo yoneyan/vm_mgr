@@ -38,6 +38,7 @@ type Group struct {
 	Name       string
 	Admin      string
 	User       string
+	UUID       string
 	MaxVM      int
 	MaxCPU     int
 	MaxMem     int
@@ -92,7 +93,7 @@ func InitDB() bool {
 	//user data
 	createdb(`CREATE TABLE IF NOT EXISTS "userdata" ("id" INTEGER PRIMARY KEY, "name" VARCHAR(255), "pass" VARCHAR(255))`)
 	//group data
-	createdb(`CREATE TABLE IF NOT EXISTS "groupdata" ("id" INTEGER PRIMARY KEY, "name" VARCHAR(255),"admin" VARCHAR(500),"user" VARCHAR(2000),"maxvm" INT,"maxcpu" INT,"maxmem" INT,"maxstorage" INT,"net" VARCHAR(255))`)
+	createdb(`CREATE TABLE IF NOT EXISTS "groupdata" ("id" INTEGER PRIMARY KEY, "name" VARCHAR(255),"admin" VARCHAR(500),"user" VARCHAR(2000),"uuid" VARCHAR(20000),"maxvm" INT,"maxcpu" INT,"maxmem" INT,"maxstorage" INT,"net" VARCHAR(255))`)
 	//token data
 	createdb(`CREATE TABLE IF NOT EXISTS "tokendata" ("id" INTEGER PRIMARY KEY, "token" VARCHAR(1000), "userid" INT,"groupid" INT,"begintime" INT,"endtime" INT)`)
 	//progress data

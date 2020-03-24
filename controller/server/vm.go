@@ -287,14 +287,16 @@ func (s *server) GetVM(ctx context.Context, in *pb.VMID) (*pb.VMData, error) {
 	c := pb.NewGrpcClient(conn)
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
 	defer cancel()
-	fmt.Println(address)
 
 	r, err := c.GetVM(ctx, &pb.VMID{Id: vmId})
 	if err != nil {
 		fmt.Printf("Not connect; ")
 		fmt.Println(err)
 	}
-	fmt.Println(r)
+
+	data := strings.Split(r.GetVmname(), "-")
+	groupid, _ := strconv.Atoi(data[0])
+	group, _ := db.GetDBGroup(groupid)
 
 	return &pb.VMData{
 		Node:    int32(nodeId),
@@ -306,6 +308,7 @@ func (s *server) GetVM(ctx context.Context, in *pb.VMID) (*pb.VMData, error) {
 		Option: &pb.Option{
 			Vnc:       r.Option.GetVnc(),
 			Id:        in.GetId(),
+			Vncurl:    "/api/" + group.UUID + "/" + r.GetVmname() + "/vnc",
 			Autostart: r.Option.GetAutostart(),
 			Status:    r.Option.GetStatus(),
 		},

@@ -3,18 +3,19 @@ package db
 import (
 	"database/sql"
 	"fmt"
+	"github.com/yoneyan/vm_mgr/controller/etc"
 )
 
 //groupdata
 func AddDBGroup(data Group) bool {
 	db := connectdb()
-	addDb, err := db.Prepare(`INSERT INTO "groupdata" ("name","admin","user","maxvm","maxcpu","maxmem","maxstorage","net") VALUES (?,?,?,?,?,?,?,?)`)
+	addDb, err := db.Prepare(`INSERT INTO "groupdata" ("name","admin","user","uuid","maxvm","maxcpu","maxmem","maxstorage","net") VALUES (?,?,?,?,?,?,?,?,?)`)
 	if err != nil {
 		fmt.Println(err)
 		return false
 	}
 
-	if _, err := addDb.Exec(data.Name, data.Admin, data.User, data.MaxVM, data.MaxCPU, data.MaxMem, data.MaxStorage, data.Net); err != nil {
+	if _, err := addDb.Exec(data.Name, data.Admin, data.User, etc.GenerateToken(), data.MaxVM, data.MaxCPU, data.MaxMem, data.MaxStorage, data.Net); err != nil {
 		fmt.Println(err)
 		return false
 	}
@@ -44,7 +45,7 @@ func GetDBAllGroup() []Group {
 	var bg []Group
 	for rows.Next() {
 		var b Group
-		err := rows.Scan(&b.ID, &b.Name, &b.Admin, &b.User, &b.MaxVM, &b.MaxCPU, &b.MaxMem, &b.MaxStorage, &b.Net)
+		err := rows.Scan(&b.ID, &b.Name, &b.Admin, &b.User, &b.UUID, &b.MaxVM, &b.MaxCPU, &b.MaxMem, &b.MaxStorage, &b.Net)
 		if err != nil {
 			fmt.Println(err)
 		}
@@ -53,12 +54,32 @@ func GetDBAllGroup() []Group {
 	return bg
 }
 
+func GetDBGroupToken(uuid string) (Group, bool) {
+	db := connectdb()
+	rows := db.QueryRow("SELECT * FROM groupdata WHERE uuid = ?", uuid)
+
+	var b Group
+	err := rows.Scan(&b.ID, &b.Name, &b.Admin, &b.User, &b.UUID, &b.MaxVM, &b.MaxCPU, &b.MaxMem, &b.MaxStorage, &b.Net)
+
+	switch {
+	case err == sql.ErrNoRows:
+		fmt.Printf("Not found")
+		return b, false
+	case err != nil:
+		fmt.Println(err)
+		fmt.Println("Error: DBError")
+		return b, false
+	default:
+		return b, true
+	}
+}
+
 func GetDBGroup(id int) (Group, bool) {
 	db := connectdb()
 	rows := db.QueryRow("SELECT * FROM groupdata WHERE id = ?", id)
 
 	var b Group
-	err := rows.Scan(&b.ID, &b.Name, &b.Admin, &b.User, &b.MaxVM, &b.MaxCPU, &b.MaxMem, &b.MaxStorage, &b.Net)
+	err := rows.Scan(&b.ID, &b.Name, &b.Admin, &b.User, &b.UUID, &b.MaxVM, &b.MaxCPU, &b.MaxMem, &b.MaxStorage, &b.Net)
 
 	switch {
 	case err == sql.ErrNoRows:

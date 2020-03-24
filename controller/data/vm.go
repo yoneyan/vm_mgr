@@ -27,6 +27,7 @@ type VMDataStruct struct {
 	Image       int
 	Net         string
 	VNC         int
+	VNCURL      string
 	AutoStart   bool
 	Status      int
 }
@@ -82,6 +83,39 @@ func CheckMaxSpec(d *pb.VMData, s []VMDataStruct) bool {
 		return true
 	}
 	return false
+}
+
+func GetVNCVMData(groupid int, vmname string) (string, int) {
+	for _, node := range db.GetDBAllNode() {
+		conn, err := grpc.Dial(node.IP, grpc.WithInsecure(), grpc.WithBlock())
+		if err != nil {
+			fmt.Printf("Not connect; ")
+			fmt.Println(err)
+		}
+		defer conn.Close()
+
+		c := pb.NewGrpcClient(conn)
+		ctx, cancel := context.WithTimeout(context.Background(), time.Second)
+		defer cancel()
+		stream, err := c.GetAllVM(ctx, &pb.Base{})
+		if err != nil {
+			fmt.Println(err)
+		}
+		for {
+			article, err := stream.Recv()
+			if err == io.EOF {
+				break
+			}
+			if err != nil {
+				fmt.Println(err)
+			}
+			s := strings.Split(article.Vmname, "-")
+			if s[0] == strconv.Itoa(groupid) && s[2] == vmname {
+				return node.IP, int(article.Option.GetVnc())
+			}
+		}
+	}
+	return "0", 0
 }
 
 func GetAllVMData(group string) []VMDataStruct {
