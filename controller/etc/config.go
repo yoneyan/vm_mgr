@@ -3,6 +3,7 @@ package etc
 import (
 	"encoding/json"
 	"io/ioutil"
+	"strconv"
 )
 
 type Config struct {
@@ -10,15 +11,16 @@ type Config struct {
 }
 
 type ControllerData struct {
-	IP string `json:"ip"`
+	IP   string `json:"ip"`
+	Port int    `json:"port"`
 }
 
-func GetControllerIP() string {
+func GetControllerIP() (string, string) {
 	file, err := ioutil.ReadFile("./config.json")
 	if err != nil {
 		panic(err)
 	}
 	var config Config
 	json.Unmarshal(file, &config)
-	return config.Controller.IP
+	return config.Controller.IP, strconv.Itoa(config.Controller.Port)
 }

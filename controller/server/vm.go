@@ -299,6 +299,8 @@ func (s *server) GetVM(ctx context.Context, in *pb.VMID) (*pb.VMData, error) {
 	groupid, _ := strconv.Atoi(data[0])
 	group, _ := db.GetDBGroup(groupid)
 
+	ip, port := etc.GetControllerIP()
+
 	// URL: /console/vnc.html?host=localhost&port=8081&path=api/[groupuuid]/[vmname]/vnc
 	return &pb.VMData{
 		Node:    int32(nodeId),
@@ -310,7 +312,7 @@ func (s *server) GetVM(ctx context.Context, in *pb.VMID) (*pb.VMData, error) {
 		Option: &pb.Option{
 			Vnc:       r.Option.GetVnc(),
 			Id:        in.GetId(),
-			Vncurl:    "/console/vnc.html?host=" + etc.GetControllerIP() + "&port=8081&path=api/" + group.UUID + "/" + r.GetVmname() + "/vnc",
+			Vncurl:    "/console/vnc.html?host=" + ip + "&port=" + port + "&path=api/" + group.UUID + "/" + r.GetVmname() + "/vnc",
 			Autostart: r.Option.GetAutostart(),
 			Status:    r.Option.GetStatus(),
 		},
