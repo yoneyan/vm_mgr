@@ -11,5 +11,5 @@ func VNCProxy() {
 	e.Use(middleware.Recover())
 	e.GET("/api/:uuid/:vmname/vnc", WebSocketProxy())
 
-	e.Start("0.0.0.0:8080")
+	e.Start("0.0.0.0:8081")
 }

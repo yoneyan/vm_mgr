@@ -85,6 +85,9 @@ func CheckMaxSpec(d *pb.VMData, s []VMDataStruct) bool {
 	return false
 }
 
+//
+// Issue #28
+//
 func GetVNCVMData(groupid int, vmname string) (string, int) {
 	for _, node := range db.GetDBAllNode() {
 		conn, err := grpc.Dial(node.IP, grpc.WithInsecure(), grpc.WithBlock())
@@ -109,9 +112,10 @@ func GetVNCVMData(groupid int, vmname string) (string, int) {
 			if err != nil {
 				fmt.Println(err)
 			}
+			ip := strings.Split(node.IP, ":")
 			s := strings.Split(article.Vmname, "-")
-			if s[0] == strconv.Itoa(groupid) && s[2] == vmname {
-				return node.IP, int(article.Option.GetVnc())
+			if s[0] == strconv.Itoa(groupid) && article.Vmname == vmname {
+				return ip[0], int(article.Option.GetVnc())
 			}
 		}
 	}

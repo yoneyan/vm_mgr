@@ -11,6 +11,8 @@ import (
 	"net/url"
 )
 
+const vncwebsocketport = 7000
+
 func WebSocketProxy() func(echo.Context) error {
 	return func(c echo.Context) error {
 		uuid := c.Param("uuid")
@@ -29,7 +31,7 @@ func WebSocketProxy() func(echo.Context) error {
 
 		u := &url.URL{
 			Scheme: "ws",
-			Host:   fmt.Sprintf("%s:%d", nodeip, port+7000),
+			Host:   fmt.Sprintf("%s:%d", nodeip, port+vncwebsocketport),
 			Path:   "/",
 		}
 		fmt.Println(u)
