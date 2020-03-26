@@ -22,6 +22,6 @@ func main() {
 	e.GET("/api/:port/vnc", vnc.WebSocketProxy())
 	e.GET("/console/*", echo.WrapHandler(http.StripPrefix("/", http.FileServer(statikFs))))
 
-	e.Start("0.0.0.0:8080")
+	e.Start("0.0.0.0:80")
 
 }
