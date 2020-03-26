@@ -1,6 +1,7 @@
 import {Injectable} from '@angular/core';
 import {HttpClient, HttpHeaders} from "@angular/common/http";
 import {AuthService} from "./auth/auth.service";
+import {environment} from "../../environments/environment";
 
 @Injectable({
   providedIn: 'root'
@@ -12,7 +13,7 @@ export class VmService {
   }
 
   public getUserVM(): Promise<any> {
-    let url: string = "http://localhost:8080/api/v1/vm"
+    let url: string = "http://" + environment.APIHostIP + ":8080/api/v1/vm"
     const httpOptions = {
       headers: new HttpHeaders({
         'Content-Type': 'application/json',
@@ -29,7 +30,7 @@ export class VmService {
   }
 
   public getVM(id): Promise<any> {
-    let url: string = "http://localhost:8080/api/v1/vm/" + id
+    let url: string = "http://" + environment.APIHostIP + ":8080/api/v1/vm/" + id
     const httpOptions = {
       headers: new HttpHeaders({
         'Content-Type': 'application/json',
@@ -46,7 +47,7 @@ export class VmService {
   }
 
   public startVM(id): Promise<any> {
-    let url: string = "http://localhost:8080/api/v1/vm/" + id + "/power"
+    let url: string = "http://" + environment.APIHostIP + ":8080/api/v1/vm/" + id + "/power"
     const httpOptions = {
       headers: new HttpHeaders({
         'Content-Type': 'application/json',
@@ -64,7 +65,7 @@ export class VmService {
   }
 
   public stopVM(id): Promise<any> {
-    let url: string = "http://localhost:8080/api/v1/vm/" + id + "/power"
+    let url: string = "http://" + environment.APIHostIP + ":8080/api/v1/vm/" + id + "/power"
     const httpOptions = {
       headers: new HttpHeaders({
         'Content-Type': 'application/json',
@@ -83,7 +84,7 @@ export class VmService {
   }
 
   public shutdownVM(id): Promise<any> {
-    let url: string = "http://localhost:8080/api/v1/vm/" + id + "/power"
+    let url: string = "http://" + environment.APIHostIP + ":8080/api/v1/vm/" + id + "/power"
     const httpOptions = {
       headers: new HttpHeaders({
         'Content-Type': 'application/json',
@@ -102,7 +103,7 @@ export class VmService {
   }
 
   public resetVM(id): Promise<any> {
-    let url: string = "http://localhost:8080/api/v1/vm/" + id + "/reset"
+    let url: string = "http://" + environment.APIHostIP + ":8080/api/v1/vm/" + id + "/reset"
     const httpOptions = {
       headers: new HttpHeaders({
         'Content-Type': 'application/json',
@@ -121,7 +122,7 @@ export class VmService {
   }
 
   public pauseVM(id): Promise<any> {
-    let url: string = "http://localhost:8080/api/v1/vm/" + id + "/pause"
+    let url: string = "http://" + environment.APIHostIP + ":8080/api/v1/vm/" + id + "/pause"
     const httpOptions = {
       headers: new HttpHeaders({
         'Content-Type': 'application/json',
@@ -139,7 +140,7 @@ export class VmService {
   }
 
   public resumeVM(id): Promise<any> {
-    let url: string = "http://localhost:8080/api/v1/vm/" + id + "/pause"
+    let url: string = "http://" + environment.APIHostIP + ":8080/api/v1/vm/" + id + "/pause"
     const httpOptions = {
       headers: new HttpHeaders({
         'Content-Type': 'application/json',

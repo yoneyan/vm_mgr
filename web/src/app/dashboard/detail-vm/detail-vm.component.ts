@@ -15,6 +15,7 @@ export class DetailVMComponent implements OnInit {
     private location: Location,
     private vm: VmService,) {
   }
+
   public vmdata: VMData;
 
   ngOnInit(): void {
@@ -58,6 +59,8 @@ interface VMData {
   name: string
   cpu: string
   mem: string
+  net: string
+  vncurl: string
   status: string
   autostart: boolean
 

@@ -1,7 +1,7 @@
 import {Injectable} from '@angular/core';
 import {HttpClient, HttpHeaders} from "@angular/common/http";
 import {Router} from "@angular/router";
-import {resetFakeAsyncZone} from "@angular/core/testing";
+import {environment} from '../../../environments/environment';
 
 @Injectable({
   providedIn: 'root'
@@ -23,7 +23,7 @@ export class AuthService {
     headers: new HttpHeaders("application/json")
   }
 
-  private result:string
+  private result: string
 
 
   public verifyUser(data: any): string {
@@ -34,8 +34,7 @@ export class AuthService {
     console.log("user: " + body.user)
     console.log("pass: " + body.pass)
 
-
-    this.http.post('http://localhost:8080/api/v1/token', body, this.defalutHttpOptions)
+    this.http.post('http://' + environment.APIHostIP + ':8080/api/v1/token', body, this.defalutHttpOptions)
       .toPromise()
       .then((result: any) => {
         if (result.result === true) {
@@ -46,12 +45,12 @@ export class AuthService {
           console.log("Auth OK")
           console.log("Token: " + result.token)
           this.isLogin = true
-          return location.href="/dashboard"
+          return location.href = "/dashboard"
           // return this.router.navigate(['/'])
         } else {
           this.r = false
           console.log("Auth NG")
-          this.result =  "Wrong username or password !!"
+          this.result = "Wrong username or password !!"
           // Promise.reject(false)
         }
       })
@@ -66,7 +65,7 @@ export class AuthService {
     localStorage.removeItem("userid")
     localStorage.removeItem("id_token")
     this.isLogin = false
-    this.router.navigate([ '/logout' ]);
+    this.router.navigate(['/logout']);
   }
 
   public tokenCheck(): Promise<boolean> {
@@ -77,28 +76,28 @@ export class AuthService {
         // 'Accept': '*/*',
       })
     }
-    const body: any = {
-    };
-    return this.http.post('http://localhost:8080/api/v1/token/check', body, httpOptions)
+    const body: any = {};
+
+    return this.http.post('http://' + environment.APIHostIP + ':8080/api/v1/token/check', body, httpOptions)
       .toPromise()
       .then((res) => {
         const response: any = res;
         console.log(response)
         return response.result
       })
-      .catch((err)=> {
-        console.log('Error occured.', err);
-        // return Promise.reject(err.message || err);
-        return false
-      }
-  )
+      .catch((err) => {
+          console.log('Error occured.', err);
+          // return Promise.reject(err.message || err);
+          return false
+        }
+      )
   }
 
   loginCheck(): boolean {
     return this.isLogin
   }
 
-  getAuthUser(): string{
+  getAuthUser(): string {
     return localStorage.getItem("user")
   }
 
