@@ -3,6 +3,7 @@ package client
 import (
 	"context"
 	"fmt"
+	"github.com/yoneyan/vm_mgr/ggate/etc"
 	pb "github.com/yoneyan/vm_mgr/proto/proto-go"
 	"google.golang.org/grpc"
 	"io"
@@ -312,6 +313,15 @@ func GetVMClient(id, token string) VMDataResult {
 	if err != nil {
 		log.Println("could not greet: %v", err)
 	}
+
+	isHttps, domain := etc.GetDomain()
+
+	if isHttps {
+		domain = "https://" + domain
+	} else {
+		domain = "http://" + domain
+	}
+
 	return VMDataResult{
 		NodeID:    int(r.Node),
 		ID:        int(r.Option.Id),
@@ -320,7 +330,7 @@ func GetVMClient(id, token string) VMDataResult {
 		Mem:       int(r.Vmem),
 		Net:       r.Vnet,
 		Storage:   r.Option.StoragePath,
-		VNCUrl:    r.Option.Vncurl,
+		VNCUrl:    domain + r.Option.Vncurl,
 		AutoStart: r.Option.Autostart,
 		Status:    int(r.Option.Status),
 	}
