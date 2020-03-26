@@ -18,6 +18,8 @@ type VMDataResult struct {
 	CPU       int    `json:"cpu"`
 	Mem       int    `json:"mem"`
 	Net       string `json:"net"`
+	Storage   string `json:"net"`
+	VNCUrl    string `json:"vncurl"`
 	AutoStart bool   `json:"autostart"`
 	Status    int    `json:"status"`
 }
@@ -309,6 +311,8 @@ func GetVMClient(id, token string) VMDataResult {
 		CPU:       int(r.Vcpu),
 		Mem:       int(r.Vmem),
 		Net:       r.Vnet,
+		Storage:   r.Option.StoragePath,
+		VNCUrl:    r.Option.Vncurl,
 		AutoStart: r.Option.Autostart,
 		Status:    int(r.Option.Status),
 	}
