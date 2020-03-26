@@ -71,10 +71,19 @@ func (s *server) GetNode(d *pb.Base, stream pb.Grpc_GetNodeServer) error {
 	log.Println("Receive AuthUser : " + d.GetUser() + ", AuthPass: " + d.GetPass())
 	log.Println("Receive Token     : " + d.GetToken())
 
-	if data.AdminUserCertification(d.GetUser(), d.GetPass(), d.GetToken()) == false {
-		fmt.Println("Administrator certification failed!!!")
+	isAdmin := false
+
+	if data.AdminUserCertification(d.GetUser(), d.GetPass(), d.GetToken()) {
+		isAdmin = true
+	}
+
+	_, _, r := data.TokenCertification(d.GetToken())
+	if r == false {
+		fmt.Println("Auth Failed...")
 		return nil
 	}
+	fmt.Println("Administrator certification failed!!!")
+	return nil
 	result := db.GetDBAllNode()
 	fmt.Println(result)
 	var OnlyAdmin bool
@@ -84,19 +93,29 @@ func (s *server) GetNode(d *pb.Base, stream pb.Grpc_GetNodeServer) error {
 		} else {
 			OnlyAdmin = false
 		}
-		if err := stream.Send(&pb.NodeData{
-			NodeID:    int32(a.ID),
-			Hostname:  a.HostName,
-			IP:        a.IP,
-			Path:      a.Path,
-			OnlyAdmin: OnlyAdmin,
-			Status:    int32(a.Status),
-			Sepc: &pb.SpecData{
-				Maxcpu: int32(a.MaxCPU),
-				Maxmem: int32(a.MaxMem),
-			},
-		}); err != nil {
-			return err
+		if OnlyAdmin == isAdmin {
+			if err := stream.Send(&pb.NodeData{
+				NodeID:    int32(a.ID),
+				Hostname:  a.HostName,
+				IP:        a.IP,
+				Path:      a.Path,
+				OnlyAdmin: OnlyAdmin,
+				Status:    int32(a.Status),
+				Sepc: &pb.SpecData{
+					Maxcpu: int32(a.MaxCPU),
+					Maxmem: int32(a.MaxMem),
+				},
+			}); err != nil {
+				return err
+			}
+		} else {
+			if err := stream.Send(&pb.NodeData{
+				NodeID:    int32(a.ID),
+				Hostname:  a.HostName,
+				OnlyAdmin: OnlyAdmin,
+			}); err != nil {
+				return err
+			}
 		}
 	}
 	return nil

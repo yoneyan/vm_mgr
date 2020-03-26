@@ -317,3 +317,21 @@ func StandardUserVMCertification(d *UserCertData) (string, bool) {
 	}
 	return "", false
 }
+
+func GetUserName(name, token string) string {
+	if token != "" {
+		tokendata, result := db.GetDBToken(token)
+		if result == false {
+			fmt.Println("Error: Token Get Error 1")
+			return ""
+		}
+
+		userdata, result := db.GetDBUser(tokendata.Userid)
+		if result == false {
+			fmt.Println("Error: Token Get Error 2")
+			return ""
+		}
+		name = userdata.Name
+	}
+	return name
+}

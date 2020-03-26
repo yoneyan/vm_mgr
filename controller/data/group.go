@@ -161,6 +161,7 @@ func SearchUserForAllGroup(user string) ([]int, bool) {
 	}
 	return resultarray, true
 }
+
 func SearchUserForAdminGroup(user string) ([]int, bool) {
 	data := db.GetDBAllGroup()
 	fmt.Println(data)
