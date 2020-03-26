@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"github.com/yoneyan/vm_mgr/controller/data"
 	"github.com/yoneyan/vm_mgr/controller/db"
+	"github.com/yoneyan/vm_mgr/controller/etc"
 	pb "github.com/yoneyan/vm_mgr/proto/proto-go"
 	"google.golang.org/grpc"
 	"io"
@@ -298,6 +299,7 @@ func (s *server) GetVM(ctx context.Context, in *pb.VMID) (*pb.VMData, error) {
 	groupid, _ := strconv.Atoi(data[0])
 	group, _ := db.GetDBGroup(groupid)
 
+	// URL: /console/vnc.html?host=localhost&port=8081&path=api/[groupuuid]/[vmname]/vnc
 	return &pb.VMData{
 		Node:    int32(nodeId),
 		Vmname:  r.GetVmname(),
@@ -308,7 +310,7 @@ func (s *server) GetVM(ctx context.Context, in *pb.VMID) (*pb.VMData, error) {
 		Option: &pb.Option{
 			Vnc:       r.Option.GetVnc(),
 			Id:        in.GetId(),
-			Vncurl:    "/api/" + group.UUID + "/" + r.GetVmname() + "/vnc",
+			Vncurl:    "/console/vnc.html?host=" + etc.GetControllerIP() + "&port=8081&path=api/" + group.UUID + "/" + r.GetVmname() + "/vnc",
 			Autostart: r.Option.GetAutostart(),
 			Status:    r.Option.GetStatus(),
 		},
