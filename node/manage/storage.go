@@ -127,14 +127,14 @@ func DeleteStorage(s *Storage) error {
 	return fmt.Errorf("File not exits!!")
 }
 
-func ResizeStorage(s *Storage, soon bool) error {
+func ResizeStorage(s *Storage) error {
 	//qemu-img resize filename size
 
 	var cmd []string
 
 	cmd = append(cmd, "qemu-img")
 	cmd = append(cmd, "resize")
-	cmd = append(cmd, etc.GeneratePath(s.Path, s.Name)+".img")
+	cmd = append(cmd, s.Path)
 	cmd = append(cmd, strconv.Itoa(s.Size)+"M")
 
 	RunStorageCmd(cmd)

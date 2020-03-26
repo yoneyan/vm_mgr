@@ -8,6 +8,7 @@ import (
 	"github.com/yoneyan/vm_mgr/node/manage"
 	pb "github.com/yoneyan/vm_mgr/proto/proto-go"
 	"log"
+	"strconv"
 	"strings"
 )
 
@@ -25,9 +26,13 @@ type CreateVMInformation struct {
 }
 
 func CreateAutoVMProcess(c *pb.VMData) (string, bool) {
-	if etc.FileCopy(etc.GetImagePath()+"/"+c.Image.GetPath(), manage.GetMainStorage(c)) == false {
+	path := manage.GetMainStorage(c)
+	if etc.FileCopy(etc.GetImagePath()+"/"+c.Image.GetPath(), path) == false {
 		return "File Copy Failed...", false
 	}
+	s := strings.Split(c.Storage, ",")
+	size, _ := strconv.Atoi(s[0])
+	manage.ResizeStorage(&manage.Storage{Path: manage.GetMainStorage(c), Size: size})
 
 	var r CreateVMInformation
 
