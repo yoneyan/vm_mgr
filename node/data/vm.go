@@ -158,7 +158,10 @@ func (s *server) GetAllVM(base *pb.Base, stream pb.Grpc_GetAllVMServer) error {
 	fmt.Println(db.VMDBGetAll())
 	result := db.VMDBGetAll()
 	for _, a := range result {
-		if err := stream.Send(&pb.VMData{Option: &pb.Option{Id: int64(a.ID), Autostart: a.AutoStart, Status: int32(a.Status)}, Vmname: a.Name, Vcpu: int64(a.CPU), Vmem: int64(a.Mem), Vnet: a.Net, Storage: a.Storage}); err != nil {
+		if err := stream.Send(&pb.VMData{Option: &pb.Option{
+			Vnc: int32(a.Vnc), Id: int64(a.ID), Autostart: a.AutoStart, Status: int32(a.Status),
+			StoragePath: a.StoragePath},
+			Vmname: a.Name, Vcpu: int64(a.CPU), Vmem: int64(a.Mem), Vnet: a.Net, Storage: a.Storage}); err != nil {
 			return err
 		}
 	}
