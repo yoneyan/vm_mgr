@@ -18,7 +18,7 @@ type VMDataResult struct {
 	CPU       int    `json:"cpu"`
 	Mem       int    `json:"mem"`
 	Net       string `json:"net"`
-	Storage   string `json:"net"`
+	Storage   string `json:"storage"`
 	VNCUrl    string `json:"vncurl"`
 	AutoStart bool   `json:"autostart"`
 	Status    int    `json:"status"`
@@ -266,17 +266,25 @@ func GetUserVMClient(token string) []VMDataResult {
 	var data []VMDataResult
 
 	for {
-		article, err := stream.Recv()
+		r, err := stream.Recv()
 		if err == io.EOF {
 			break
 		}
 		if err != nil {
 			log.Fatal(err)
 		}
-
-		tmp := VMDataResult{int(article.Node), int(article.Option.Id), article.Vmname,
-			int(article.Vcpu), int(article.Vmem), article.Vnet,
-			article.Option.Autostart, int(article.Option.Status)}
+		tmp := VMDataResult{
+			NodeID:    int(r.GetNode()),
+			ID:        int(r.Option.GetId()),
+			Name:      r.Vmname,
+			CPU:       int(r.Vcpu),
+			Mem:       int(r.Vmem),
+			Net:       r.GetVnet(),
+			Storage:   r.GetStorage(),
+			VNCUrl:    r.Option.GetVncurl(),
+			AutoStart: r.Option.GetAutostart(),
+			Status:    int(r.Option.GetStatus()),
+		}
 		data = append(data, tmp)
 	}
 	fmt.Println(data)
