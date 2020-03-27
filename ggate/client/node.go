@@ -40,7 +40,7 @@ func GetNode(token string) []NodeDataStruct {
 			break
 		}
 		if err != nil {
-			log.Fatal(err)
+			log.Println(err)
 		}
 
 		tmp := NodeDataStruct{ID: int(d.NodeID), HostName: d.Hostname, IsAdmin: d.OnlyAdmin}
