@@ -8,34 +8,64 @@ kvm management tool :computer:
 
 VMを管理するという意味を込めてvm_mgrとしています。   
 
+**実装予定はGithubのProjectに載せています。**
+##必須条件
+**go v1.11**以上を推奨  
+
+go 1.10はgGate以外であれば可能だが、ggateはgo 1.11以上である必要あり  
+使用しているパッケージ(gin)が1.11以上でないと動かないため  
+
 ## 状況
 |機能|状況|
 |---|---|
-|controller|OK(一部NG)|
-|node|OK(一部NG)|
-|client|OK(一部NG)|
+|controller|OK(おそらく)|
+|node|OK(おそらく)|
+|client|OK(おそらく)|
+|gGate|OK(VM作成やユーザ・グループ追加などを除く)|
+|nginx|Webサービス(Docker対応予定)|
+|imacon|OK(Joinのみ。SFTP経由による追加は未定)|
 現時点では基本的な機能は動作できるようになっています。  
 
 ## 特徴
-* ユーザ認証、グループ認証ffが可能
+* ユーザ認証、グループ認証が可能
 * tokenを用いた認証が可能
 * gRPCを使用
 * cliライブラリとしてspf13/cobraの使用
 
 ## 仕組み
-![vm_mgr](https://user-images.githubusercontent.com/40447529/76597729-7ac2f500-6544-11ea-9747-bef12200cdab.png)
+![vm_mgr](https://user-images.githubusercontent.com/40447529/77657892-4413c280-6fb9-11ea-941e-c45926dfe544.png)  
 
-ClientはコマンドをControllerやNodeに命令を送る部分  
-Controllerはユーザやグループやノード管理などを担う部分  
-Nodeはqemuを使って実際にVMを動かしている部分    
+|名称|内容|
+|---|---|
+|Client|コマンドによる操作|
+|Controller|ユーザやグループやノード管理など|
+|ggate|RestAPIの提供|  
+|wgate|WebGUIの提供|
+|imacon|Imageの提供|  
+|Node|VMホスト|
+
+## スケーラビリティ
+### 対応状況
+* imacon  
+* node  
+* gGate  
+* wGate
+上記の3つのシステムのみ可能  
+コントローラは現時点ではできないが、対応予定あり  
 
 ## 使用Port
+### gRPC
 |機能|ポート|
 |---|---|
+|imacon|50300/tcp|
 |Controller|50200/tcp|
 |Node| 50100/tcp|
-
-**実装予定はGithubのProjectに載せています。**
+### RestAPI
+|機能|ポート|用途|
+|---|---|---|
+|wGate|80/tcp|Webサーバ|
+|gGate|8080/tcp|RestAPI|
+|Controller|8081/tcp|WebSocket(VNC)|
 
 ## 実行
 コマンドはWikiに乗せています。(一部を除く)

@@ -10,6 +10,8 @@ import (
 //userdata
 func AddDBUser(data User) bool {
 	db := connectdb()
+	defer db.Close()
+
 	addDb, err := db.Prepare(`INSERT INTO "userdata" ("name","pass") VALUES (?,?)`)
 	if err != nil {
 		fmt.Println(err)
@@ -26,6 +28,8 @@ func AddDBUser(data User) bool {
 
 func RemoveDBUser(name string) bool {
 	db := connectdb()
+	defer db.Close()
+
 	deleteDb := "DELETE FROM userdata WHERE name = ?"
 	_, err := db.Exec(deleteDb, name)
 	if err != nil {
@@ -37,6 +41,8 @@ func RemoveDBUser(name string) bool {
 
 func PassAuthDBUser(name, pass string) bool {
 	db := connectdb()
+	defer db.Close()
+
 	var hash string
 	if err := db.QueryRow("SELECT pass FROM userdata WHERE name = ?", name).Scan(&hash); err != nil {
 		fmt.Println(err)
@@ -48,6 +54,7 @@ func PassAuthDBUser(name, pass string) bool {
 
 func GetDBUserID(name string) (int, bool) {
 	db := connectdb()
+	defer db.Close()
 
 	var id int
 	if err := db.QueryRow("SELECT id FROM userdata WHERE name = ?", name).Scan(&id); err != nil {
@@ -60,6 +67,8 @@ func GetDBUserID(name string) (int, bool) {
 
 func GetDBUser(id int) (User, bool) {
 	db := connectdb()
+	defer db.Close()
+
 	rows := db.QueryRow("SELECT * FROM userdata WHERE id = ?", id)
 
 	var b User
@@ -79,8 +88,8 @@ func GetDBUser(id int) (User, bool) {
 }
 
 func GetDBAllUser() []User {
-
 	db := *connectdb()
+	defer db.Close()
 
 	rows, err := db.Query("SELECT * FROM userdata")
 	if err != nil {
@@ -102,6 +111,7 @@ func GetDBAllUser() []User {
 
 func ChangeDBUserName(id int, data string) bool {
 	db := connectdb()
+	defer db.Close()
 
 	dbdata := "UPDATE userdata SET user = ? WHERE id = ?"
 	_, err := db.Exec(dbdata, data, id)
@@ -116,6 +126,7 @@ func ChangeDBUserName(id int, data string) bool {
 
 func ChangeDBUserPassword(id int, data string) bool {
 	db := connectdb()
+	defer db.Close()
 
 	dbdata := "UPDATE userdata SET pass = ? WHERE id = ?"
 	_, err := db.Exec(dbdata, etc.Hashgenerate(data), id)

@@ -12,38 +12,41 @@ import (
 
 func (s *server) CreateVM(ctx context.Context, in *pb.VMData) (*pb.Result, error) {
 	fmt.Println("----------CreateVM-----")
-	log.Printf("Receive VMID: %v", in.GetOption().GetId())
-	log.Printf("Receive name: %v", in.GetVmname())
-	log.Printf("Receive cpu: %v", in.GetVcpu())
-	log.Printf("Receive mem: %v", in.GetVmem())
-	log.Printf("Receive StoragePath: %v", in.GetOption().StoragePath)
-	log.Printf("Receive Storage: %v", in.GetStorage())
-	log.Printf("Receive CDROM: %v", in.GetCdrom())
-	log.Printf("Receive vnc: %v", in.GetOption().Vnc)
-	log.Printf("Receive net: %v", in.GetVnet())
-	log.Printf("Receive change: %v", in.GetOption().Autostart)
+	log.Printf("Receive VMID        : %v", in.GetOption().GetId())
+	log.Printf("Receive Type        : %v", in.GetType())
+	log.Printf("Receive name        : %v", in.GetVmname())
+	log.Printf("Receive cpu         : %v", in.GetVcpu())
+	log.Printf("Receive mem         : %v", in.GetVmem())
+	log.Printf("Receive StoragePath : %v", in.GetOption().StoragePath)
+	log.Printf("Receive Storage     : %v", in.GetStorage())
+	log.Printf("Receive CDROM       : %v", in.GetCdrom())
+	log.Printf("Receive vnc         : %v", in.GetOption().Vnc)
+	log.Printf("Receive net         : %v", in.GetVnet())
+	log.Printf("Receive autostart   : %v", in.GetOption().Autostart)
 	var r vm.CreateVMInformation
 
 	r.ID = int(in.GetOption().Id)
 	r.Name = in.GetVmname()
 	r.CPU = int(in.GetVcpu())
 	r.Mem = int(in.GetVmem())
-	r.StoragePath = in.GetOption().StoragePath
+	r.Storage = in.GetStorage()
 	r.CDROM = in.GetOption().CdromPath
 	r.Net = in.GetVnet()
 	r.VNC = int(in.GetOption().Vnc)
 	r.AutoStart = in.GetOption().Autostart
 
-	if manage.FileExistsCheck(in.GetOption().StoragePath+"/"+in.GetVmname()+".img") == false {
-		fmt.Println("Not storage file exists")
-		storage := manage.Storage{
-			Path:   in.GetOption().StoragePath,
-			Name:   in.GetVmname(),
-			Format: "qcow2",
-			Size:   int(in.GetStorage()),
-		}
-		manage.CreateStorage(&storage)
+	if manage.InputCheck(in.Option.GetStoragePath(), r.Storage) == false {
+		return &pb.Result{Status: false, Info: "Input Error!!"}, nil
 	}
+
+	//
+	if in.GetType()%10 == 1 {
+		//Disk copy process
+		go vm.CreateAutoVMProcess(in)
+		return &pb.Result{Status: true, Info: "Add process.. wait...."}, nil
+	}
+
+	r.StoragePath = manage.StorageProcess(in)
 
 	info, result := vm.CreateVMProcess(&r)
 	if result {
@@ -104,6 +107,7 @@ func (s *server) GetVM(ctx context.Context, in *pb.VMID) (*pb.VMData, error) {
 			Vnc:         int32(result.Vnc),
 			Id:          int64(result.ID),
 			Autostart:   result.AutoStart,
+			Status:      int32(result.Status),
 		},
 		Vmname: result.Name,
 		Vcpu:   int64(result.CPU),
@@ -133,10 +137,11 @@ func (s *server) GetVMName(ctx context.Context, in *pb.VMName) (*pb.VMData, erro
 			Id:          int64(result.ID),
 			Autostart:   result.AutoStart,
 		},
-		Vmname: result.Name,
-		Vcpu:   int64(result.CPU),
-		Vmem:   int64(result.Mem),
-		Vnet:   result.Net,
+		Vmname:  result.Name,
+		Vcpu:    int64(result.CPU),
+		Vmem:    int64(result.Mem),
+		Vnet:    result.Net,
+		Storage: result.Storage,
 	}, nil
 }
 
@@ -153,7 +158,10 @@ func (s *server) GetAllVM(base *pb.Base, stream pb.Grpc_GetAllVMServer) error {
 	fmt.Println(db.VMDBGetAll())
 	result := db.VMDBGetAll()
 	for _, a := range result {
-		if err := stream.Send(&pb.VMData{Option: &pb.Option{Id: int64(a.ID), Autostart: a.AutoStart, Status: int32(a.Status)}, Vmname: a.Name, Vcpu: int64(a.CPU), Vmem: int64(a.Mem), Vnet: a.Net}); err != nil {
+		if err := stream.Send(&pb.VMData{Option: &pb.Option{
+			Vnc: int32(a.Vnc), Id: int64(a.ID), Autostart: a.AutoStart, Status: int32(a.Status),
+			StoragePath: a.StoragePath},
+			Vmname: a.Name, Vcpu: int64(a.CPU), Vmem: int64(a.Mem), Vnet: a.Net, Storage: a.Storage}); err != nil {
 			return err
 		}
 	}

@@ -61,6 +61,9 @@ type Base struct {
 	Group                string   `protobuf:"bytes,3,opt,name=group,proto3" json:"group,omitempty"`
 	Token                string   `protobuf:"bytes,4,opt,name=token,proto3" json:"token,omitempty"`
 	Result               bool     `protobuf:"varint,5,opt,name=result,proto3" json:"result,omitempty"`
+	Userid               int32    `protobuf:"varint,6,opt,name=userid,proto3" json:"userid,omitempty"`
+	Groupid              int32    `protobuf:"varint,7,opt,name=groupid,proto3" json:"groupid,omitempty"`
+	Isadmin              bool     `protobuf:"varint,8,opt,name=isadmin,proto3" json:"isadmin,omitempty"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
 	XXX_unrecognized     []byte   `json:"-"`
 	XXX_sizecache        int32    `json:"-"`
@@ -126,9 +129,32 @@ func (m *Base) GetResult() bool {
 	return false
 }
 
+func (m *Base) GetUserid() int32 {
+	if m != nil {
+		return m.Userid
+	}
+	return 0
+}
+
+func (m *Base) GetGroupid() int32 {
+	if m != nil {
+		return m.Groupid
+	}
+	return 0
+}
+
+func (m *Base) GetIsadmin() bool {
+	if m != nil {
+		return m.Isadmin
+	}
+	return false
+}
+
 type AuthResult struct {
 	Token                string   `protobuf:"bytes,1,opt,name=token,proto3" json:"token,omitempty"`
-	Result               bool     `protobuf:"varint,2,opt,name=result,proto3" json:"result,omitempty"`
+	Name                 string   `protobuf:"bytes,2,opt,name=name,proto3" json:"name,omitempty"`
+	Id                   int32    `protobuf:"varint,3,opt,name=id,proto3" json:"id,omitempty"`
+	Result               bool     `protobuf:"varint,4,opt,name=result,proto3" json:"result,omitempty"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
 	XXX_unrecognized     []byte   `json:"-"`
 	XXX_sizecache        int32    `json:"-"`
@@ -166,11 +192,302 @@ func (m *AuthResult) GetToken() string {
 	return ""
 }
 
+func (m *AuthResult) GetName() string {
+	if m != nil {
+		return m.Name
+	}
+	return ""
+}
+
+func (m *AuthResult) GetId() int32 {
+	if m != nil {
+		return m.Id
+	}
+	return 0
+}
+
 func (m *AuthResult) GetResult() bool {
 	if m != nil {
 		return m.Result
 	}
 	return false
+}
+
+type ImageResult struct {
+	Percent              int32    `protobuf:"varint,1,opt,name=percent,proto3" json:"percent,omitempty"`
+	Result               bool     `protobuf:"varint,2,opt,name=result,proto3" json:"result,omitempty"`
+	Info                 string   `protobuf:"bytes,3,opt,name=info,proto3" json:"info,omitempty"`
+	Uuid                 string   `protobuf:"bytes,4,opt,name=uuid,proto3" json:"uuid,omitempty"`
+	Path                 string   `protobuf:"bytes,5,opt,name=path,proto3" json:"path,omitempty"`
+	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_unrecognized     []byte   `json:"-"`
+	XXX_sizecache        int32    `json:"-"`
+}
+
+func (m *ImageResult) Reset()         { *m = ImageResult{} }
+func (m *ImageResult) String() string { return proto.CompactTextString(m) }
+func (*ImageResult) ProtoMessage()    {}
+func (*ImageResult) Descriptor() ([]byte, []int) {
+	return fileDescriptor_bedfbfc9b54e5600, []int{3}
+}
+
+func (m *ImageResult) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_ImageResult.Unmarshal(m, b)
+}
+func (m *ImageResult) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_ImageResult.Marshal(b, m, deterministic)
+}
+func (m *ImageResult) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_ImageResult.Merge(m, src)
+}
+func (m *ImageResult) XXX_Size() int {
+	return xxx_messageInfo_ImageResult.Size(m)
+}
+func (m *ImageResult) XXX_DiscardUnknown() {
+	xxx_messageInfo_ImageResult.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_ImageResult proto.InternalMessageInfo
+
+func (m *ImageResult) GetPercent() int32 {
+	if m != nil {
+		return m.Percent
+	}
+	return 0
+}
+
+func (m *ImageResult) GetResult() bool {
+	if m != nil {
+		return m.Result
+	}
+	return false
+}
+
+func (m *ImageResult) GetInfo() string {
+	if m != nil {
+		return m.Info
+	}
+	return ""
+}
+
+func (m *ImageResult) GetUuid() string {
+	if m != nil {
+		return m.Uuid
+	}
+	return ""
+}
+
+func (m *ImageResult) GetPath() string {
+	if m != nil {
+		return m.Path
+	}
+	return ""
+}
+
+type ImageTransferData struct {
+	Ip                   string     `protobuf:"bytes,1,opt,name=ip,proto3" json:"ip,omitempty"`
+	Port                 string     `protobuf:"bytes,2,opt,name=port,proto3" json:"port,omitempty"`
+	Path                 string     `protobuf:"bytes,3,opt,name=path,proto3" json:"path,omitempty"`
+	Image                *ImageData `protobuf:"bytes,4,opt,name=image,proto3" json:"image,omitempty"`
+	XXX_NoUnkeyedLiteral struct{}   `json:"-"`
+	XXX_unrecognized     []byte     `json:"-"`
+	XXX_sizecache        int32      `json:"-"`
+}
+
+func (m *ImageTransferData) Reset()         { *m = ImageTransferData{} }
+func (m *ImageTransferData) String() string { return proto.CompactTextString(m) }
+func (*ImageTransferData) ProtoMessage()    {}
+func (*ImageTransferData) Descriptor() ([]byte, []int) {
+	return fileDescriptor_bedfbfc9b54e5600, []int{4}
+}
+
+func (m *ImageTransferData) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_ImageTransferData.Unmarshal(m, b)
+}
+func (m *ImageTransferData) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_ImageTransferData.Marshal(b, m, deterministic)
+}
+func (m *ImageTransferData) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_ImageTransferData.Merge(m, src)
+}
+func (m *ImageTransferData) XXX_Size() int {
+	return xxx_messageInfo_ImageTransferData.Size(m)
+}
+func (m *ImageTransferData) XXX_DiscardUnknown() {
+	xxx_messageInfo_ImageTransferData.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_ImageTransferData proto.InternalMessageInfo
+
+func (m *ImageTransferData) GetIp() string {
+	if m != nil {
+		return m.Ip
+	}
+	return ""
+}
+
+func (m *ImageTransferData) GetPort() string {
+	if m != nil {
+		return m.Port
+	}
+	return ""
+}
+
+func (m *ImageTransferData) GetPath() string {
+	if m != nil {
+		return m.Path
+	}
+	return ""
+}
+
+func (m *ImageTransferData) GetImage() *ImageData {
+	if m != nil {
+		return m.Image
+	}
+	return nil
+}
+
+type ImageData struct {
+	Id                   int32    `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
+	Path                 string   `protobuf:"bytes,2,opt,name=path,proto3" json:"path,omitempty"`
+	Name                 string   `protobuf:"bytes,3,opt,name=name,proto3" json:"name,omitempty"`
+	Tag                  string   `protobuf:"bytes,4,opt,name=tag,proto3" json:"tag,omitempty"`
+	Type                 int32    `protobuf:"varint,5,opt,name=type,proto3" json:"type,omitempty"`
+	Capacity             int64    `protobuf:"varint,6,opt,name=capacity,proto3" json:"capacity,omitempty"`
+	Addtime              int64    `protobuf:"varint,7,opt,name=addtime,proto3" json:"addtime,omitempty"`
+	Minmem               int32    `protobuf:"varint,8,opt,name=minmem,proto3" json:"minmem,omitempty"`
+	Authority            int32    `protobuf:"varint,9,opt,name=authority,proto3" json:"authority,omitempty"`
+	Filename             string   `protobuf:"bytes,10,opt,name=filename,proto3" json:"filename,omitempty"`
+	Uuid                 string   `protobuf:"bytes,11,opt,name=uuid,proto3" json:"uuid,omitempty"`
+	Base                 *Base    `protobuf:"bytes,12,opt,name=base,proto3" json:"base,omitempty"`
+	Imaconid             int32    `protobuf:"varint,13,opt,name=imaconid,proto3" json:"imaconid,omitempty"`
+	Raddr                string   `protobuf:"bytes,14,opt,name=raddr,proto3" json:"raddr,omitempty"`
+	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_unrecognized     []byte   `json:"-"`
+	XXX_sizecache        int32    `json:"-"`
+}
+
+func (m *ImageData) Reset()         { *m = ImageData{} }
+func (m *ImageData) String() string { return proto.CompactTextString(m) }
+func (*ImageData) ProtoMessage()    {}
+func (*ImageData) Descriptor() ([]byte, []int) {
+	return fileDescriptor_bedfbfc9b54e5600, []int{5}
+}
+
+func (m *ImageData) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_ImageData.Unmarshal(m, b)
+}
+func (m *ImageData) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_ImageData.Marshal(b, m, deterministic)
+}
+func (m *ImageData) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_ImageData.Merge(m, src)
+}
+func (m *ImageData) XXX_Size() int {
+	return xxx_messageInfo_ImageData.Size(m)
+}
+func (m *ImageData) XXX_DiscardUnknown() {
+	xxx_messageInfo_ImageData.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_ImageData proto.InternalMessageInfo
+
+func (m *ImageData) GetId() int32 {
+	if m != nil {
+		return m.Id
+	}
+	return 0
+}
+
+func (m *ImageData) GetPath() string {
+	if m != nil {
+		return m.Path
+	}
+	return ""
+}
+
+func (m *ImageData) GetName() string {
+	if m != nil {
+		return m.Name
+	}
+	return ""
+}
+
+func (m *ImageData) GetTag() string {
+	if m != nil {
+		return m.Tag
+	}
+	return ""
+}
+
+func (m *ImageData) GetType() int32 {
+	if m != nil {
+		return m.Type
+	}
+	return 0
+}
+
+func (m *ImageData) GetCapacity() int64 {
+	if m != nil {
+		return m.Capacity
+	}
+	return 0
+}
+
+func (m *ImageData) GetAddtime() int64 {
+	if m != nil {
+		return m.Addtime
+	}
+	return 0
+}
+
+func (m *ImageData) GetMinmem() int32 {
+	if m != nil {
+		return m.Minmem
+	}
+	return 0
+}
+
+func (m *ImageData) GetAuthority() int32 {
+	if m != nil {
+		return m.Authority
+	}
+	return 0
+}
+
+func (m *ImageData) GetFilename() string {
+	if m != nil {
+		return m.Filename
+	}
+	return ""
+}
+
+func (m *ImageData) GetUuid() string {
+	if m != nil {
+		return m.Uuid
+	}
+	return ""
+}
+
+func (m *ImageData) GetBase() *Base {
+	if m != nil {
+		return m.Base
+	}
+	return nil
+}
+
+func (m *ImageData) GetImaconid() int32 {
+	if m != nil {
+		return m.Imaconid
+	}
+	return 0
+}
+
+func (m *ImageData) GetRaddr() string {
+	if m != nil {
+		return m.Raddr
+	}
+	return ""
 }
 
 type TokenData struct {
@@ -189,7 +506,7 @@ func (m *TokenData) Reset()         { *m = TokenData{} }
 func (m *TokenData) String() string { return proto.CompactTextString(m) }
 func (*TokenData) ProtoMessage()    {}
 func (*TokenData) Descriptor() ([]byte, []int) {
-	return fileDescriptor_bedfbfc9b54e5600, []int{3}
+	return fileDescriptor_bedfbfc9b54e5600, []int{6}
 }
 
 func (m *TokenData) XXX_Unmarshal(b []byte) error {
@@ -258,11 +575,12 @@ type VMData struct {
 	Vmname               string   `protobuf:"bytes,3,opt,name=vmname,proto3" json:"vmname,omitempty"`
 	Vcpu                 int64    `protobuf:"varint,4,opt,name=vcpu,proto3" json:"vcpu,omitempty"`
 	Vmem                 int64    `protobuf:"varint,5,opt,name=vmem,proto3" json:"vmem,omitempty"`
-	Storagetype          int32    `protobuf:"varint,6,opt,name=storagetype,proto3" json:"storagetype,omitempty"`
-	Storage              int64    `protobuf:"varint,7,opt,name=storage,proto3" json:"storage,omitempty"`
+	Type                 int32    `protobuf:"varint,6,opt,name=type,proto3" json:"type,omitempty"`
+	Storage              string   `protobuf:"bytes,7,opt,name=storage,proto3" json:"storage,omitempty"`
 	Cdrom                string   `protobuf:"bytes,8,opt,name=cdrom,proto3" json:"cdrom,omitempty"`
 	Vnet                 string   `protobuf:"bytes,9,opt,name=vnet,proto3" json:"vnet,omitempty"`
 	Option               *Option  `protobuf:"bytes,10,opt,name=option,proto3" json:"option,omitempty"`
+	Image                *Image   `protobuf:"bytes,11,opt,name=image,proto3" json:"image,omitempty"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
 	XXX_unrecognized     []byte   `json:"-"`
 	XXX_sizecache        int32    `json:"-"`
@@ -272,7 +590,7 @@ func (m *VMData) Reset()         { *m = VMData{} }
 func (m *VMData) String() string { return proto.CompactTextString(m) }
 func (*VMData) ProtoMessage()    {}
 func (*VMData) Descriptor() ([]byte, []int) {
-	return fileDescriptor_bedfbfc9b54e5600, []int{4}
+	return fileDescriptor_bedfbfc9b54e5600, []int{7}
 }
 
 func (m *VMData) XXX_Unmarshal(b []byte) error {
@@ -328,18 +646,18 @@ func (m *VMData) GetVmem() int64 {
 	return 0
 }
 
-func (m *VMData) GetStoragetype() int32 {
+func (m *VMData) GetType() int32 {
 	if m != nil {
-		return m.Storagetype
+		return m.Type
 	}
 	return 0
 }
 
-func (m *VMData) GetStorage() int64 {
+func (m *VMData) GetStorage() string {
 	if m != nil {
 		return m.Storage
 	}
-	return 0
+	return ""
 }
 
 func (m *VMData) GetCdrom() string {
@@ -363,14 +681,22 @@ func (m *VMData) GetOption() *Option {
 	return nil
 }
 
+func (m *VMData) GetImage() *Image {
+	if m != nil {
+		return m.Image
+	}
+	return nil
+}
+
 type Option struct {
 	StoragePath          string   `protobuf:"bytes,1,opt,name=storage_path,json=storagePath,proto3" json:"storage_path,omitempty"`
 	CdromPath            string   `protobuf:"bytes,2,opt,name=cdrom_path,json=cdromPath,proto3" json:"cdrom_path,omitempty"`
 	Image                int32    `protobuf:"varint,3,opt,name=image,proto3" json:"image,omitempty"`
 	Vnc                  int32    `protobuf:"varint,4,opt,name=vnc,proto3" json:"vnc,omitempty"`
-	Id                   int64    `protobuf:"varint,5,opt,name=id,proto3" json:"id,omitempty"`
-	Autostart            bool     `protobuf:"varint,6,opt,name=autostart,proto3" json:"autostart,omitempty"`
-	Status               int32    `protobuf:"varint,7,opt,name=status,proto3" json:"status,omitempty"`
+	Vncurl               string   `protobuf:"bytes,5,opt,name=vncurl,proto3" json:"vncurl,omitempty"`
+	Id                   int64    `protobuf:"varint,6,opt,name=id,proto3" json:"id,omitempty"`
+	Autostart            bool     `protobuf:"varint,7,opt,name=autostart,proto3" json:"autostart,omitempty"`
+	Status               int32    `protobuf:"varint,8,opt,name=status,proto3" json:"status,omitempty"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
 	XXX_unrecognized     []byte   `json:"-"`
 	XXX_sizecache        int32    `json:"-"`
@@ -380,7 +706,7 @@ func (m *Option) Reset()         { *m = Option{} }
 func (m *Option) String() string { return proto.CompactTextString(m) }
 func (*Option) ProtoMessage()    {}
 func (*Option) Descriptor() ([]byte, []int) {
-	return fileDescriptor_bedfbfc9b54e5600, []int{5}
+	return fileDescriptor_bedfbfc9b54e5600, []int{8}
 }
 
 func (m *Option) XXX_Unmarshal(b []byte) error {
@@ -429,6 +755,13 @@ func (m *Option) GetVnc() int32 {
 	return 0
 }
 
+func (m *Option) GetVncurl() string {
+	if m != nil {
+		return m.Vncurl
+	}
+	return ""
+}
+
 func (m *Option) GetId() int64 {
 	if m != nil {
 		return m.Id
@@ -450,6 +783,61 @@ func (m *Option) GetStatus() int32 {
 	return 0
 }
 
+type Image struct {
+	Name                 string   `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
+	Tag                  string   `protobuf:"bytes,2,opt,name=tag,proto3" json:"tag,omitempty"`
+	Path                 string   `protobuf:"bytes,3,opt,name=path,proto3" json:"path,omitempty"`
+	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_unrecognized     []byte   `json:"-"`
+	XXX_sizecache        int32    `json:"-"`
+}
+
+func (m *Image) Reset()         { *m = Image{} }
+func (m *Image) String() string { return proto.CompactTextString(m) }
+func (*Image) ProtoMessage()    {}
+func (*Image) Descriptor() ([]byte, []int) {
+	return fileDescriptor_bedfbfc9b54e5600, []int{9}
+}
+
+func (m *Image) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_Image.Unmarshal(m, b)
+}
+func (m *Image) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_Image.Marshal(b, m, deterministic)
+}
+func (m *Image) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_Image.Merge(m, src)
+}
+func (m *Image) XXX_Size() int {
+	return xxx_messageInfo_Image.Size(m)
+}
+func (m *Image) XXX_DiscardUnknown() {
+	xxx_messageInfo_Image.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_Image proto.InternalMessageInfo
+
+func (m *Image) GetName() string {
+	if m != nil {
+		return m.Name
+	}
+	return ""
+}
+
+func (m *Image) GetTag() string {
+	if m != nil {
+		return m.Tag
+	}
+	return ""
+}
+
+func (m *Image) GetPath() string {
+	if m != nil {
+		return m.Path
+	}
+	return ""
+}
+
 type SnapshotOperationData struct {
 	Base                 *Base    `protobuf:"bytes,1,opt,name=base,proto3" json:"base,omitempty"`
 	Vmid                 int64    `protobuf:"varint,2,opt,name=vmid,proto3" json:"vmid,omitempty"`
@@ -464,7 +852,7 @@ func (m *SnapshotOperationData) Reset()         { *m = SnapshotOperationData{} }
 func (m *SnapshotOperationData) String() string { return proto.CompactTextString(m) }
 func (*SnapshotOperationData) ProtoMessage()    {}
 func (*SnapshotOperationData) Descriptor() ([]byte, []int) {
-	return fileDescriptor_bedfbfc9b54e5600, []int{6}
+	return fileDescriptor_bedfbfc9b54e5600, []int{10}
 }
 
 func (m *SnapshotOperationData) XXX_Unmarshal(b []byte) error {
@@ -528,7 +916,7 @@ func (m *SnapshotData) Reset()         { *m = SnapshotData{} }
 func (m *SnapshotData) String() string { return proto.CompactTextString(m) }
 func (*SnapshotData) ProtoMessage()    {}
 func (*SnapshotData) Descriptor() ([]byte, []int) {
-	return fileDescriptor_bedfbfc9b54e5600, []int{7}
+	return fileDescriptor_bedfbfc9b54e5600, []int{11}
 }
 
 func (m *SnapshotData) XXX_Unmarshal(b []byte) error {
@@ -596,7 +984,7 @@ func (m *VMName) Reset()         { *m = VMName{} }
 func (m *VMName) String() string { return proto.CompactTextString(m) }
 func (*VMName) ProtoMessage()    {}
 func (*VMName) Descriptor() ([]byte, []int) {
-	return fileDescriptor_bedfbfc9b54e5600, []int{8}
+	return fileDescriptor_bedfbfc9b54e5600, []int{12}
 }
 
 func (m *VMName) XXX_Unmarshal(b []byte) error {
@@ -642,7 +1030,7 @@ func (m *VMDataResponse) Reset()         { *m = VMDataResponse{} }
 func (m *VMDataResponse) String() string { return proto.CompactTextString(m) }
 func (*VMDataResponse) ProtoMessage()    {}
 func (*VMDataResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_bedfbfc9b54e5600, []int{9}
+	return fileDescriptor_bedfbfc9b54e5600, []int{13}
 }
 
 func (m *VMDataResponse) XXX_Unmarshal(b []byte) error {
@@ -682,7 +1070,7 @@ func (m *VMID) Reset()         { *m = VMID{} }
 func (m *VMID) String() string { return proto.CompactTextString(m) }
 func (*VMID) ProtoMessage()    {}
 func (*VMID) Descriptor() ([]byte, []int) {
-	return fileDescriptor_bedfbfc9b54e5600, []int{10}
+	return fileDescriptor_bedfbfc9b54e5600, []int{14}
 }
 
 func (m *VMID) XXX_Unmarshal(b []byte) error {
@@ -720,6 +1108,7 @@ func (m *VMID) GetId() int64 {
 type Result struct {
 	Status               bool     `protobuf:"varint,1,opt,name=status,proto3" json:"status,omitempty"`
 	Info                 string   `protobuf:"bytes,2,opt,name=info,proto3" json:"info,omitempty"`
+	Id                   int32    `protobuf:"varint,3,opt,name=id,proto3" json:"id,omitempty"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
 	XXX_unrecognized     []byte   `json:"-"`
 	XXX_sizecache        int32    `json:"-"`
@@ -729,7 +1118,7 @@ func (m *Result) Reset()         { *m = Result{} }
 func (m *Result) String() string { return proto.CompactTextString(m) }
 func (*Result) ProtoMessage()    {}
 func (*Result) Descriptor() ([]byte, []int) {
-	return fileDescriptor_bedfbfc9b54e5600, []int{11}
+	return fileDescriptor_bedfbfc9b54e5600, []int{15}
 }
 
 func (m *Result) XXX_Unmarshal(b []byte) error {
@@ -764,6 +1153,13 @@ func (m *Result) GetInfo() string {
 	return ""
 }
 
+func (m *Result) GetId() int32 {
+	if m != nil {
+		return m.Id
+	}
+	return 0
+}
+
 type NodeID struct {
 	Base                 *Base    `protobuf:"bytes,1,opt,name=base,proto3" json:"base,omitempty"`
 	NodeID               int32    `protobuf:"varint,2,opt,name=NodeID,proto3" json:"NodeID,omitempty"`
@@ -776,7 +1172,7 @@ func (m *NodeID) Reset()         { *m = NodeID{} }
 func (m *NodeID) String() string { return proto.CompactTextString(m) }
 func (*NodeID) ProtoMessage()    {}
 func (*NodeID) Descriptor() ([]byte, []int) {
-	return fileDescriptor_bedfbfc9b54e5600, []int{12}
+	return fileDescriptor_bedfbfc9b54e5600, []int{16}
 }
 
 func (m *NodeID) XXX_Unmarshal(b []byte) error {
@@ -830,7 +1226,7 @@ func (m *NodeData) Reset()         { *m = NodeData{} }
 func (m *NodeData) String() string { return proto.CompactTextString(m) }
 func (*NodeData) ProtoMessage()    {}
 func (*NodeData) Descriptor() ([]byte, []int) {
-	return fileDescriptor_bedfbfc9b54e5600, []int{13}
+	return fileDescriptor_bedfbfc9b54e5600, []int{17}
 }
 
 func (m *NodeData) XXX_Unmarshal(b []byte) error {
@@ -914,6 +1310,77 @@ func (m *NodeData) GetSepc() *SpecData {
 	return nil
 }
 
+type ImaconData struct {
+	Base                 *Base    `protobuf:"bytes,1,opt,name=base,proto3" json:"base,omitempty"`
+	Id                   int32    `protobuf:"varint,2,opt,name=id,proto3" json:"id,omitempty"`
+	Hostname             string   `protobuf:"bytes,3,opt,name=hostname,proto3" json:"hostname,omitempty"`
+	IP                   string   `protobuf:"bytes,4,opt,name=IP,proto3" json:"IP,omitempty"`
+	Status               int32    `protobuf:"varint,5,opt,name=status,proto3" json:"status,omitempty"`
+	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_unrecognized     []byte   `json:"-"`
+	XXX_sizecache        int32    `json:"-"`
+}
+
+func (m *ImaconData) Reset()         { *m = ImaconData{} }
+func (m *ImaconData) String() string { return proto.CompactTextString(m) }
+func (*ImaconData) ProtoMessage()    {}
+func (*ImaconData) Descriptor() ([]byte, []int) {
+	return fileDescriptor_bedfbfc9b54e5600, []int{18}
+}
+
+func (m *ImaconData) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_ImaconData.Unmarshal(m, b)
+}
+func (m *ImaconData) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_ImaconData.Marshal(b, m, deterministic)
+}
+func (m *ImaconData) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_ImaconData.Merge(m, src)
+}
+func (m *ImaconData) XXX_Size() int {
+	return xxx_messageInfo_ImaconData.Size(m)
+}
+func (m *ImaconData) XXX_DiscardUnknown() {
+	xxx_messageInfo_ImaconData.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_ImaconData proto.InternalMessageInfo
+
+func (m *ImaconData) GetBase() *Base {
+	if m != nil {
+		return m.Base
+	}
+	return nil
+}
+
+func (m *ImaconData) GetId() int32 {
+	if m != nil {
+		return m.Id
+	}
+	return 0
+}
+
+func (m *ImaconData) GetHostname() string {
+	if m != nil {
+		return m.Hostname
+	}
+	return ""
+}
+
+func (m *ImaconData) GetIP() string {
+	if m != nil {
+		return m.IP
+	}
+	return ""
+}
+
+func (m *ImaconData) GetStatus() int32 {
+	if m != nil {
+		return m.Status
+	}
+	return 0
+}
+
 type UserData struct {
 	Base                 *Base     `protobuf:"bytes,1,opt,name=base,proto3" json:"base,omitempty"`
 	Id                   int64     `protobuf:"varint,2,opt,name=id,proto3" json:"id,omitempty"`
@@ -931,7 +1398,7 @@ func (m *UserData) Reset()         { *m = UserData{} }
 func (m *UserData) String() string { return proto.CompactTextString(m) }
 func (*UserData) ProtoMessage()    {}
 func (*UserData) Descriptor() ([]byte, []int) {
-	return fileDescriptor_bedfbfc9b54e5600, []int{14}
+	return fileDescriptor_bedfbfc9b54e5600, []int{19}
 }
 
 func (m *UserData) XXX_Unmarshal(b []byte) error {
@@ -1021,7 +1488,7 @@ func (m *GroupData) Reset()         { *m = GroupData{} }
 func (m *GroupData) String() string { return proto.CompactTextString(m) }
 func (*GroupData) ProtoMessage()    {}
 func (*GroupData) Descriptor() ([]byte, []int) {
-	return fileDescriptor_bedfbfc9b54e5600, []int{15}
+	return fileDescriptor_bedfbfc9b54e5600, []int{20}
 }
 
 func (m *GroupData) XXX_Unmarshal(b []byte) error {
@@ -1113,7 +1580,7 @@ func (m *SpecData) Reset()         { *m = SpecData{} }
 func (m *SpecData) String() string { return proto.CompactTextString(m) }
 func (*SpecData) ProtoMessage()    {}
 func (*SpecData) Descriptor() ([]byte, []int) {
-	return fileDescriptor_bedfbfc9b54e5600, []int{16}
+	return fileDescriptor_bedfbfc9b54e5600, []int{21}
 }
 
 func (m *SpecData) XXX_Unmarshal(b []byte) error {
@@ -1173,9 +1640,13 @@ func init() {
 	proto.RegisterType((*Null)(nil), "Null")
 	proto.RegisterType((*Base)(nil), "Base")
 	proto.RegisterType((*AuthResult)(nil), "AuthResult")
+	proto.RegisterType((*ImageResult)(nil), "ImageResult")
+	proto.RegisterType((*ImageTransferData)(nil), "ImageTransferData")
+	proto.RegisterType((*ImageData)(nil), "ImageData")
 	proto.RegisterType((*TokenData)(nil), "TokenData")
 	proto.RegisterType((*VMData)(nil), "VMData")
 	proto.RegisterType((*Option)(nil), "Option")
+	proto.RegisterType((*Image)(nil), "Image")
 	proto.RegisterType((*SnapshotOperationData)(nil), "SnapshotOperationData")
 	proto.RegisterType((*SnapshotData)(nil), "SnapshotData")
 	proto.RegisterType((*VMName)(nil), "VMName")
@@ -1184,89 +1655,121 @@ func init() {
 	proto.RegisterType((*Result)(nil), "Result")
 	proto.RegisterType((*NodeID)(nil), "NodeID")
 	proto.RegisterType((*NodeData)(nil), "NodeData")
+	proto.RegisterType((*ImaconData)(nil), "ImaconData")
 	proto.RegisterType((*UserData)(nil), "UserData")
 	proto.RegisterType((*GroupData)(nil), "GroupData")
 	proto.RegisterType((*SpecData)(nil), "SpecData")
 }
 
-func init() { proto.RegisterFile("grpc.proto", fileDescriptor_bedfbfc9b54e5600) }
+func init() {
+	proto.RegisterFile("grpc.proto", fileDescriptor_bedfbfc9b54e5600)
+}
 
 var fileDescriptor_bedfbfc9b54e5600 = []byte{
-	// 1182 bytes of a gzipped FileDescriptorProto
-	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x94, 0x57, 0xcd, 0x6e, 0xdb, 0x46,
-	0x10, 0x0e, 0x25, 0x91, 0x22, 0x47, 0x8e, 0x5b, 0x6c, 0x53, 0x83, 0x71, 0x1d, 0x5b, 0x66, 0x93,
-	0xc0, 0xbd, 0x10, 0xa9, 0xd3, 0x43, 0xd1, 0x9e, 0xdc, 0x18, 0x10, 0x7c, 0xb0, 0x63, 0xd0, 0xa9,
-	0xaf, 0xc5, 0x5a, 0xdc, 0x4a, 0x44, 0xc4, 0x1f, 0x90, 0x2b, 0xd5, 0xe9, 0xb1, 0xaf, 0xd1, 0x7b,
-	0x8f, 0x3d, 0x17, 0xe8, 0x1b, 0xf5, 0x21, 0x8a, 0x62, 0x66, 0x77, 0x45, 0xca, 0xa1, 0x64, 0xf7,
-	0x36, 0xf3, 0xed, 0xec, 0xee, 0x37, 0x3f, 0xfb, 0x51, 0x02, 0x98, 0x94, 0xc5, 0x38, 0x2c, 0xca,
-	0x5c, 0xe6, 0x81, 0x03, 0xbd, 0x8b, 0xf9, 0x6c, 0x16, 0x94, 0xd0, 0xfb, 0x81, 0x57, 0x82, 0x31,
-	0xe8, 0xcd, 0x2b, 0x51, 0xfa, 0xd6, 0xd0, 0x3a, 0xf2, 0x22, 0xb2, 0x11, 0x2b, 0x78, 0x55, 0xf9,
-	0x1d, 0x85, 0xa1, 0xcd, 0x9e, 0x80, 0x3d, 0x29, 0xf3, 0x79, 0xe1, 0x77, 0x09, 0x54, 0x0e, 0xa2,
-	0x32, 0x7f, 0x2f, 0x32, 0xbf, 0xa7, 0x50, 0x72, 0xd8, 0x0e, 0x38, 0xa5, 0xa8, 0xe6, 0x33, 0xe9,
-	0xdb, 0x43, 0xeb, 0xc8, 0x8d, 0xb4, 0x17, 0x7c, 0x07, 0x70, 0x32, 0x97, 0xd3, 0x88, 0xbc, 0x7a,
-	0xaf, 0xd5, 0xbe, 0xb7, 0xb3, 0xb2, 0xf7, 0x77, 0x0b, 0xbc, 0x77, 0x18, 0x71, 0xca, 0x25, 0x67,
-	0xdb, 0xd0, 0x49, 0x62, 0xda, 0xd8, 0x8d, 0x3a, 0x49, 0x5c, 0x9f, 0xd5, 0xb9, 0x73, 0x16, 0xe6,
-	0x93, 0xc4, 0x44, 0xda, 0x8e, 0xb4, 0xc7, 0x7c, 0xe8, 0x13, 0xfd, 0x24, 0xd6, 0xbc, 0x8d, 0xcb,
-	0xf6, 0xc0, 0xbb, 0x11, 0x93, 0x24, 0x93, 0x49, 0x2a, 0x88, 0x7c, 0x37, 0xaa, 0x01, 0xdc, 0x27,
-	0xb2, 0x98, 0xd6, 0x1c, 0x5a, 0x33, 0x6e, 0xf0, 0xaf, 0x05, 0xce, 0xf5, 0x39, 0x51, 0x7b, 0x0a,
-	0xbd, 0x1b, 0x5e, 0x09, 0x22, 0x37, 0x38, 0xb6, 0x43, 0xac, 0x72, 0x44, 0x10, 0xd6, 0x35, 0xcb,
-	0x63, 0x41, 0x24, 0xed, 0x88, 0x6c, 0xe4, 0xb8, 0x48, 0x33, 0x9e, 0x0a, 0x5d, 0x58, 0xed, 0x61,
-	0xec, 0x62, 0x5c, 0xcc, 0x89, 0x60, 0x37, 0x22, 0x9b, 0xb0, 0x54, 0xa4, 0x9a, 0x18, 0xd9, 0x6c,
-	0x08, 0x83, 0x4a, 0xe6, 0x25, 0x9f, 0x08, 0xf9, 0xa1, 0x50, 0xbc, 0xec, 0xa8, 0x09, 0x21, 0x6b,
-	0xed, 0xfa, 0x7d, 0xc5, 0x5a, 0xbb, 0x58, 0xb5, 0x71, 0x5c, 0xe6, 0xa9, 0xef, 0xaa, 0xaa, 0x91,
-	0x43, 0xb7, 0x64, 0x42, 0xfa, 0x9e, 0xea, 0x3e, 0xda, 0xec, 0x00, 0x9c, 0xbc, 0x90, 0x49, 0x9e,
-	0xf9, 0x40, 0x69, 0xf5, 0xc3, 0xb7, 0xe4, 0x46, 0x1a, 0x0e, 0xfe, 0xb2, 0xc0, 0x51, 0x10, 0x3b,
-	0x84, 0x2d, 0x7d, 0xc1, 0x4f, 0x05, 0x97, 0x53, 0xdd, 0x5e, 0x43, 0xe9, 0x92, 0xcb, 0x29, 0x7b,
-	0x06, 0x40, 0x77, 0xa9, 0x00, 0xd5, 0x33, 0x8f, 0x10, 0x5a, 0x7e, 0x02, 0x76, 0x92, 0x22, 0x5f,
-	0xd5, 0x36, 0xe5, 0xb0, 0x4f, 0xa1, 0xbb, 0xc8, 0xc6, 0x54, 0x10, 0x3b, 0x42, 0x53, 0x4f, 0x81,
-	0xbd, 0x9c, 0x82, 0x3d, 0xf0, 0xf8, 0x5c, 0xe6, 0x95, 0xe4, 0xa5, 0xa4, 0x4a, 0xb8, 0x51, 0x0d,
-	0x60, 0xa5, 0x2b, 0xc9, 0xe5, 0xbc, 0xa2, 0x32, 0xd8, 0x91, 0xf6, 0x82, 0x05, 0x7c, 0x7e, 0x95,
-	0xf1, 0xa2, 0x9a, 0xe6, 0xf2, 0x6d, 0x21, 0x4a, 0x8e, 0x49, 0x3c, 0xa0, 0x93, 0x8b, 0x34, 0x89,
-	0x89, 0x3a, 0x75, 0x42, 0xdd, 0x9e, 0x9b, 0xfd, 0x9a, 0x79, 0x0d, 0x20, 0x7b, 0xc9, 0x27, 0x7a,
-	0xde, 0xd0, 0x0c, 0x4a, 0xd8, 0x32, 0xf7, 0xb6, 0xce, 0xb4, 0xde, 0xd1, 0x59, 0xee, 0xc0, 0x5b,
-	0xab, 0xe4, 0x57, 0x33, 0x29, 0x64, 0x23, 0x16, 0x73, 0x29, 0xf4, 0xc1, 0x64, 0x63, 0xc7, 0x17,
-	0xe9, 0x78, 0x96, 0x8f, 0xdf, 0x53, 0x71, 0xbc, 0xc8, 0xb8, 0xc1, 0xf7, 0x38, 0xa6, 0x17, 0x38,
-	0x5f, 0x1b, 0x92, 0xab, 0x47, 0xb2, 0xd3, 0x1c, 0xc9, 0xe0, 0x35, 0x6c, 0xab, 0x19, 0x8f, 0x44,
-	0x55, 0xe4, 0x59, 0x25, 0xd8, 0x21, 0xf4, 0x15, 0x52, 0xf9, 0xd6, 0xb0, 0x4b, 0x73, 0xa1, 0x23,
-	0x0c, 0x1e, 0x7c, 0x0d, 0xbd, 0xeb, 0xf3, 0xb3, 0xd3, 0x4d, 0xf7, 0xa9, 0xc4, 0x3b, 0x26, 0xf1,
-	0xe0, 0x1b, 0x70, 0xb4, 0x44, 0xd4, 0x2d, 0xb3, 0x94, 0x18, 0x28, 0x0f, 0x93, 0x4e, 0xb2, 0x9f,
-	0x73, 0x23, 0x50, 0x68, 0x63, 0x6a, 0x17, 0x79, 0x2c, 0x36, 0x5f, 0xb5, 0x63, 0x82, 0xf4, 0x1b,
-	0xd4, 0x5e, 0xf0, 0x8f, 0x05, 0x2e, 0x9a, 0xf7, 0xf5, 0x7d, 0xcd, 0x7e, 0xb6, 0x0b, 0xee, 0x34,
-	0xaf, 0x64, 0xe3, 0x1d, 0x2f, 0x7d, 0x4c, 0xef, 0xec, 0x52, 0xf7, 0xa7, 0x73, 0x76, 0xa9, 0xd4,
-	0x55, 0x4e, 0x75, 0x6b, 0xc8, 0xa6, 0xd9, 0xc9, 0x66, 0x1f, 0x4e, 0xe2, 0x34, 0xc9, 0xcc, 0xe4,
-	0x2e, 0x81, 0x75, 0x93, 0x8b, 0xb8, 0xc8, 0xf8, 0xcd, 0x4c, 0xd0, 0x03, 0x76, 0x23, 0xed, 0xb1,
-	0x67, 0xd0, 0xab, 0x44, 0x31, 0xa6, 0x17, 0x3c, 0x38, 0xf6, 0xc2, 0xab, 0x42, 0x8c, 0xa9, 0x2b,
-	0x04, 0x07, 0x7f, 0x58, 0xe0, 0xfe, 0x58, 0x89, 0xf2, 0xbe, 0x64, 0xef, 0xf4, 0x65, 0xf9, 0xa9,
-	0xe8, 0xb6, 0x7c, 0x2a, 0x7a, 0x8d, 0x4f, 0x05, 0x83, 0x5e, 0x8a, 0x32, 0x67, 0x2b, 0x99, 0x43,
-	0xbb, 0x16, 0x68, 0xa7, 0x29, 0xd0, 0x86, 0x68, 0xbf, 0x9d, 0xe8, 0xdf, 0x16, 0x78, 0x23, 0x54,
-	0xe6, 0x87, 0x33, 0xb5, 0x0d, 0xd3, 0x46, 0x2b, 0xc8, 0x46, 0x06, 0x9c, 0xca, 0xab, 0x3f, 0x55,
-	0xe4, 0x2c, 0x73, 0xb2, 0x57, 0x73, 0x22, 0xfe, 0x4e, 0x83, 0x3f, 0x83, 0x9e, 0x14, 0x3c, 0x25,
-	0xa6, 0x6e, 0x44, 0xf6, 0x92, 0xbd, 0xdb, 0xce, 0xfe, 0x37, 0x0b, 0x5c, 0x03, 0xe1, 0xed, 0x29,
-	0xbf, 0x5d, 0xa4, 0xc4, 0xde, 0x8e, 0x94, 0x83, 0x0d, 0x4c, 0xf9, 0x2d, 0xca, 0xbc, 0x1e, 0x27,
-	0xe5, 0x69, 0x1c, 0xa5, 0xbe, 0xbb, 0xc4, 0x51, 0xec, 0xf7, 0x01, 0x52, 0x7e, 0x6b, 0xd4, 0x5c,
-	0x29, 0x61, 0x03, 0x41, 0xc9, 0x40, 0xe5, 0x56, 0xc9, 0xa0, 0x79, 0xfc, 0xa7, 0x07, 0x3d, 0xfc,
-	0xfa, 0xb3, 0x7d, 0x70, 0xdf, 0x94, 0x82, 0x4b, 0x71, 0x7d, 0xce, 0xcc, 0x2b, 0xdd, 0xed, 0x87,
-	0xea, 0xa1, 0x05, 0x8f, 0xd8, 0x1e, 0xb8, 0xa7, 0x62, 0x26, 0x68, 0xdd, 0x0e, 0xf1, 0xc9, 0x36,
-	0x57, 0xbf, 0x80, 0xfe, 0x15, 0x8a, 0x68, 0xeb, 0xe2, 0x2e, 0x38, 0x57, 0x32, 0x2f, 0x5a, 0xd7,
-	0xf6, 0x01, 0xae, 0xa6, 0x73, 0x19, 0xe7, 0xbf, 0x64, 0xeb, 0x0e, 0x8e, 0x44, 0x25, 0xe4, 0xba,
-	0xc5, 0x4b, 0x3e, 0xaf, 0xda, 0x29, 0xed, 0x81, 0x8b, 0x76, 0xda, 0xbe, 0xfa, 0x15, 0x3c, 0x1e,
-	0x09, 0x69, 0xf4, 0xb5, 0x0e, 0x79, 0x1c, 0x36, 0x35, 0x37, 0x78, 0xf4, 0xca, 0x62, 0xdf, 0xc2,
-	0x67, 0x1f, 0xe9, 0xff, 0xf5, 0x39, 0xdb, 0x09, 0x5b, 0xbf, 0x0a, 0xcd, 0x4b, 0x9e, 0x82, 0x3d,
-	0x5a, 0xa5, 0xae, 0xea, 0x1a, 0x3c, 0x62, 0x07, 0xe0, 0xd1, 0x12, 0x69, 0x2d, 0xe2, 0x68, 0x34,
-	0x03, 0x86, 0x00, 0x23, 0x21, 0x69, 0xba, 0xe9, 0x00, 0x9c, 0xe6, 0xc6, 0xfa, 0x2b, 0x0b, 0x3b,
-	0x36, 0x12, 0xf2, 0x64, 0x36, 0x5b, 0xb3, 0x7e, 0x00, 0xfd, 0x93, 0x38, 0x46, 0x01, 0x62, 0x5e,
-	0x68, 0xc4, 0xab, 0x49, 0xef, 0x00, 0xfa, 0x23, 0x21, 0x29, 0x40, 0xef, 0xaf, 0xe3, 0xe8, 0x84,
-	0x21, 0x40, 0x24, 0xd2, 0x7c, 0x21, 0x28, 0xa6, 0x1f, 0x2a, 0x31, 0x5b, 0x3d, 0xc2, 0xa3, 0xbe,
-	0xaf, 0x0d, 0xd8, 0x07, 0x17, 0x7b, 0xbf, 0xe1, 0x00, 0x24, 0x89, 0x6a, 0xc3, 0xbc, 0xd0, 0x88,
-	0x4e, 0x33, 0x20, 0x30, 0x1c, 0x36, 0xc4, 0x7c, 0x49, 0x89, 0xdc, 0x0d, 0xa8, 0x4d, 0x4a, 0xe6,
-	0x39, 0x6c, 0xbd, 0x13, 0x15, 0x45, 0x5d, 0xa2, 0x0a, 0xb5, 0x1f, 0xf5, 0x12, 0xb6, 0xdf, 0x4c,
-	0x79, 0x36, 0x11, 0xff, 0x27, 0x8e, 0x9a, 0xd8, 0x1e, 0x77, 0x08, 0xee, 0x49, 0x1c, 0x53, 0x1b,
-	0x19, 0x84, 0x4b, 0xb1, 0x6a, 0x86, 0x3c, 0x87, 0x81, 0xca, 0x70, 0x63, 0xd4, 0x4b, 0xea, 0xf6,
-	0xc7, 0x21, 0x0d, 0x9b, 0xd2, 0x7c, 0x01, 0x5b, 0xc8, 0xe3, 0xbe, 0x4b, 0x8f, 0xe0, 0x13, 0x0c,
-	0x7b, 0xc0, 0xc5, 0x2f, 0xf0, 0xa5, 0x64, 0x38, 0xe1, 0x82, 0x7e, 0x5f, 0x9b, 0x59, 0x19, 0x84,
-	0xf5, 0x6f, 0x75, 0x6a, 0xe4, 0x40, 0xe9, 0xc3, 0x4a, 0xd0, 0x6a, 0x9a, 0x6a, 0x5c, 0x57, 0x02,
-	0x20, 0x5c, 0xfe, 0x68, 0xd7, 0x43, 0x8b, 0x69, 0xae, 0x0f, 0xb9, 0x71, 0xe8, 0x6f, 0xca, 0xeb,
-	0xff, 0x02, 0x00, 0x00, 0xff, 0xff, 0x03, 0x63, 0xc3, 0x04, 0xb4, 0x0c, 0x00, 0x00,
+	// 1633 bytes of a gzipped FileDescriptorProto
+	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x94, 0x58, 0xdb, 0x6e, 0xdb, 0x46,
+	0x13, 0x36, 0x25, 0x51, 0x12, 0x47, 0xb6, 0xf3, 0xff, 0x4c, 0xfe, 0x80, 0xf1, 0xef, 0xf8, 0xc0,
+	0x1c, 0xe0, 0xa0, 0x2d, 0x91, 0x38, 0x37, 0x05, 0x7a, 0xe5, 0xc6, 0x85, 0xe1, 0x0b, 0x27, 0x06,
+	0xed, 0xf8, 0xb2, 0xc1, 0x5a, 0xdc, 0x48, 0x44, 0xc4, 0x03, 0xc8, 0x95, 0xe2, 0x34, 0x77, 0x7d,
+	0x80, 0xbe, 0x40, 0x6f, 0x8b, 0xbe, 0x44, 0x81, 0x3e, 0x43, 0xd1, 0xc7, 0xe8, 0x53, 0x14, 0x33,
+	0xbb, 0x4b, 0xad, 0x2c, 0xca, 0x8a, 0xef, 0x66, 0x66, 0x87, 0xb3, 0x33, 0xdf, 0x9c, 0x56, 0x02,
+	0x18, 0x14, 0x79, 0x3f, 0xc8, 0x8b, 0x4c, 0x64, 0x7e, 0x1b, 0x5a, 0xaf, 0xc7, 0xa3, 0x91, 0xff,
+	0xa7, 0x05, 0xad, 0xef, 0x59, 0xc9, 0x5d, 0x17, 0x5a, 0xe3, 0x92, 0x17, 0x9e, 0xb5, 0x63, 0xed,
+	0x39, 0x21, 0xd1, 0x28, 0xcb, 0x59, 0x59, 0x7a, 0x0d, 0x29, 0x43, 0xda, 0xbd, 0x07, 0xf6, 0xa0,
+	0xc8, 0xc6, 0xb9, 0xd7, 0x24, 0xa1, 0x64, 0x50, 0x2a, 0xb2, 0x0f, 0x3c, 0xf5, 0x5a, 0x52, 0x4a,
+	0x8c, 0x7b, 0x1f, 0xda, 0x05, 0x2f, 0xc7, 0x23, 0xe1, 0xd9, 0x3b, 0xd6, 0x5e, 0x37, 0x54, 0x1c,
+	0xca, 0xd1, 0x7e, 0x1c, 0x79, 0xed, 0x1d, 0x6b, 0xcf, 0x0e, 0x15, 0xe7, 0x7a, 0xd0, 0x21, 0x73,
+	0x71, 0xe4, 0x75, 0xe8, 0x40, 0xb3, 0x78, 0x12, 0x97, 0x2c, 0x4a, 0xe2, 0xd4, 0xeb, 0x92, 0x29,
+	0xcd, 0xfa, 0x3f, 0x02, 0x1c, 0x8c, 0xc5, 0x30, 0x94, 0x96, 0x2b, 0x3f, 0x2c, 0xd3, 0x0f, 0x17,
+	0x5a, 0x29, 0x4b, 0xb8, 0x8e, 0x03, 0x69, 0x77, 0x1d, 0x1a, 0x71, 0x44, 0x41, 0xd8, 0x61, 0x23,
+	0x8e, 0x0c, 0x5f, 0x5b, 0xa6, 0xaf, 0xfe, 0x67, 0xe8, 0x1d, 0x27, 0x6c, 0xc0, 0xd5, 0x05, 0x1e,
+	0x74, 0x72, 0x5e, 0xf4, 0x79, 0x2a, 0xe8, 0x0a, 0x3b, 0xd4, 0xac, 0x61, 0xa0, 0x31, 0x13, 0xac,
+	0x0b, 0xad, 0x38, 0x7d, 0x9f, 0x29, 0xbc, 0x88, 0x26, 0xb0, 0xc7, 0x71, 0xa4, 0xd0, 0x22, 0x5a,
+	0x82, 0x2d, 0x86, 0x04, 0x15, 0x81, 0x2d, 0x86, 0x7e, 0x02, 0xff, 0xa5, 0xcb, 0xcf, 0x0b, 0x96,
+	0x96, 0xef, 0x79, 0x71, 0xc8, 0x04, 0x23, 0xcf, 0x73, 0x15, 0x60, 0x23, 0xce, 0xe9, 0xc3, 0xac,
+	0x10, 0x55, 0x96, 0xb2, 0x42, 0x54, 0xc6, 0x9a, 0x53, 0x63, 0xee, 0x0e, 0xd8, 0x31, 0x1a, 0xa3,
+	0x5b, 0x7b, 0xfb, 0x10, 0x90, 0x69, 0x34, 0x19, 0xca, 0x03, 0xff, 0xef, 0x06, 0x38, 0x95, 0x50,
+	0x21, 0x64, 0x55, 0x08, 0x69, 0x9b, 0x0d, 0xc3, 0xa6, 0x46, 0xb6, 0x69, 0x20, 0xfb, 0x1f, 0x68,
+	0x0a, 0x36, 0x50, 0xb1, 0x21, 0x89, 0x5a, 0xe2, 0x53, 0xce, 0x29, 0x34, 0x3b, 0x24, 0xda, 0xdd,
+	0x80, 0x6e, 0x9f, 0xe5, 0xac, 0x1f, 0x8b, 0x4f, 0x54, 0x05, 0xcd, 0xb0, 0xe2, 0x11, 0x64, 0x16,
+	0x45, 0x22, 0x4e, 0x38, 0xd5, 0x41, 0x33, 0xd4, 0x2c, 0x82, 0x9c, 0xc4, 0x69, 0xc2, 0x13, 0x2a,
+	0x03, 0x3b, 0x54, 0x9c, 0xbb, 0x09, 0x0e, 0x1b, 0x8b, 0x61, 0x56, 0xa0, 0x39, 0x87, 0x8e, 0xa6,
+	0x02, 0xbc, 0xeb, 0x7d, 0x3c, 0xe2, 0xe4, 0x29, 0x90, 0x5b, 0x15, 0x5f, 0xa5, 0xa2, 0x67, 0xa4,
+	0xe2, 0x01, 0xb4, 0x2e, 0x59, 0xc9, 0xbd, 0x55, 0x02, 0xca, 0x0e, 0xb0, 0x41, 0x42, 0x12, 0xa1,
+	0xa9, 0x38, 0x61, 0xfd, 0x2c, 0x8d, 0x23, 0x6f, 0x8d, 0xee, 0xa9, 0x78, 0x2c, 0xbe, 0x82, 0x45,
+	0x51, 0xe1, 0xad, 0xcb, 0xe2, 0x23, 0xc6, 0xff, 0xd5, 0x02, 0xe7, 0x1c, 0xcb, 0xf0, 0x1a, 0xa8,
+	0x4d, 0x02, 0xb5, 0x2a, 0xd8, 0xc6, 0xb5, 0xc6, 0x51, 0x0d, 0xd2, 0x5c, 0xd4, 0x20, 0x12, 0xde,
+	0xaa, 0x41, 0x36, 0xc1, 0xb9, 0xe4, 0x83, 0x38, 0x25, 0xd0, 0x6c, 0x32, 0x3f, 0x15, 0xe0, 0x77,
+	0x3c, 0x95, 0x80, 0x4a, 0xac, 0x35, 0xeb, 0xff, 0xd2, 0x80, 0xf6, 0xc5, 0x09, 0xb9, 0xa6, 0xa3,
+	0xb6, 0xe6, 0xa3, 0xc6, 0x34, 0x67, 0x91, 0x6c, 0x20, 0x3b, 0x24, 0x1a, 0x7d, 0x9c, 0x24, 0x46,
+	0xf2, 0x15, 0x87, 0xba, 0x93, 0x7e, 0x3e, 0x26, 0x07, 0x9b, 0x21, 0xd1, 0x24, 0xc3, 0xa4, 0xd9,
+	0x4a, 0x86, 0x29, 0xd3, 0x45, 0xd1, 0x36, 0x8a, 0xc2, 0x83, 0x4e, 0x29, 0xb2, 0x02, 0x8b, 0xb4,
+	0x23, 0xe3, 0x53, 0x2c, 0xe2, 0xd4, 0x8f, 0x8a, 0x4c, 0xe6, 0xdd, 0x09, 0x25, 0x43, 0x76, 0x53,
+	0x2e, 0x28, 0xe3, 0x4e, 0x48, 0xb4, 0xbb, 0x0d, 0xed, 0x2c, 0x17, 0x71, 0x96, 0x52, 0xaa, 0x7b,
+	0xfb, 0x9d, 0xe0, 0x0d, 0xb1, 0xa1, 0x12, 0xbb, 0x9b, 0xba, 0x0f, 0x7a, 0x74, 0xde, 0x96, 0x7d,
+	0xa0, 0x7b, 0xe0, 0x2f, 0x0b, 0xda, 0xf2, 0x03, 0x77, 0x17, 0x56, 0xd5, 0xf5, 0xef, 0xa8, 0xf0,
+	0x65, 0xcb, 0xf5, 0x94, 0xec, 0x14, 0xeb, 0xff, 0x21, 0x00, 0x79, 0xf2, 0xce, 0xe8, 0x0c, 0x87,
+	0x24, 0x74, 0x7c, 0x4f, 0x5f, 0x25, 0xd3, 0x28, 0x19, 0x6c, 0x90, 0x49, 0xda, 0x27, 0x80, 0xec,
+	0x10, 0x49, 0xc2, 0x32, 0xed, 0x8f, 0x8b, 0x91, 0xea, 0x7e, 0xc5, 0xa9, 0x6a, 0x69, 0x57, 0xd5,
+	0x22, 0xcb, 0x3c, 0x2b, 0x05, 0x2b, 0x04, 0x21, 0xd4, 0x0d, 0xa7, 0x02, 0xb4, 0x52, 0x0a, 0x26,
+	0xc6, 0xa5, 0x6e, 0x0e, 0xc9, 0xf9, 0x07, 0x60, 0x53, 0x88, 0x55, 0xb7, 0x5a, 0xf3, 0xdd, 0xda,
+	0x98, 0xe9, 0xd6, 0xeb, 0xb3, 0xc3, 0x9f, 0xc0, 0xff, 0xce, 0x52, 0x96, 0x97, 0xc3, 0x4c, 0xbc,
+	0xc9, 0x79, 0xc1, 0x10, 0x9f, 0x2f, 0x28, 0x9a, 0x49, 0x12, 0x47, 0x64, 0x9a, 0x92, 0x2e, 0x03,
+	0xc8, 0xf4, 0xf7, 0x0a, 0x94, 0xa9, 0x60, 0x7e, 0x72, 0xf8, 0x05, 0xac, 0xea, 0x7b, 0x6b, 0xdb,
+	0xa7, 0xd6, 0xfb, 0x32, 0xfe, 0xa9, 0x9a, 0x48, 0x48, 0xa3, 0x2c, 0x62, 0x82, 0xeb, 0x71, 0x8b,
+	0x34, 0x96, 0xda, 0x24, 0xe9, 0x8f, 0xb2, 0xfe, 0x07, 0x85, 0xb9, 0x66, 0xfd, 0xef, 0xb0, 0x23,
+	0x5e, 0x23, 0x36, 0x37, 0x04, 0x37, 0xad, 0xfe, 0x86, 0x59, 0xfd, 0xfe, 0x4b, 0x58, 0x97, 0xed,
+	0x14, 0xf2, 0x32, 0xcf, 0xd2, 0x92, 0xbb, 0xbb, 0xd0, 0x91, 0x92, 0xd2, 0xb3, 0x76, 0x9a, 0x54,
+	0x90, 0x4a, 0x43, 0xcb, 0xfd, 0x17, 0xd0, 0xba, 0x38, 0x39, 0x3e, 0xbc, 0xe9, 0x3e, 0x19, 0x78,
+	0x43, 0x07, 0xee, 0x1f, 0x42, 0x3b, 0xac, 0x96, 0xa9, 0xca, 0xba, 0x25, 0xf7, 0x8e, 0xe4, 0xaa,
+	0xbd, 0xd3, 0x30, 0xf6, 0xce, 0xb5, 0xa5, 0x87, 0xa1, 0xbe, 0xce, 0x22, 0x7e, 0xf3, 0xd5, 0xf7,
+	0xb5, 0x92, 0x6a, 0x7f, 0xc5, 0xf9, 0xff, 0x58, 0xd0, 0x45, 0x72, 0x59, 0x1d, 0x2c, 0xf8, 0x1e,
+	0x47, 0xe9, 0x30, 0x2b, 0x85, 0x31, 0x42, 0x2a, 0x1e, 0x1d, 0x3d, 0x3e, 0x55, 0xf9, 0x6a, 0x1c,
+	0x9f, 0xd6, 0x2d, 0x47, 0xaa, 0xa5, 0x74, 0xf4, 0xe9, 0x80, 0x5e, 0x05, 0x6d, 0xd9, 0x0c, 0x95,
+	0xc0, 0x80, 0xa5, 0x63, 0x36, 0x03, 0xca, 0x79, 0xca, 0x2e, 0x47, 0x5c, 0x3d, 0x24, 0x14, 0xe7,
+	0x3e, 0x84, 0x56, 0xc9, 0xf3, 0x3e, 0x8d, 0x92, 0xde, 0xbe, 0x13, 0x9c, 0xe5, 0xbc, 0x4f, 0x59,
+	0x22, 0xb1, 0xff, 0x19, 0xe0, 0x98, 0xe6, 0xfc, 0xb2, 0x68, 0xa7, 0x89, 0x92, 0x5b, 0xf3, 0x36,
+	0x51, 0x4e, 0x7d, 0xb6, 0x67, 0x1a, 0xf8, 0x77, 0x0b, 0xba, 0x6f, 0x4b, 0xb5, 0xfe, 0xbf, 0xbc,
+	0x48, 0xaa, 0x37, 0x5d, 0xb3, 0xe6, 0x4d, 0xd7, 0x32, 0xde, 0x74, 0x2e, 0xb4, 0x12, 0x1c, 0xef,
+	0x6a, 0x3f, 0x23, 0x3d, 0x5d, 0x4c, 0x6d, 0x73, 0x31, 0x69, 0x94, 0x3a, 0xf5, 0x28, 0xfd, 0x61,
+	0x81, 0x73, 0x84, 0x1b, 0xe9, 0xb6, 0x28, 0xd5, 0xbd, 0x23, 0xee, 0x81, 0x2d, 0x5f, 0x7c, 0xea,
+	0x4d, 0x49, 0x4c, 0x15, 0x93, 0x3d, 0x1b, 0x13, 0xf9, 0xdf, 0x36, 0xfc, 0xc7, 0xf5, 0xc2, 0x59,
+	0xa2, 0xa6, 0x24, 0xd1, 0x95, 0xf7, 0xdd, 0x7a, 0xef, 0x7f, 0xb6, 0xa0, 0xab, 0x45, 0x78, 0x7b,
+	0xc2, 0xae, 0x26, 0x89, 0x7a, 0x00, 0x49, 0x86, 0xde, 0x1f, 0xec, 0x0a, 0xd7, 0x9b, 0xaa, 0x65,
+	0xc9, 0x29, 0x39, 0xae, 0xb8, 0x66, 0x25, 0xc7, 0x25, 0xb7, 0x05, 0x90, 0xb0, 0x2b, 0xbd, 0xd3,
+	0xe4, 0xc4, 0x37, 0x24, 0x38, 0xbf, 0x70, 0x7f, 0xc9, 0x60, 0x90, 0xdc, 0xff, 0x6d, 0x1d, 0x5a,
+	0xf8, 0x4e, 0x77, 0xb7, 0xa0, 0xfb, 0xaa, 0xe0, 0x4c, 0xf0, 0x8b, 0x13, 0x57, 0x8f, 0x8c, 0x8d,
+	0x4e, 0x20, 0xbb, 0xde, 0x5f, 0x71, 0x37, 0xa1, 0x7b, 0xc8, 0x47, 0x9c, 0xce, 0xed, 0x00, 0xe7,
+	0x87, 0x79, 0xfa, 0x7f, 0xe8, 0x9c, 0xe1, 0x52, 0xa8, 0x3d, 0xdc, 0x80, 0xf6, 0x99, 0xc8, 0xf2,
+	0xda, 0xb3, 0x2d, 0x80, 0xb3, 0xe1, 0x58, 0x44, 0xd9, 0xc7, 0x74, 0x91, 0xe1, 0x90, 0x97, 0x5c,
+	0x2c, 0x3a, 0x3c, 0x65, 0xe3, 0xb2, 0xde, 0xa5, 0x4d, 0xe8, 0x22, 0x9d, 0xd4, 0x9f, 0x3e, 0x83,
+	0xb5, 0x23, 0x2e, 0xf4, 0xb0, 0x9f, 0xaa, 0xac, 0x05, 0xe6, 0x02, 0xf0, 0x57, 0x9e, 0x5b, 0xee,
+	0xb7, 0x70, 0x77, 0x6e, 0x19, 0x5d, 0x9c, 0xb8, 0xf7, 0x83, 0xda, 0x15, 0x65, 0x5e, 0xf2, 0x00,
+	0xec, 0xa3, 0x59, 0xd7, 0x25, 0xae, 0xfe, 0x8a, 0xbb, 0x0d, 0x0e, 0x1d, 0xd1, 0xe0, 0x47, 0x39,
+	0x12, 0xf3, 0x0a, 0xd8, 0x86, 0xf4, 0x3d, 0x16, 0xb3, 0x71, 0xfc, 0xdc, 0x72, 0x77, 0x00, 0x8e,
+	0xb8, 0xa0, 0xf2, 0x5f, 0xa0, 0xb1, 0x05, 0xdd, 0x23, 0x2e, 0x0e, 0x46, 0xa3, 0x05, 0xe7, 0xdb,
+	0xd0, 0x39, 0x88, 0x22, 0x1c, 0x8f, 0xae, 0x13, 0xe8, 0xd1, 0x6a, 0xfa, 0xbf, 0x0d, 0x9d, 0x23,
+	0x2e, 0x48, 0x41, 0x7d, 0x3f, 0xd5, 0xd3, 0x3e, 0x84, 0x3c, 0xc9, 0x26, 0x9c, 0x74, 0x3a, 0x81,
+	0x1c, 0xb5, 0xb3, 0x26, 0x1c, 0x2a, 0x8c, 0x85, 0x0a, 0x5b, 0xd0, 0xc5, 0xe2, 0x58, 0x78, 0xfe,
+	0x08, 0x9c, 0x83, 0x28, 0x92, 0xc3, 0xd0, 0xed, 0x05, 0xd3, 0xa9, 0x68, 0x2a, 0xed, 0x12, 0x58,
+	0x4a, 0xa9, 0xde, 0xd5, 0xa7, 0xb0, 0x2a, 0x5d, 0x5d, 0x62, 0x4a, 0x82, 0x82, 0xb8, 0xbb, 0x4e,
+	0xa0, 0xa7, 0xa0, 0xa9, 0xe0, 0xeb, 0x98, 0x6f, 0xd0, 0x79, 0x44, 0xc0, 0x5d, 0x57, 0x98, 0x92,
+	0xe4, 0xd1, 0x63, 0x58, 0x3d, 0xe7, 0x25, 0x69, 0x9d, 0xe2, 0x58, 0xac, 0x37, 0xf5, 0x14, 0xd6,
+	0x5f, 0x0d, 0x59, 0x3a, 0xe0, 0xb7, 0xd1, 0xa3, 0xaa, 0xaa, 0xd7, 0xdb, 0x85, 0xee, 0x41, 0x14,
+	0x51, 0xd9, 0xb8, 0x10, 0x54, 0xd3, 0xd3, 0x54, 0x79, 0x0c, 0x3d, 0x19, 0xe1, 0x8d, 0x5a, 0x4f,
+	0xa9, 0xba, 0xe6, 0x55, 0x0c, 0x9a, 0xc2, 0x7c, 0x02, 0xab, 0xe8, 0xc7, 0xb2, 0x4b, 0xf7, 0xe0,
+	0x0e, 0xaa, 0x7d, 0xc1, 0xc5, 0x4f, 0xb0, 0x75, 0x53, 0x6c, 0x39, 0x4e, 0x3f, 0x74, 0x74, 0xc2,
+	0x7b, 0xc1, 0xf4, 0x97, 0x39, 0x25, 0xb2, 0x27, 0x07, 0xd6, 0x8c, 0xd2, 0x6c, 0x98, 0xb2, 0x3d,
+	0x66, 0x14, 0x20, 0xa8, 0x7e, 0x3d, 0xa9, 0x26, 0xc1, 0x30, 0x17, 0xab, 0xe0, 0x04, 0x7b, 0x35,
+	0xe4, 0xfd, 0x0f, 0x4b, 0xaf, 0x91, 0x8f, 0xe2, 0xca, 0x46, 0xf5, 0xcb, 0x97, 0xae, 0x79, 0x01,
+	0xbd, 0xb7, 0xf9, 0x28, 0x63, 0x91, 0x7a, 0x3a, 0x07, 0x73, 0x3f, 0xc4, 0x37, 0x56, 0x03, 0xe3,
+	0x9f, 0x01, 0x7f, 0xc5, 0x7d, 0x09, 0x6b, 0x87, 0xd9, 0xc7, 0xf4, 0x76, 0x1f, 0xed, 0x01, 0xfc,
+	0x70, 0x15, 0x97, 0x42, 0x7e, 0x61, 0x78, 0x31, 0xa7, 0xf9, 0x15, 0xac, 0x9d, 0x16, 0xd9, 0xa0,
+	0xe0, 0x65, 0xb9, 0x5c, 0x39, 0x80, 0xbb, 0x32, 0xc8, 0xd9, 0x4f, 0x54, 0xb0, 0xd7, 0xb4, 0xa9,
+	0x1b, 0xbb, 0xb2, 0xab, 0x97, 0xd8, 0x7d, 0xa6, 0x93, 0xb8, 0x5c, 0xf5, 0x1b, 0xb8, 0x23, 0x1b,
+	0x00, 0x8b, 0x7f, 0xb9, 0xfa, 0xd7, 0xba, 0x5f, 0xce, 0xd9, 0x60, 0xa9, 0xf6, 0x65, 0x9b, 0xfe,
+	0xc6, 0x7a, 0xf9, 0x6f, 0x00, 0x00, 0x00, 0xff, 0xff, 0xaa, 0x5d, 0xde, 0x4d, 0xd4, 0x12, 0x00,
+	0x00,
 }
 
 // Reference imports to suppress errors if they are not otherwise used.
@@ -1293,6 +1796,7 @@ type GrpcClient interface {
 	SnapshotOperationVM(ctx context.Context, in *SnapshotOperationData, opts ...grpc.CallOption) (*Result, error)
 	GetVM(ctx context.Context, in *VMID, opts ...grpc.CallOption) (*VMData, error)
 	GetVMName(ctx context.Context, in *VMName, opts ...grpc.CallOption) (*VMData, error)
+	GetUserVM(ctx context.Context, in *Base, opts ...grpc.CallOption) (Grpc_GetUserVMClient, error)
 	GetGroupVM(ctx context.Context, in *Base, opts ...grpc.CallOption) (Grpc_GetGroupVMClient, error)
 	GetAllVM(ctx context.Context, in *Base, opts ...grpc.CallOption) (Grpc_GetAllVMClient, error)
 	AddNode(ctx context.Context, in *NodeData, opts ...grpc.CallOption) (*Result, error)
@@ -1300,6 +1804,9 @@ type GrpcClient interface {
 	RemoveNode(ctx context.Context, in *NodeID, opts ...grpc.CallOption) (*Result, error)
 	StartNode(ctx context.Context, in *NodeID, opts ...grpc.CallOption) (*Result, error)
 	StopNode(ctx context.Context, in *NodeID, opts ...grpc.CallOption) (*Result, error)
+	AddImacon(ctx context.Context, in *ImaconData, opts ...grpc.CallOption) (*Result, error)
+	GetImacon(ctx context.Context, in *Base, opts ...grpc.CallOption) (Grpc_GetImaconClient, error)
+	RemoveImacon(ctx context.Context, in *ImaconData, opts ...grpc.CallOption) (*Result, error)
 	AddUser(ctx context.Context, in *UserData, opts ...grpc.CallOption) (*Result, error)
 	RemoveUser(ctx context.Context, in *UserData, opts ...grpc.CallOption) (*Result, error)
 	GetUser(ctx context.Context, in *UserData, opts ...grpc.CallOption) (Grpc_GetUserClient, error)
@@ -1315,6 +1822,17 @@ type GrpcClient interface {
 	DeleteToken(ctx context.Context, in *Base, opts ...grpc.CallOption) (*Result, error)
 	GetAllToken(ctx context.Context, in *Base, opts ...grpc.CallOption) (Grpc_GetAllTokenClient, error)
 	GetToken(ctx context.Context, in *Base, opts ...grpc.CallOption) (*TokenData, error)
+	CheckToken(ctx context.Context, in *Base, opts ...grpc.CallOption) (*Result, error)
+	GetAllImage(ctx context.Context, in *Base, opts ...grpc.CallOption) (Grpc_GetAllImageClient, error)
+	UploadImage(ctx context.Context, in *ImageTransferData, opts ...grpc.CallOption) (*ImageResult, error)
+	DownloadImage(ctx context.Context, in *ImageTransferData, opts ...grpc.CallOption) (*ImageResult, error)
+	ExistImage(ctx context.Context, in *ImageData, opts ...grpc.CallOption) (*ImageResult, error)
+	ProgressImage(ctx context.Context, in *ImageData, opts ...grpc.CallOption) (*ImageResult, error)
+	GetAllProgressImage(ctx context.Context, in *Base, opts ...grpc.CallOption) (Grpc_GetAllProgressImageClient, error)
+	AddImage(ctx context.Context, in *ImageData, opts ...grpc.CallOption) (*ImageResult, error)
+	DeleteImage(ctx context.Context, in *ImageData, opts ...grpc.CallOption) (*ImageResult, error)
+	ChangeNameImage(ctx context.Context, in *ImageData, opts ...grpc.CallOption) (*ImageResult, error)
+	ChangeTagImage(ctx context.Context, in *ImageData, opts ...grpc.CallOption) (*ImageResult, error)
 }
 
 type grpcClient struct {
@@ -1456,8 +1974,40 @@ func (c *grpcClient) GetVMName(ctx context.Context, in *VMName, opts ...grpc.Cal
 	return out, nil
 }
 
+func (c *grpcClient) GetUserVM(ctx context.Context, in *Base, opts ...grpc.CallOption) (Grpc_GetUserVMClient, error) {
+	stream, err := c.cc.NewStream(ctx, &_Grpc_serviceDesc.Streams[1], "/grpc/GetUserVM", opts...)
+	if err != nil {
+		return nil, err
+	}
+	x := &grpcGetUserVMClient{stream}
+	if err := x.ClientStream.SendMsg(in); err != nil {
+		return nil, err
+	}
+	if err := x.ClientStream.CloseSend(); err != nil {
+		return nil, err
+	}
+	return x, nil
+}
+
+type Grpc_GetUserVMClient interface {
+	Recv() (*VMData, error)
+	grpc.ClientStream
+}
+
+type grpcGetUserVMClient struct {
+	grpc.ClientStream
+}
+
+func (x *grpcGetUserVMClient) Recv() (*VMData, error) {
+	m := new(VMData)
+	if err := x.ClientStream.RecvMsg(m); err != nil {
+		return nil, err
+	}
+	return m, nil
+}
+
 func (c *grpcClient) GetGroupVM(ctx context.Context, in *Base, opts ...grpc.CallOption) (Grpc_GetGroupVMClient, error) {
-	stream, err := c.cc.NewStream(ctx, &_Grpc_serviceDesc.Streams[1], "/grpc/GetGroupVM", opts...)
+	stream, err := c.cc.NewStream(ctx, &_Grpc_serviceDesc.Streams[2], "/grpc/GetGroupVM", opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -1489,7 +2039,7 @@ func (x *grpcGetGroupVMClient) Recv() (*VMData, error) {
 }
 
 func (c *grpcClient) GetAllVM(ctx context.Context, in *Base, opts ...grpc.CallOption) (Grpc_GetAllVMClient, error) {
-	stream, err := c.cc.NewStream(ctx, &_Grpc_serviceDesc.Streams[2], "/grpc/GetAllVM", opts...)
+	stream, err := c.cc.NewStream(ctx, &_Grpc_serviceDesc.Streams[3], "/grpc/GetAllVM", opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -1530,7 +2080,7 @@ func (c *grpcClient) AddNode(ctx context.Context, in *NodeData, opts ...grpc.Cal
 }
 
 func (c *grpcClient) GetNode(ctx context.Context, in *Base, opts ...grpc.CallOption) (Grpc_GetNodeClient, error) {
-	stream, err := c.cc.NewStream(ctx, &_Grpc_serviceDesc.Streams[3], "/grpc/GetNode", opts...)
+	stream, err := c.cc.NewStream(ctx, &_Grpc_serviceDesc.Streams[4], "/grpc/GetNode", opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -1588,6 +2138,56 @@ func (c *grpcClient) StopNode(ctx context.Context, in *NodeID, opts ...grpc.Call
 	return out, nil
 }
 
+func (c *grpcClient) AddImacon(ctx context.Context, in *ImaconData, opts ...grpc.CallOption) (*Result, error) {
+	out := new(Result)
+	err := c.cc.Invoke(ctx, "/grpc/AddImacon", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *grpcClient) GetImacon(ctx context.Context, in *Base, opts ...grpc.CallOption) (Grpc_GetImaconClient, error) {
+	stream, err := c.cc.NewStream(ctx, &_Grpc_serviceDesc.Streams[5], "/grpc/GetImacon", opts...)
+	if err != nil {
+		return nil, err
+	}
+	x := &grpcGetImaconClient{stream}
+	if err := x.ClientStream.SendMsg(in); err != nil {
+		return nil, err
+	}
+	if err := x.ClientStream.CloseSend(); err != nil {
+		return nil, err
+	}
+	return x, nil
+}
+
+type Grpc_GetImaconClient interface {
+	Recv() (*NodeData, error)
+	grpc.ClientStream
+}
+
+type grpcGetImaconClient struct {
+	grpc.ClientStream
+}
+
+func (x *grpcGetImaconClient) Recv() (*NodeData, error) {
+	m := new(NodeData)
+	if err := x.ClientStream.RecvMsg(m); err != nil {
+		return nil, err
+	}
+	return m, nil
+}
+
+func (c *grpcClient) RemoveImacon(ctx context.Context, in *ImaconData, opts ...grpc.CallOption) (*Result, error) {
+	out := new(Result)
+	err := c.cc.Invoke(ctx, "/grpc/RemoveImacon", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 func (c *grpcClient) AddUser(ctx context.Context, in *UserData, opts ...grpc.CallOption) (*Result, error) {
 	out := new(Result)
 	err := c.cc.Invoke(ctx, "/grpc/AddUser", in, out, opts...)
@@ -1607,7 +2207,7 @@ func (c *grpcClient) RemoveUser(ctx context.Context, in *UserData, opts ...grpc.
 }
 
 func (c *grpcClient) GetUser(ctx context.Context, in *UserData, opts ...grpc.CallOption) (Grpc_GetUserClient, error) {
-	stream, err := c.cc.NewStream(ctx, &_Grpc_serviceDesc.Streams[4], "/grpc/GetUser", opts...)
+	stream, err := c.cc.NewStream(ctx, &_Grpc_serviceDesc.Streams[6], "/grpc/GetUser", opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -1684,7 +2284,7 @@ func (c *grpcClient) RemoveGroup(ctx context.Context, in *GroupData, opts ...grp
 }
 
 func (c *grpcClient) GetGroup(ctx context.Context, in *GroupData, opts ...grpc.CallOption) (Grpc_GetGroupClient, error) {
-	stream, err := c.cc.NewStream(ctx, &_Grpc_serviceDesc.Streams[5], "/grpc/GetGroup", opts...)
+	stream, err := c.cc.NewStream(ctx, &_Grpc_serviceDesc.Streams[7], "/grpc/GetGroup", opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -1752,7 +2352,7 @@ func (c *grpcClient) DeleteToken(ctx context.Context, in *Base, opts ...grpc.Cal
 }
 
 func (c *grpcClient) GetAllToken(ctx context.Context, in *Base, opts ...grpc.CallOption) (Grpc_GetAllTokenClient, error) {
-	stream, err := c.cc.NewStream(ctx, &_Grpc_serviceDesc.Streams[6], "/grpc/GetAllToken", opts...)
+	stream, err := c.cc.NewStream(ctx, &_Grpc_serviceDesc.Streams[8], "/grpc/GetAllToken", opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -1792,6 +2392,151 @@ func (c *grpcClient) GetToken(ctx context.Context, in *Base, opts ...grpc.CallOp
 	return out, nil
 }
 
+func (c *grpcClient) CheckToken(ctx context.Context, in *Base, opts ...grpc.CallOption) (*Result, error) {
+	out := new(Result)
+	err := c.cc.Invoke(ctx, "/grpc/CheckToken", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *grpcClient) GetAllImage(ctx context.Context, in *Base, opts ...grpc.CallOption) (Grpc_GetAllImageClient, error) {
+	stream, err := c.cc.NewStream(ctx, &_Grpc_serviceDesc.Streams[9], "/grpc/GetAllImage", opts...)
+	if err != nil {
+		return nil, err
+	}
+	x := &grpcGetAllImageClient{stream}
+	if err := x.ClientStream.SendMsg(in); err != nil {
+		return nil, err
+	}
+	if err := x.ClientStream.CloseSend(); err != nil {
+		return nil, err
+	}
+	return x, nil
+}
+
+type Grpc_GetAllImageClient interface {
+	Recv() (*ImageData, error)
+	grpc.ClientStream
+}
+
+type grpcGetAllImageClient struct {
+	grpc.ClientStream
+}
+
+func (x *grpcGetAllImageClient) Recv() (*ImageData, error) {
+	m := new(ImageData)
+	if err := x.ClientStream.RecvMsg(m); err != nil {
+		return nil, err
+	}
+	return m, nil
+}
+
+func (c *grpcClient) UploadImage(ctx context.Context, in *ImageTransferData, opts ...grpc.CallOption) (*ImageResult, error) {
+	out := new(ImageResult)
+	err := c.cc.Invoke(ctx, "/grpc/UploadImage", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *grpcClient) DownloadImage(ctx context.Context, in *ImageTransferData, opts ...grpc.CallOption) (*ImageResult, error) {
+	out := new(ImageResult)
+	err := c.cc.Invoke(ctx, "/grpc/DownloadImage", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *grpcClient) ExistImage(ctx context.Context, in *ImageData, opts ...grpc.CallOption) (*ImageResult, error) {
+	out := new(ImageResult)
+	err := c.cc.Invoke(ctx, "/grpc/ExistImage", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *grpcClient) ProgressImage(ctx context.Context, in *ImageData, opts ...grpc.CallOption) (*ImageResult, error) {
+	out := new(ImageResult)
+	err := c.cc.Invoke(ctx, "/grpc/ProgressImage", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *grpcClient) GetAllProgressImage(ctx context.Context, in *Base, opts ...grpc.CallOption) (Grpc_GetAllProgressImageClient, error) {
+	stream, err := c.cc.NewStream(ctx, &_Grpc_serviceDesc.Streams[10], "/grpc/GetAllProgressImage", opts...)
+	if err != nil {
+		return nil, err
+	}
+	x := &grpcGetAllProgressImageClient{stream}
+	if err := x.ClientStream.SendMsg(in); err != nil {
+		return nil, err
+	}
+	if err := x.ClientStream.CloseSend(); err != nil {
+		return nil, err
+	}
+	return x, nil
+}
+
+type Grpc_GetAllProgressImageClient interface {
+	Recv() (*ImageResult, error)
+	grpc.ClientStream
+}
+
+type grpcGetAllProgressImageClient struct {
+	grpc.ClientStream
+}
+
+func (x *grpcGetAllProgressImageClient) Recv() (*ImageResult, error) {
+	m := new(ImageResult)
+	if err := x.ClientStream.RecvMsg(m); err != nil {
+		return nil, err
+	}
+	return m, nil
+}
+
+func (c *grpcClient) AddImage(ctx context.Context, in *ImageData, opts ...grpc.CallOption) (*ImageResult, error) {
+	out := new(ImageResult)
+	err := c.cc.Invoke(ctx, "/grpc/AddImage", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *grpcClient) DeleteImage(ctx context.Context, in *ImageData, opts ...grpc.CallOption) (*ImageResult, error) {
+	out := new(ImageResult)
+	err := c.cc.Invoke(ctx, "/grpc/DeleteImage", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *grpcClient) ChangeNameImage(ctx context.Context, in *ImageData, opts ...grpc.CallOption) (*ImageResult, error) {
+	out := new(ImageResult)
+	err := c.cc.Invoke(ctx, "/grpc/ChangeNameImage", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *grpcClient) ChangeTagImage(ctx context.Context, in *ImageData, opts ...grpc.CallOption) (*ImageResult, error) {
+	out := new(ImageResult)
+	err := c.cc.Invoke(ctx, "/grpc/ChangeTagImage", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // GrpcServer is the server API for Grpc service.
 type GrpcServer interface {
 	CreateVM(context.Context, *VMData) (*Result, error)
@@ -1806,6 +2551,7 @@ type GrpcServer interface {
 	SnapshotOperationVM(context.Context, *SnapshotOperationData) (*Result, error)
 	GetVM(context.Context, *VMID) (*VMData, error)
 	GetVMName(context.Context, *VMName) (*VMData, error)
+	GetUserVM(*Base, Grpc_GetUserVMServer) error
 	GetGroupVM(*Base, Grpc_GetGroupVMServer) error
 	GetAllVM(*Base, Grpc_GetAllVMServer) error
 	AddNode(context.Context, *NodeData) (*Result, error)
@@ -1813,6 +2559,9 @@ type GrpcServer interface {
 	RemoveNode(context.Context, *NodeID) (*Result, error)
 	StartNode(context.Context, *NodeID) (*Result, error)
 	StopNode(context.Context, *NodeID) (*Result, error)
+	AddImacon(context.Context, *ImaconData) (*Result, error)
+	GetImacon(*Base, Grpc_GetImaconServer) error
+	RemoveImacon(context.Context, *ImaconData) (*Result, error)
 	AddUser(context.Context, *UserData) (*Result, error)
 	RemoveUser(context.Context, *UserData) (*Result, error)
 	GetUser(*UserData, Grpc_GetUserServer) error
@@ -1828,6 +2577,17 @@ type GrpcServer interface {
 	DeleteToken(context.Context, *Base) (*Result, error)
 	GetAllToken(*Base, Grpc_GetAllTokenServer) error
 	GetToken(context.Context, *Base) (*TokenData, error)
+	CheckToken(context.Context, *Base) (*Result, error)
+	GetAllImage(*Base, Grpc_GetAllImageServer) error
+	UploadImage(context.Context, *ImageTransferData) (*ImageResult, error)
+	DownloadImage(context.Context, *ImageTransferData) (*ImageResult, error)
+	ExistImage(context.Context, *ImageData) (*ImageResult, error)
+	ProgressImage(context.Context, *ImageData) (*ImageResult, error)
+	GetAllProgressImage(*Base, Grpc_GetAllProgressImageServer) error
+	AddImage(context.Context, *ImageData) (*ImageResult, error)
+	DeleteImage(context.Context, *ImageData) (*ImageResult, error)
+	ChangeNameImage(context.Context, *ImageData) (*ImageResult, error)
+	ChangeTagImage(context.Context, *ImageData) (*ImageResult, error)
 }
 
 // UnimplementedGrpcServer can be embedded to have forward compatible implementations.
@@ -1870,6 +2630,9 @@ func (*UnimplementedGrpcServer) GetVM(ctx context.Context, req *VMID) (*VMData, 
 func (*UnimplementedGrpcServer) GetVMName(ctx context.Context, req *VMName) (*VMData, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetVMName not implemented")
 }
+func (*UnimplementedGrpcServer) GetUserVM(req *Base, srv Grpc_GetUserVMServer) error {
+	return status.Errorf(codes.Unimplemented, "method GetUserVM not implemented")
+}
 func (*UnimplementedGrpcServer) GetGroupVM(req *Base, srv Grpc_GetGroupVMServer) error {
 	return status.Errorf(codes.Unimplemented, "method GetGroupVM not implemented")
 }
@@ -1890,6 +2653,15 @@ func (*UnimplementedGrpcServer) StartNode(ctx context.Context, req *NodeID) (*Re
 }
 func (*UnimplementedGrpcServer) StopNode(ctx context.Context, req *NodeID) (*Result, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method StopNode not implemented")
+}
+func (*UnimplementedGrpcServer) AddImacon(ctx context.Context, req *ImaconData) (*Result, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method AddImacon not implemented")
+}
+func (*UnimplementedGrpcServer) GetImacon(req *Base, srv Grpc_GetImaconServer) error {
+	return status.Errorf(codes.Unimplemented, "method GetImacon not implemented")
+}
+func (*UnimplementedGrpcServer) RemoveImacon(ctx context.Context, req *ImaconData) (*Result, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method RemoveImacon not implemented")
 }
 func (*UnimplementedGrpcServer) AddUser(ctx context.Context, req *UserData) (*Result, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method AddUser not implemented")
@@ -1935,6 +2707,39 @@ func (*UnimplementedGrpcServer) GetAllToken(req *Base, srv Grpc_GetAllTokenServe
 }
 func (*UnimplementedGrpcServer) GetToken(ctx context.Context, req *Base) (*TokenData, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetToken not implemented")
+}
+func (*UnimplementedGrpcServer) CheckToken(ctx context.Context, req *Base) (*Result, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method CheckToken not implemented")
+}
+func (*UnimplementedGrpcServer) GetAllImage(req *Base, srv Grpc_GetAllImageServer) error {
+	return status.Errorf(codes.Unimplemented, "method GetAllImage not implemented")
+}
+func (*UnimplementedGrpcServer) UploadImage(ctx context.Context, req *ImageTransferData) (*ImageResult, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method UploadImage not implemented")
+}
+func (*UnimplementedGrpcServer) DownloadImage(ctx context.Context, req *ImageTransferData) (*ImageResult, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method DownloadImage not implemented")
+}
+func (*UnimplementedGrpcServer) ExistImage(ctx context.Context, req *ImageData) (*ImageResult, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ExistImage not implemented")
+}
+func (*UnimplementedGrpcServer) ProgressImage(ctx context.Context, req *ImageData) (*ImageResult, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ProgressImage not implemented")
+}
+func (*UnimplementedGrpcServer) GetAllProgressImage(req *Base, srv Grpc_GetAllProgressImageServer) error {
+	return status.Errorf(codes.Unimplemented, "method GetAllProgressImage not implemented")
+}
+func (*UnimplementedGrpcServer) AddImage(ctx context.Context, req *ImageData) (*ImageResult, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method AddImage not implemented")
+}
+func (*UnimplementedGrpcServer) DeleteImage(ctx context.Context, req *ImageData) (*ImageResult, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method DeleteImage not implemented")
+}
+func (*UnimplementedGrpcServer) ChangeNameImage(ctx context.Context, req *ImageData) (*ImageResult, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ChangeNameImage not implemented")
+}
+func (*UnimplementedGrpcServer) ChangeTagImage(ctx context.Context, req *ImageData) (*ImageResult, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ChangeTagImage not implemented")
 }
 
 func RegisterGrpcServer(s *grpc.Server, srv GrpcServer) {
@@ -2160,6 +2965,27 @@ func _Grpc_GetVMName_Handler(srv interface{}, ctx context.Context, dec func(inte
 	return interceptor(ctx, in, info, handler)
 }
 
+func _Grpc_GetUserVM_Handler(srv interface{}, stream grpc.ServerStream) error {
+	m := new(Base)
+	if err := stream.RecvMsg(m); err != nil {
+		return err
+	}
+	return srv.(GrpcServer).GetUserVM(m, &grpcGetUserVMServer{stream})
+}
+
+type Grpc_GetUserVMServer interface {
+	Send(*VMData) error
+	grpc.ServerStream
+}
+
+type grpcGetUserVMServer struct {
+	grpc.ServerStream
+}
+
+func (x *grpcGetUserVMServer) Send(m *VMData) error {
+	return x.ServerStream.SendMsg(m)
+}
+
 func _Grpc_GetGroupVM_Handler(srv interface{}, stream grpc.ServerStream) error {
 	m := new(Base)
 	if err := stream.RecvMsg(m); err != nil {
@@ -2291,6 +3117,63 @@ func _Grpc_StopNode_Handler(srv interface{}, ctx context.Context, dec func(inter
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(GrpcServer).StopNode(ctx, req.(*NodeID))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Grpc_AddImacon_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ImaconData)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(GrpcServer).AddImacon(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/grpc/AddImacon",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(GrpcServer).AddImacon(ctx, req.(*ImaconData))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Grpc_GetImacon_Handler(srv interface{}, stream grpc.ServerStream) error {
+	m := new(Base)
+	if err := stream.RecvMsg(m); err != nil {
+		return err
+	}
+	return srv.(GrpcServer).GetImacon(m, &grpcGetImaconServer{stream})
+}
+
+type Grpc_GetImaconServer interface {
+	Send(*NodeData) error
+	grpc.ServerStream
+}
+
+type grpcGetImaconServer struct {
+	grpc.ServerStream
+}
+
+func (x *grpcGetImaconServer) Send(m *NodeData) error {
+	return x.ServerStream.SendMsg(m)
+}
+
+func _Grpc_RemoveImacon_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ImaconData)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(GrpcServer).RemoveImacon(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/grpc/RemoveImacon",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(GrpcServer).RemoveImacon(ctx, req.(*ImaconData))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -2574,6 +3457,210 @@ func _Grpc_GetToken_Handler(srv interface{}, ctx context.Context, dec func(inter
 	return interceptor(ctx, in, info, handler)
 }
 
+func _Grpc_CheckToken_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(Base)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(GrpcServer).CheckToken(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/grpc/CheckToken",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(GrpcServer).CheckToken(ctx, req.(*Base))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Grpc_GetAllImage_Handler(srv interface{}, stream grpc.ServerStream) error {
+	m := new(Base)
+	if err := stream.RecvMsg(m); err != nil {
+		return err
+	}
+	return srv.(GrpcServer).GetAllImage(m, &grpcGetAllImageServer{stream})
+}
+
+type Grpc_GetAllImageServer interface {
+	Send(*ImageData) error
+	grpc.ServerStream
+}
+
+type grpcGetAllImageServer struct {
+	grpc.ServerStream
+}
+
+func (x *grpcGetAllImageServer) Send(m *ImageData) error {
+	return x.ServerStream.SendMsg(m)
+}
+
+func _Grpc_UploadImage_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ImageTransferData)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(GrpcServer).UploadImage(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/grpc/UploadImage",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(GrpcServer).UploadImage(ctx, req.(*ImageTransferData))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Grpc_DownloadImage_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ImageTransferData)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(GrpcServer).DownloadImage(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/grpc/DownloadImage",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(GrpcServer).DownloadImage(ctx, req.(*ImageTransferData))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Grpc_ExistImage_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ImageData)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(GrpcServer).ExistImage(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/grpc/ExistImage",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(GrpcServer).ExistImage(ctx, req.(*ImageData))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Grpc_ProgressImage_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ImageData)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(GrpcServer).ProgressImage(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/grpc/ProgressImage",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(GrpcServer).ProgressImage(ctx, req.(*ImageData))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Grpc_GetAllProgressImage_Handler(srv interface{}, stream grpc.ServerStream) error {
+	m := new(Base)
+	if err := stream.RecvMsg(m); err != nil {
+		return err
+	}
+	return srv.(GrpcServer).GetAllProgressImage(m, &grpcGetAllProgressImageServer{stream})
+}
+
+type Grpc_GetAllProgressImageServer interface {
+	Send(*ImageResult) error
+	grpc.ServerStream
+}
+
+type grpcGetAllProgressImageServer struct {
+	grpc.ServerStream
+}
+
+func (x *grpcGetAllProgressImageServer) Send(m *ImageResult) error {
+	return x.ServerStream.SendMsg(m)
+}
+
+func _Grpc_AddImage_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ImageData)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(GrpcServer).AddImage(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/grpc/AddImage",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(GrpcServer).AddImage(ctx, req.(*ImageData))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Grpc_DeleteImage_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ImageData)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(GrpcServer).DeleteImage(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/grpc/DeleteImage",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(GrpcServer).DeleteImage(ctx, req.(*ImageData))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Grpc_ChangeNameImage_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ImageData)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(GrpcServer).ChangeNameImage(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/grpc/ChangeNameImage",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(GrpcServer).ChangeNameImage(ctx, req.(*ImageData))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Grpc_ChangeTagImage_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ImageData)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(GrpcServer).ChangeTagImage(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/grpc/ChangeTagImage",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(GrpcServer).ChangeTagImage(ctx, req.(*ImageData))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 var _Grpc_serviceDesc = grpc.ServiceDesc{
 	ServiceName: "grpc",
 	HandlerType: (*GrpcServer)(nil),
@@ -2639,6 +3726,14 @@ var _Grpc_serviceDesc = grpc.ServiceDesc{
 			Handler:    _Grpc_StopNode_Handler,
 		},
 		{
+			MethodName: "AddImacon",
+			Handler:    _Grpc_AddImacon_Handler,
+		},
+		{
+			MethodName: "RemoveImacon",
+			Handler:    _Grpc_RemoveImacon_Handler,
+		},
+		{
 			MethodName: "AddUser",
 			Handler:    _Grpc_AddUser_Handler,
 		},
@@ -2686,11 +3781,52 @@ var _Grpc_serviceDesc = grpc.ServiceDesc{
 			MethodName: "GetToken",
 			Handler:    _Grpc_GetToken_Handler,
 		},
+		{
+			MethodName: "CheckToken",
+			Handler:    _Grpc_CheckToken_Handler,
+		},
+		{
+			MethodName: "UploadImage",
+			Handler:    _Grpc_UploadImage_Handler,
+		},
+		{
+			MethodName: "DownloadImage",
+			Handler:    _Grpc_DownloadImage_Handler,
+		},
+		{
+			MethodName: "ExistImage",
+			Handler:    _Grpc_ExistImage_Handler,
+		},
+		{
+			MethodName: "ProgressImage",
+			Handler:    _Grpc_ProgressImage_Handler,
+		},
+		{
+			MethodName: "AddImage",
+			Handler:    _Grpc_AddImage_Handler,
+		},
+		{
+			MethodName: "DeleteImage",
+			Handler:    _Grpc_DeleteImage_Handler,
+		},
+		{
+			MethodName: "ChangeNameImage",
+			Handler:    _Grpc_ChangeNameImage_Handler,
+		},
+		{
+			MethodName: "ChangeTagImage",
+			Handler:    _Grpc_ChangeTagImage_Handler,
+		},
 	},
 	Streams: []grpc.StreamDesc{
 		{
 			StreamName:    "GetSnapshotVM",
 			Handler:       _Grpc_GetSnapshotVM_Handler,
+			ServerStreams: true,
+		},
+		{
+			StreamName:    "GetUserVM",
+			Handler:       _Grpc_GetUserVM_Handler,
 			ServerStreams: true,
 		},
 		{
@@ -2709,6 +3845,11 @@ var _Grpc_serviceDesc = grpc.ServiceDesc{
 			ServerStreams: true,
 		},
 		{
+			StreamName:    "GetImacon",
+			Handler:       _Grpc_GetImacon_Handler,
+			ServerStreams: true,
+		},
+		{
 			StreamName:    "GetUser",
 			Handler:       _Grpc_GetUser_Handler,
 			ServerStreams: true,
@@ -2721,6 +3862,16 @@ var _Grpc_serviceDesc = grpc.ServiceDesc{
 		{
 			StreamName:    "GetAllToken",
 			Handler:       _Grpc_GetAllToken_Handler,
+			ServerStreams: true,
+		},
+		{
+			StreamName:    "GetAllImage",
+			Handler:       _Grpc_GetAllImage_Handler,
+			ServerStreams: true,
+		},
+		{
+			StreamName:    "GetAllProgressImage",
+			Handler:       _Grpc_GetAllProgressImage_Handler,
 			ServerStreams: true,
 		},
 	},

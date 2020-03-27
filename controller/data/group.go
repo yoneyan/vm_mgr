@@ -159,20 +159,25 @@ func SearchUserForAllGroup(user string) ([]int, bool) {
 			resultarray = append(resultarray, el)
 		}
 	}
-	return tmp, true
+	return resultarray, true
 }
+
 func SearchUserForAdminGroup(user string) ([]int, bool) {
 	data := db.GetDBAllGroup()
+	fmt.Println(data)
 	var result []int
 	for _, a := range data {
 		dataarray := strings.Split(a.Admin, ",")
 		for _, d := range dataarray {
 			if d == user {
+				result = append(result, a.ID)
 				break
 			}
 		}
-		result = append(result, a.ID)
+		fmt.Println(a)
 	}
+	fmt.Println("AdminGroup")
+	fmt.Println(result)
 	return result, true
 }
 func SearchUserForUserGroup(user string) ([]int, bool) {
@@ -182,11 +187,13 @@ func SearchUserForUserGroup(user string) ([]int, bool) {
 		dataarray := strings.Split(a.User, ",")
 		for _, d := range dataarray {
 			if d == user {
+				result = append(result, a.ID)
 				break
 			}
 		}
-		result = append(result, a.ID)
 	}
+	fmt.Println("UserGroup")
+	fmt.Println(result)
 	return result, true
 }
 
@@ -204,7 +211,7 @@ func SearchAllGroupUser(basedata, searchnamedata string) bool {
 }
 
 //mode 0:admin 1:user
-func SearchGroupUser(searchnamedata, group string, mode int) bool {
+func SearchGroupUser(name, group string, mode int) bool {
 	id, result := db.GetDBGroupID(group)
 	if result == false {
 		fmt.Println("Error: Not found group")
@@ -217,14 +224,14 @@ func SearchGroupUser(searchnamedata, group string, mode int) bool {
 	if mode == 0 {
 		d := strings.Split(data.Admin, ",")
 		for _, a := range d {
-			if a == searchnamedata {
+			if a == name {
 				return true
 			}
 		}
 	} else if mode == 1 {
 		d := strings.Split(data.User, ",")
 		for _, a := range d {
-			if a == searchnamedata {
+			if a == name {
 				return true
 			}
 		}

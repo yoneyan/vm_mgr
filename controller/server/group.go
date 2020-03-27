@@ -138,15 +138,40 @@ func (s *server) GetGroup(d *pb.GroupData, stream pb.Grpc_GetGroupServer) error 
 	log.Println("Receive AuthUser  : " + d.Base.GetUser() + ", AuthPass: " + d.Base.GetPass())
 	log.Println("Receive Token     : " + d.Base.GetToken())
 
-	if d.Mode == 0 {
-		log.Printf("Receive GetAllGroup")
-		if data.AdminUserCertification(d.Base.GetUser(), d.Base.GetPass(), d.Base.GetToken()) == false {
-			fmt.Println("Failed authentication")
+	isAdmin := false
+
+	log.Printf("Receive GetAllGroup")
+	if data.AdminUserCertification(d.Base.GetUser(), d.Base.GetPass(), d.Base.GetToken()) {
+		isAdmin = true
+	}
+
+	_, _, r := data.TokenCertification(d.Base.GetToken())
+	if r == false {
+		fmt.Println("Auth Failed...")
+		return nil
+	}
+
+	data, r := data.SearchUserForAdminGroup(data.GetUserName(d.Base.GetUser(), d.Base.GetToken()))
+	if r == false {
+		fmt.Println("Search Error!!")
+		return nil
+	}
+
+	var groupdata []string
+
+	for _, a := range data {
+		tmp, r := db.GetDBGroup(a)
+		if r == false {
+			fmt.Println("Search Error!!")
 			return nil
 		}
-		fmt.Println(db.GetDBAllGroup())
-		result := db.GetDBAllGroup()
-		for _, a := range result {
+		groupdata = append(groupdata, tmp.Name)
+	}
+
+	fmt.Println(db.GetDBAllGroup())
+	result := db.GetDBAllGroup()
+	for _, a := range result {
+		if isAdmin {
 			if err := stream.Send(&pb.GroupData{
 				Id:    int32(a.ID),
 				Name:  a.Name,
@@ -162,14 +187,29 @@ func (s *server) GetGroup(d *pb.GroupData, stream pb.Grpc_GetGroupServer) error 
 			}); err != nil {
 				return err
 			}
+		} else if isAdmin == false {
+			for _, b := range groupdata {
+				if a.Name == b {
+					if err := stream.Send(&pb.GroupData{
+						Id:    int32(a.ID),
+						Name:  a.Name,
+						Admin: a.Admin,
+						User:  a.User,
+						Sepc: &pb.SpecData{
+							Maxvm:      int32(a.MaxVM),
+							Maxcpu:     int32(a.MaxCPU),
+							Maxmem:     int32(a.MaxMem),
+							Maxstorage: int32(a.MaxStorage),
+							Net:        a.Net,
+						},
+					}); err != nil {
+						return err
+					}
+					break
+				}
+			}
+
 		}
-	} else if d.Mode == 1 {
-		log.Printf("Receive GetAllGroup")
-	} else if d.Mode == 2 {
-		log.Printf("Receive GetAllGroup")
-	} else {
-		log.Printf("Mode error!!!")
-		return nil
 	}
 
 	return nil

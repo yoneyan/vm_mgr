@@ -8,7 +8,7 @@ import (
 )
 
 func CreateVMCheck(d *grpc.VMData) bool {
-	if d.Vcpu < 0 || d.Vmem < 0 || d.Option.Vnc < 0 || d.Storage < 0 {
+	if d.Vcpu < 0 || d.Vmem < 0 || d.Option.Vnc < 0 {
 		return false
 	}
 	if d.Vmname == "" || d.Option.StoragePath == "" {
@@ -64,4 +64,17 @@ func GroupAllUserCheck(name string) bool {
 		}
 	}
 	return false
+}
+
+func CheckOnlyAdmin(nodeid int) bool {
+	d, result := db.GetDBNodeID(nodeid)
+	if result == false {
+		fmt.Println("DB Connection Error!!")
+		return false
+	}
+	if d.OnlyAdmin == 0 {
+		return false
+	} else {
+		return true
+	}
 }

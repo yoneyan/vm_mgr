@@ -11,6 +11,9 @@ I am aiming to manage KVM reasonably.
 ## Status
 |function|status|
 |---|---|
-|controller|NG|
-|node|NG|
-|client|NG|
+|controller|OK|
+|node|OK|
+|client|OK|
+|gGate|OK|
+|wGate|OK|
+|imacon|OK(Only Join)|

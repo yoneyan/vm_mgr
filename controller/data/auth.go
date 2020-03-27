@@ -6,7 +6,6 @@ import (
 	"github.com/yoneyan/vm_mgr/controller/db"
 	pb "github.com/yoneyan/vm_mgr/proto/proto-go"
 	"google.golang.org/grpc"
-	"log"
 	"strconv"
 	"strings"
 	"time"
@@ -58,6 +57,7 @@ func AdminUserCertification(name, pass, token string) bool {
 			return false
 		}
 	}
+
 	if SearchGroupUser(name, "admin", 0) {
 		fmt.Println("Certification OK!! (Administrator)")
 		return true
@@ -152,7 +152,7 @@ func VMCertification(vmid, groupid int, address string) (string, bool) {
 
 	conn, err := grpc.Dial(address, grpc.WithInsecure(), grpc.WithBlock())
 	if err != nil {
-		log.Fatalf("Not connect; %v", err)
+		fmt.Println("Not connect; %v", err)
 	}
 	defer conn.Close()
 	c := pb.NewGrpcClient(conn)
@@ -161,7 +161,7 @@ func VMCertification(vmid, groupid int, address string) (string, bool) {
 	defer cancel()
 	r, err := c.GetVM(ctx, &pb.VMID{Id: int64(vmid)})
 	if err != nil {
-		log.Fatalf("could not greet: %v", err)
+		fmt.Println("could not greet: %v", err)
 	}
 	if r.GetVmname() == "" {
 		return "None", false
@@ -197,53 +197,140 @@ func StandardUserCertification(d *UserCertData) bool {
 //Only VM Certification
 
 func SuperUserVMCertification(d *UserCertData) (string, bool) {
-	g, result := db.GetDBGroupID(d.Group)
-	if result == false {
-		fmt.Println("Error: Get NodeData Error")
-		return "", false
+	var username string
+	if d.Token == "" {
+		username = d.User
+		if UserCertification(d.User, d.Pass) == false {
+			return "", false
+		}
+	} else {
+		userid, _, result := TokenCertification(d.Token)
+		if result == false {
+			return "", false
+		}
+		userdata, result := db.GetDBUser(userid)
+		if result == false {
+			return "", false
+		}
+		username = userdata.Name
 	}
+
+	//NodeIP
 	n, result := db.GetDBNodeID(d.NodeID)
 	if result == false {
 		fmt.Println("Error: Get NodeData Error")
 		return "", false
 	}
+
+	conn, err := grpc.Dial(n.IP, grpc.WithInsecure(), grpc.WithBlock())
+	if err != nil {
+		fmt.Printf("Not connect; ")
+		fmt.Println(err)
+	}
+	defer conn.Close()
+	c := pb.NewGrpcClient(conn)
+	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
+	defer cancel()
+
+	g, err := c.GetVM(ctx, &pb.VMID{Id: int64(d.VMID)})
+	if err != nil {
+		fmt.Println("could not greet: %v", err)
+	}
+	d2 := strings.Split(g.GetVmname(), "-")
+	groupid := d2[0]
+
 	if AdminUserCertification(d.User, d.Pass, d.Token) == false {
-		if GroupAdminCertification(d.User, d.Pass, d.Token, d.Group) == false {
+		groupdata, result := SearchUserForAdminGroup(username)
+		if result == false {
 			return "", false
-		} else {
-			info, result := VMCertification(d.VMID, g, n.IP)
-			if result == false {
-				fmt.Println("Error: " + info)
-				return "", false
+		}
+
+		for _, a := range groupdata {
+			if strconv.Itoa(a) == groupid {
+				return n.IP, true
 			}
 		}
+	} else {
+		return n.IP, true
 	}
-	return n.IP, true
+
+	return "", true
 }
 
 func StandardUserVMCertification(d *UserCertData) (string, bool) {
-	g, result := db.GetDBGroupID(d.Group)
-	if result == false {
-		fmt.Println("Error: Get NodeData Error")
-		return "", false
+	var username string
+	if d.Token == "" {
+		username = d.User
+		if UserCertification(d.User, d.Pass) == false {
+			return "", false
+		}
+	} else {
+		userid, _, result := TokenCertification(d.Token)
+		if result == false {
+			return "", false
+		}
+		userdata, result := db.GetDBUser(userid)
+		if result == false {
+			return "", false
+		}
+		username = userdata.Name
 	}
+
+	//NodeIP
 	n, result := db.GetDBNodeID(d.NodeID)
 	if result == false {
 		fmt.Println("Error: Get NodeData Error")
-		return "", false
+		return "NodeDataError", false
 	}
+
+	conn, err := grpc.Dial(n.IP, grpc.WithInsecure(), grpc.WithBlock())
+	if err != nil {
+		fmt.Printf("Not connect; ")
+		fmt.Println(err)
+	}
+	defer conn.Close()
+	c := pb.NewGrpcClient(conn)
+	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
+	defer cancel()
+
+	g, err := c.GetVM(ctx, &pb.VMID{Id: int64(d.VMID)})
+	if err != nil {
+		fmt.Println("could not greet: %v", err)
+	}
+	d2 := strings.Split(g.GetVmname(), "-")
+	groupid := d2[0]
+
 	if AdminUserCertification(d.User, d.Pass, d.Token) == false {
-		if GroupAdminCertification(d.User, d.Pass, d.Token, d.Group) == false {
-			if GroupUserCertification(d.User, d.Pass, d.Token, d.Group) == false {
-				return "", false
-			} else {
-				info, result := VMCertification(d.VMID, g, n.IP)
-				if result == false {
-					fmt.Println("Error: " + info)
-					return "", false
-				}
+		groupdata, result := SearchUserForAllGroup(username)
+		if result == false {
+			return "", false
+		}
+
+		for _, a := range groupdata {
+			if strconv.Itoa(a) == groupid {
+				return n.IP, true
 			}
 		}
+	} else {
+		return n.IP, true
 	}
-	return n.IP, true
+	return "", false
+}
+
+func GetUserName(name, token string) string {
+	if token != "" {
+		tokendata, result := db.GetDBToken(token)
+		if result == false {
+			fmt.Println("Error: Token Get Error 1")
+			return ""
+		}
+
+		userdata, result := db.GetDBUser(tokendata.Userid)
+		if result == false {
+			fmt.Println("Error: Token Get Error 2")
+			return ""
+		}
+		name = userdata.Name
+	}
+	return name
 }

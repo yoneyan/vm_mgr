@@ -53,10 +53,8 @@ func sshTest1() string {
 	session.Stdout = &output
 	remoteCmd := "ls -la"
 	if err := session.Run(remoteCmd); err != nil {
-		//log.Fatal("Failed to run: " + err.Error())
 		return "Failed to run: " + err.Error()
 	}
-	//log.Println(remoteCmd + ":" + output.String())
 	return remoteCmd + ":" + output.String()
 
 }

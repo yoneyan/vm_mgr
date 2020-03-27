@@ -52,10 +52,10 @@ func init() {
 	// when this action is called directly.
 	rootCmd.Flags().Bool("toggle", false, "Help message for toggle")
 	rootCmd.PersistentFlags().StringP("host", "H", "127.0.0.1:50200", "host example: 127.0.0.1:50001")
-	rootCmd.PersistentFlags().StringP("token", "t", "", "token")
-	rootCmd.PersistentFlags().StringP("authuser", "u", "test", "username")
-	rootCmd.PersistentFlags().StringP("authpass", "p", "test", "password")
-	rootCmd.PersistentFlags().StringP("group", "g", "test", "group")
+	rootCmd.PersistentFlags().StringP("token", "t", "", "")
+	rootCmd.PersistentFlags().StringP("authuser", "u", "", "username")
+	rootCmd.PersistentFlags().StringP("authpass", "p", "", "password")
+	rootCmd.PersistentFlags().StringP("group", "g", "", "group")
 	rootCmd.PersistentFlags().BoolP("direct", "D", false, "direct connection to node")
 }
 

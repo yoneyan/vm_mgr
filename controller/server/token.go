@@ -6,6 +6,7 @@ import (
 	"github.com/yoneyan/vm_mgr/controller/data"
 	"github.com/yoneyan/vm_mgr/controller/db"
 	pb "github.com/yoneyan/vm_mgr/proto/proto-go"
+	"google.golang.org/grpc/metadata"
 	"log"
 )
 
@@ -14,12 +15,20 @@ func (s *server) GenerateToken(ctx context.Context, in *pb.Base) (*pb.AuthResult
 	log.Println("Receive AuthUser : " + in.GetUser() + ", AuthPass: " + in.GetPass())
 	log.Println("Receive Token    : " + in.GetToken())
 
+	test, _ := metadata.FromIncomingContext(ctx)
+	fmt.Println(test)
+
 	if data.UserCertification(in.GetUser(), in.GetPass()) == false {
 		return &pb.AuthResult{Result: false, Token: "Auth Failed!!"}, nil
 	}
+	userid, result := db.GetDBUserID(in.GetUser())
+	if result == false {
+		userid = 0
+	}
+
 	uuid, result := data.NewToken(in.GetUser())
 	if result {
-		return &pb.AuthResult{Result: true, Token: uuid}, nil
+		return &pb.AuthResult{Result: true, Token: uuid, Name: in.GetUser(), Id: int32(userid)}, nil
 	} else {
 		return &pb.AuthResult{Result: false, Token: uuid}, nil
 	}
@@ -28,13 +37,9 @@ func (s *server) GenerateToken(ctx context.Context, in *pb.Base) (*pb.AuthResult
 func (s *server) DeleteToken(ctx context.Context, in *pb.Base) (*pb.Result, error) {
 	go data.DeleteExpiredToken()
 	log.Println("----DeleteToken----")
-	log.Println("Receive AuthUser : " + in.GetUser() + ", AuthPass: " + in.GetPass())
-	log.Println("Receive Token    : " + in.GetToken())
+	log.Println("Receive Token    : " + in.Token)
 
-	if data.AdminUserCertification(in.GetUser(), in.GetPass(), in.GetToken()) == false {
-		return &pb.Result{Status: false, Info: "Authentication failed!!"}, nil
-	}
-	data, result := db.GetDBToken(in.GetToken())
+	data, result := db.GetDBToken(in.Token)
 	if result == false {
 		return &pb.Result{Status: false, Info: "DB Search failed!!"}, nil
 	}
@@ -43,6 +48,19 @@ func (s *server) DeleteToken(ctx context.Context, in *pb.Base) (*pb.Result, erro
 		return &pb.Result{Status: true, Info: "OK!"}, nil
 	} else {
 		return &pb.Result{Status: false, Info: info}, nil
+	}
+}
+
+func (s *server) CheckToken(ctx context.Context, in *pb.Base) (*pb.Result, error) {
+	go data.DeleteExpiredToken()
+	log.Println("----TokenCheck----")
+	log.Println("Receive Token    : " + in.Token)
+
+	a, result := db.GetDBToken(in.Token)
+	if result {
+		return &pb.Result{Status: true, Info: "OK!", Id: int32(a.Userid)}, nil
+	} else {
+		return &pb.Result{Status: false, Info: "NG"}, nil
 	}
 }
 

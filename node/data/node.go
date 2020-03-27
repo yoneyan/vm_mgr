@@ -13,6 +13,6 @@ func (s *server) StopNode(ctx context.Context, in *pb.NodeID) (*pb.Result, error
 	vm.StopProcess()
 	timer := time.NewTimer(time.Second * 1)
 	<-timer.C
-	log.Fatalf("Node End! ")
+	log.Printf("Node End! ")
 	return &pb.Result{Status: true}, nil
 }

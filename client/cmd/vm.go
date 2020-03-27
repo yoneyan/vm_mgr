@@ -22,30 +22,63 @@ var vmCreateCmd = &cobra.Command{
 	Use:   "create",
 	Short: "create vm",
 	Long: `VM create tool
+
 For example:
-vm create -n test -c 1 -m 1024 -p /home/yoneyan/test.qcow2 -s 1024 -N br100 -v 200 -C /home/yoneyan/Downloads/ubuntu-18.04.4-live-server-amd64.iso -a 1
+//default connect (contorller user)
+vm create -n te -c 1 -m 1024 -T 1 -s 10240 -i ubuntu,18.04 -a false -r 10 -H 127.0.0.1:50200 -u test -p test -g otaku
+vm create -n te -c 1 -m 1024 -T 1 -s 1,10240,2,20480 -i ubuntu,18.04 -a false -r 10 -H 127.0.0.1:50200 -u test -p test -g otaku
+
+//direct connect(node)
+vm create -n te -c 1 -m 1024 -T 0 -P 1,/home/yoneyan,1,home/yoneyan -s 10240,10240 -N 1,br0,br100 -v 200 -C windows.iso,virtio.iso -a false -r 10 -H 127.0.0.1:50100
 `,
 	RunE: func(cmd *cobra.Command, args []string) error {
-		stringArray := []string{"name", "storage_path", "cdrom", "vnet"}
-		int64Array := []string{"cpu", "mem", "storage", "vnc", "node"}
-		var resultStringArray [4]string
-		var resultInt64Array [5]int64
-		for i, b := range stringArray {
-			result, err := cmd.PersistentFlags().GetString(b)
-			if err != nil {
-				log.Fatalf("could not greet: %v", err)
-				return nil
-			}
-			resultStringArray[i] = result
+		name, err := cmd.Flags().GetString("name")
+		if err != nil {
+			log.Fatalf("could not greet: %v", err)
 		}
-		for i, b := range int64Array {
-			result, err := cmd.PersistentFlags().GetInt64(b)
-			if err != nil {
-				log.Fatalf("could not greet: %v", err)
-				return nil
-			}
-
-			resultInt64Array[i] = result
+		storage, err := cmd.Flags().GetString("storage")
+		if err != nil {
+			log.Fatalf("could not greet: %v", err)
+		}
+		storagepath, err := cmd.Flags().GetString("storage_path")
+		if err != nil {
+			log.Fatalf("could not greet: %v", err)
+		}
+		cdrom, err := cmd.Flags().GetString("cdrom")
+		if err != nil {
+			log.Fatalf("could not greet: %v", err)
+		}
+		vnet, err := cmd.Flags().GetString("vnet")
+		if err != nil {
+			log.Fatalf("could not greet: %v", err)
+		}
+		cpu, err := cmd.Flags().GetInt64("cpu")
+		if err != nil {
+			log.Fatalf("could not greet: %v", err)
+		}
+		mem, err := cmd.Flags().GetInt64("mem")
+		if err != nil {
+			log.Fatalf("could not greet: %v", err)
+		}
+		vmtype, err := cmd.Flags().GetInt32("type")
+		if err != nil {
+			log.Fatalf("could not greet: %v", err)
+		}
+		vnc, err := cmd.Flags().GetInt64("vnc")
+		if err != nil {
+			log.Fatalf("could not greet: %v", err)
+		}
+		node, err := cmd.Flags().GetInt32("node")
+		if err != nil {
+			log.Fatalf("could not greet: %v", err)
+		}
+		imagename, err := cmd.Flags().GetString("imagename")
+		if err != nil {
+			log.Fatalf("could not greet: %v", err)
+		}
+		imagetag, err := cmd.Flags().GetString("imagetag")
+		if err != nil {
+			log.Fatalf("could not greet: %v", err)
 		}
 
 		autostart, err := cmd.PersistentFlags().GetBool("autostart")
@@ -57,24 +90,12 @@ vm create -n test -c 1 -m 1024 -p /home/yoneyan/test.qcow2 -s 1024 -N br100 -v 2
 		d := Base(cmd)
 
 		c := grpc.VMData{
-			Base: &grpc.Base{
-				User:  d.User,
-				Pass:  d.Pass,
-				Group: d.Group,
-				Token: d.Token,
+			Base:   &grpc.Base{User: d.User, Pass: d.Pass, Group: d.Group, Token: d.Token},
+			Vmname: name, Node: node, Vcpu: cpu, Vmem: mem, Storage: storage, Vnet: vnet, Type: vmtype,
+			Option: &grpc.Option{StoragePath: storagepath,
+				CdromPath: cdrom, Vnc: int32(vnc), Autostart: autostart,
 			},
-			Vmname:  resultStringArray[0],
-			Node:    int32(resultInt64Array[4]),
-			Vcpu:    resultInt64Array[0],
-			Vmem:    resultInt64Array[1],
-			Storage: resultInt64Array[2],
-			Vnet:    resultStringArray[3],
-			Option: &grpc.Option{
-				StoragePath: resultStringArray[1],
-				CdromPath:   resultStringArray[2],
-				Vnc:         int32(resultInt64Array[3]),
-				Autostart:   autostart,
-			},
+			Image: &grpc.Image{Name: imagename, Tag: imagetag},
 		}
 		data.CreateVM(&c, d.Host)
 		fmt.Println("Process End")
@@ -351,16 +372,19 @@ var vmGetAllCmd = &cobra.Command{
 }
 
 func init() {
-	vmCreateCmd.PersistentFlags().Int64P("node", "r", 1, "nodeid")
+	vmCreateCmd.PersistentFlags().Int32P("node", "r", 1, "nodeid")
 	vmCreateCmd.PersistentFlags().StringP("name", "n", "", "vm name")
 	vmCreateCmd.PersistentFlags().Int64P("cpu", "c", 1, "virtual cpu")
 	vmCreateCmd.PersistentFlags().Int64P("mem", "m", 512, "virtual memory")
 	vmCreateCmd.PersistentFlags().StringP("storage_path", "P", "", "storage path")
-	vmCreateCmd.PersistentFlags().Int64P("storage", "s", 1024, "storage capacity")
+	vmCreateCmd.PersistentFlags().StringP("storage", "s", "1024", "storage capacity")
+	vmCreateCmd.PersistentFlags().Int32P("type", "T", 0, "type")
 	vmCreateCmd.PersistentFlags().StringP("cdrom", "C", "", "cdrom path")
 	vmCreateCmd.PersistentFlags().StringP("vnet", "N", "", "virtual net")
 	vmCreateCmd.PersistentFlags().Int64P("vnc", "v", 0, "vnc port")
 	vmCreateCmd.PersistentFlags().BoolP("autostart", "a", false, "autostart")
+	vmCreateCmd.PersistentFlags().StringP("imagename", "I", "", "image name")
+	vmCreateCmd.PersistentFlags().StringP("imagetag", "i", "", "image tag")
 
 	rootCmd.AddCommand(vmCmd)
 	vmCmd.AddCommand(vmCreateCmd)
