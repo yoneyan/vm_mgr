@@ -46,6 +46,38 @@ export class VmService {
       })
   }
 
+  public createVM(nodeid, vmname, group, cpu, mem, storage, storagetype, imagename, imagetag): Promise<any> {
+    let url: string = "http://" + environment.APIHostIP + ":8080/api/v1/vm"
+    const httpOptions = {
+      headers: new HttpHeaders({
+        'Content-Type': 'application/json',
+        'Authorization': this.auth.getAuthHeader(),
+        // 'Accept': '*/*',
+      })
+    }
+    console.log(cpu)
+    console.log(mem)
+    console.log(storage)
+    let body: any = {
+      nodeid: parseInt(nodeid),
+      vmname: vmname,
+      group: group,
+      cpu: parseInt(cpu),
+      mem: parseInt(mem),
+      storage: parseInt(storage),
+      storagetype: parseInt(storagetype),
+      autostart: 1,
+      imagename: imagename,
+      imagetype: imagetag
+    };
+
+    return this.http.put<any>(url, body, httpOptions)
+      .toPromise()
+      .then((r) => {
+        return r
+      })
+  }
+
   public startVM(id): Promise<any> {
     let url: string = "http://" + environment.APIHostIP + ":8080/api/v1/vm/" + id + "/power"
     const httpOptions = {

@@ -14,6 +14,7 @@ import {LogoutComponent} from './error/logout/logout.component';
 import {TopBarComponent} from './bar/top-bar/top-bar.component';
 import {VmComponent} from './info/vm/vm.component';
 import {DetailVMComponent} from './dashboard/detail-vm/detail-vm.component';
+import {CreateVmComponent} from './dashboard/create-vm/create-vm.component';
 
 @NgModule({
   declarations: [
@@ -25,6 +26,7 @@ import {DetailVMComponent} from './dashboard/detail-vm/detail-vm.component';
     TopBarComponent,
     VmComponent,
     DetailVMComponent,
+    CreateVmComponent,
     // AuthComponent,
 
   ],
@@ -36,7 +38,8 @@ import {DetailVMComponent} from './dashboard/detail-vm/detail-vm.component';
     RouterModule.forRoot([
       {path: '', redirectTo: '/dashboard', pathMatch: 'full'},
       {path: 'dashboard', component: DashboardComponent, canActivate: [AuthGuard]},
-      {path: 'dashboard/vm/:id', component: DetailVMComponent,canActivate: [AuthGuard]},
+      {path: 'dashboard/create', component: CreateVmComponent, canActivate: [AuthGuard]},
+      {path: 'dashboard/vm/:id', component: DetailVMComponent, canActivate: [AuthGuard]},
       {path: 'login', component: LoginComponent,},
       {path: 'logout', component: LogoutComponent,},
       {path: '**', component: NotfoundComponent},
@@ -48,3 +51,18 @@ import {DetailVMComponent} from './dashboard/detail-vm/detail-vm.component';
 })
 export class AppModule {
 }
+
+
+export class VMModel{
+  constructor(
+    public nodeid: string,
+    public name: string,
+    public group: string,
+    public cpu: number,
+    public memory: number,
+    public storagetype: string,
+    public storage: number,
+    public image: string
+  ){}
+}
+
