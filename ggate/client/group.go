@@ -30,7 +30,7 @@ func GetGroup(token string) []GroupDataResult {
 
 	stream, err := c.GetGroup(ctx, &pb.GroupData{Base: &pb.Base{Token: token}})
 	if err != nil {
-		log.Fatal(err)
+		log.Println(err)
 	}
 
 	var data []GroupDataResult
@@ -41,12 +41,13 @@ func GetGroup(token string) []GroupDataResult {
 			break
 		}
 		if err != nil {
-			log.Fatal(err)
+			log.Println(err)
 		}
 
 		tmp := GroupDataResult{ID: int(d.Id), Name: d.Name, Admin: d.Admin, User: d.User}
 		data = append(data, tmp)
 	}
 	fmt.Println(data)
+
 	return data
 }

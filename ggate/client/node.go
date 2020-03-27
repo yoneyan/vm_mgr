@@ -29,7 +29,7 @@ func GetNode(token string) []NodeDataStruct {
 
 	stream, err := c.GetNode(ctx, &pb.Base{Token: token})
 	if err != nil {
-		log.Fatal(err)
+		log.Println(err)
 	}
 
 	var data []NodeDataStruct

@@ -261,7 +261,7 @@ func GetUserVMClient(token string) []VMDataResult {
 
 	stream, err := c.GetUserVM(ctx, &pb.Base{Token: token})
 	if err != nil {
-		log.Fatal(err)
+		log.Println(err)
 	}
 
 	var data []VMDataResult
@@ -272,7 +272,7 @@ func GetUserVMClient(token string) []VMDataResult {
 			break
 		}
 		if err != nil {
-			log.Fatal(err)
+			log.Println(err)
 		}
 		tmp := VMDataResult{
 			NodeID:    int(r.GetNode()),

@@ -31,7 +31,7 @@ func GetAllImage(token string) []ImageDataResult {
 
 	stream, err := c.GetAllImage(ctx, &pb.Base{Token: token})
 	if err != nil {
-		log.Fatal(err)
+		log.Println(err)
 	}
 
 	var data []ImageDataResult
@@ -42,7 +42,7 @@ func GetAllImage(token string) []ImageDataResult {
 			break
 		}
 		if err != nil {
-			log.Fatal(err)
+			log.Println(err)
 		}
 
 		tmp := ImageDataResult{ID: int(d.Id), FileName: d.Filename, Name: d.Name, Tag: d.Tag, MinMem: int(d.Minmem)}
