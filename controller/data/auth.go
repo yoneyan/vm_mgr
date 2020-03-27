@@ -6,7 +6,6 @@ import (
 	"github.com/yoneyan/vm_mgr/controller/db"
 	pb "github.com/yoneyan/vm_mgr/proto/proto-go"
 	"google.golang.org/grpc"
-	"log"
 	"strconv"
 	"strings"
 	"time"
@@ -153,7 +152,7 @@ func VMCertification(vmid, groupid int, address string) (string, bool) {
 
 	conn, err := grpc.Dial(address, grpc.WithInsecure(), grpc.WithBlock())
 	if err != nil {
-		log.Fatalf("Not connect; %v", err)
+		fmt.Println("Not connect; %v", err)
 	}
 	defer conn.Close()
 	c := pb.NewGrpcClient(conn)
@@ -162,7 +161,7 @@ func VMCertification(vmid, groupid int, address string) (string, bool) {
 	defer cancel()
 	r, err := c.GetVM(ctx, &pb.VMID{Id: int64(vmid)})
 	if err != nil {
-		log.Fatalf("could not greet: %v", err)
+		fmt.Println("could not greet: %v", err)
 	}
 	if r.GetVmname() == "" {
 		return "None", false
@@ -235,7 +234,7 @@ func SuperUserVMCertification(d *UserCertData) (string, bool) {
 
 	g, err := c.GetVM(ctx, &pb.VMID{Id: int64(d.VMID)})
 	if err != nil {
-		log.Fatalf("could not greet: %v", err)
+		fmt.Println("could not greet: %v", err)
 	}
 	d2 := strings.Split(g.GetVmname(), "-")
 	groupid := d2[0]
@@ -296,7 +295,7 @@ func StandardUserVMCertification(d *UserCertData) (string, bool) {
 
 	g, err := c.GetVM(ctx, &pb.VMID{Id: int64(d.VMID)})
 	if err != nil {
-		log.Fatalf("could not greet: %v", err)
+		fmt.Println("could not greet: %v", err)
 	}
 	d2 := strings.Split(g.GetVmname(), "-")
 	groupid := d2[0]

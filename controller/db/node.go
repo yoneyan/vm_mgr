@@ -53,7 +53,7 @@ func NodeDBStatusUpdate(id, status int) bool {
 	cmd := "UPDATE node SET status = ? WHERE id = ?"
 	_, err := db.Exec(cmd, status, id)
 	if err != nil {
-		log.Fatalln(err)
+		fmt.Println(err)
 		return false
 	}
 	return true
