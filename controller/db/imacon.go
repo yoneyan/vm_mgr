@@ -7,8 +7,9 @@ import (
 )
 
 func AddDBImaCon(data ImaCon) bool {
-	fmt.Println(data)
 	db := *connectdb()
+	defer db.Close()
+
 	if data.ID == 0 {
 		addDb, err := db.Prepare(`INSERT INTO "imacon" ("hostname","ip","status") VALUES (?,?,?)`)
 		if err != nil {
@@ -37,6 +38,8 @@ func AddDBImaCon(data ImaCon) bool {
 
 func RemoveDBImaCon(id int) bool {
 	db := *connectdb()
+	defer db.Close()
+
 	deleteDb := "DELETE FROM imacon WHERE id = ?"
 	_, err := db.Exec(deleteDb, id)
 	if err != nil {
@@ -48,6 +51,7 @@ func RemoveDBImaCon(id int) bool {
 
 func GetDBImaCon(id int) (ImaCon, bool) {
 	db := *connectdb()
+	defer db.Close()
 
 	rows := db.QueryRow("SELECT * FROM imacon WHERE id = ?", id)
 
@@ -68,8 +72,8 @@ func GetDBImaCon(id int) (ImaCon, bool) {
 }
 
 func GetDBAllImaCon() []ImaCon {
-
 	db := *connectdb()
+	defer db.Close()
 
 	rows, err := db.Query("SELECT * FROM imacon")
 	if err != nil {

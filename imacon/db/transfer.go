@@ -7,6 +7,8 @@ import (
 
 func AddDBTransfer(data Transfer) bool {
 	db := connectDB()
+	defer db.Close()
+
 	addDb, err := db.Prepare(`INSERT INTO "transfer" ( "imageid" ,"uuid","status") VALUES (?,?)`)
 	if err != nil {
 		fmt.Println(err)
@@ -23,6 +25,8 @@ func AddDBTransfer(data Transfer) bool {
 
 func RemoveDBTransfer(uuid string) bool {
 	db := connectDB()
+	defer db.Close()
+
 	deletedb := "DELETE FROM transfer WHERE uuid = ?"
 	_, err := db.Exec(deletedb, uuid)
 	if err != nil {
@@ -34,6 +38,8 @@ func RemoveDBTransfer(uuid string) bool {
 
 func GetAllDBTransfer() []Transfer {
 	db := connectDB()
+	defer db.Close()
+
 	rows, err := db.Query("SELECT * FROM transfer")
 	if err != nil {
 		fmt.Println(err)
@@ -54,6 +60,7 @@ func GetAllDBTransfer() []Transfer {
 
 func GetDBTransfer(uuid string) (Transfer, bool) {
 	db := connectDB()
+	defer db.Close()
 
 	rows := db.QueryRow("SELECT * FROM transfer WHERE uuid = ?", uuid)
 	var b Transfer
@@ -74,6 +81,7 @@ func GetDBTransfer(uuid string) (Transfer, bool) {
 
 func ChangeDBTransferStatus(uuid string, status int) bool {
 	db := connectDB()
+	defer db.Close()
 
 	_, err := db.Exec("UPDATE image SET status = ? WHERE uuid = ?", status, uuid)
 	if err != nil {

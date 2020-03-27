@@ -7,6 +7,8 @@ import (
 
 func AddDBToken(data Token) (string, bool) {
 	db := connectdb()
+	defer db.Close()
+
 	addDb, err := db.Prepare(`INSERT INTO "tokendata" ("token","userid","groupid","begintime","endtime") VALUES (?,?,?,?,?)`)
 	if err != nil {
 		fmt.Println(err)
@@ -22,6 +24,8 @@ func AddDBToken(data Token) (string, bool) {
 
 func RemoveDBToken(id int) (string, bool) {
 	db := connectdb()
+	defer db.Close()
+
 	deleteDb := "DELETE FROM tokendata WHERE id = ?"
 	_, err := db.Exec(deleteDb, id)
 	if err != nil {
@@ -33,6 +37,8 @@ func RemoveDBToken(id int) (string, bool) {
 
 func GetDBAllToken() []Token {
 	db := *connectdb()
+	defer db.Close()
+
 	rows, err := db.Query("SELECT * FROM tokendata")
 	if err != nil {
 		fmt.Println(err)
@@ -53,6 +59,8 @@ func GetDBAllToken() []Token {
 
 func GetDBToken(token string) (Token, bool) {
 	db := connectdb()
+	defer db.Close()
+
 	rows := db.QueryRow("SELECT * FROM tokendata WHERE token = ?", token)
 
 	var b Token

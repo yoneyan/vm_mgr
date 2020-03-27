@@ -7,8 +7,9 @@ import (
 )
 
 func AddDBProgress(data Progress) bool {
-	fmt.Println(data)
 	db := *connectdb()
+	defer db.Close()
+
 	addDb, err := db.Prepare(`INSERT INTO "progress" ("vmname","uuid","starttime") VALUES (?,?,?)`)
 	if err != nil {
 		fmt.Println("DBError!!")
@@ -25,6 +26,8 @@ func AddDBProgress(data Progress) bool {
 
 func RemoveDBProgress(id int) bool {
 	db := *connectdb()
+	defer db.Close()
+
 	deleteDb := "DELETE FROM progress WHERE id = ?"
 	_, err := db.Exec(deleteDb, id)
 	if err != nil {
@@ -36,6 +39,7 @@ func RemoveDBProgress(id int) bool {
 
 func GetDBProgressVMName(vmname string) (Progress, bool) {
 	db := *connectdb()
+	defer db.Close()
 
 	rows := db.QueryRow("SELECT * FROM progress WHERE vmname = ?", vmname)
 
@@ -56,8 +60,8 @@ func GetDBProgressVMName(vmname string) (Progress, bool) {
 }
 
 func GetDBAllProgress() []Progress {
-
 	db := *connectdb()
+	defer db.Close()
 
 	rows, err := db.Query("SELECT * FROM progress")
 	if err != nil {

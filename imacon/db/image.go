@@ -7,6 +7,8 @@ import (
 
 func AddDBImage(data Image) bool {
 	db := connectDB()
+	defer db.Close()
+
 	addDb, err := db.Prepare(`INSERT INTO "image" ("filename" , "name" ,"tag" ,"type" ,"capacity" , "addtime" , "minmem" ,"authority" ,"status") VALUES (?,?,?,?,?,?,?,?,?)`)
 	if err != nil {
 		fmt.Println(err)
@@ -23,6 +25,8 @@ func AddDBImage(data Image) bool {
 
 func RemoveDBImage(id int) bool {
 	db := connectDB()
+	defer db.Close()
+
 	deletedb := "DELETE FROM image WHERE id = ?"
 	_, err := db.Exec(deletedb, id)
 	if err != nil {
@@ -34,6 +38,8 @@ func RemoveDBImage(id int) bool {
 
 func GetAllDBImage() []Image {
 	db := connectDB()
+	defer db.Close()
+
 	rows, err := db.Query("SELECT * FROM image")
 	if err != nil {
 		fmt.Println(err)
@@ -54,6 +60,7 @@ func GetAllDBImage() []Image {
 
 func GetDBImage(name, tag string) (Image, bool) {
 	db := connectDB()
+	defer db.Close()
 
 	rows := db.QueryRow("SELECT * FROM image WHERE name = ? AND tag = ?", name, tag)
 	var b Image
@@ -74,6 +81,7 @@ func GetDBImage(name, tag string) (Image, bool) {
 
 func GetDBImageFileName(filename string) (Image, bool) {
 	db := connectDB()
+	defer db.Close()
 
 	rows := db.QueryRow("SELECT * FROM image WHERE filename = ?", filename)
 	var b Image
@@ -94,6 +102,7 @@ func GetDBImageFileName(filename string) (Image, bool) {
 
 func ChangeDBImageName(id int, data string) bool {
 	db := connectDB()
+	defer db.Close()
 
 	_, err := db.Exec("UPDATE image SET name = ? WHERE id = ?", data, id)
 	if err != nil {
@@ -118,6 +127,7 @@ func ChangeDBImageTag(id int, tag string) bool {
 
 func ChangeDBImageAuthority(id, authority int) bool {
 	db := connectDB()
+	defer db.Close()
 
 	_, err := db.Exec("UPDATE image SET authority = ? WHERE id = ?", authority, id)
 	if err != nil {
@@ -130,6 +140,7 @@ func ChangeDBImageAuthority(id, authority int) bool {
 
 func ChangeDBImageStatus(id, status int) bool {
 	db := connectDB()
+	defer db.Close()
 
 	_, err := db.Exec("UPDATE image SET status = ? WHERE id = ?", status, id)
 	if err != nil {
@@ -142,6 +153,7 @@ func ChangeDBImageStatus(id, status int) bool {
 
 func ChangeDBImageFileName(id int, filename string) bool {
 	db := connectDB()
+	defer db.Close()
 
 	_, err := db.Exec("UPDATE image SET filename = ? WHERE id = ?", filename, id)
 	if err != nil {

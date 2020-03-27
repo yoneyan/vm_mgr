@@ -8,8 +8,9 @@ import (
 
 //Node
 func AddDBNode(data Node) bool {
-	fmt.Println(data)
 	db := *connectdb()
+	defer db.Close()
+
 	if data.ID == 0 {
 		addDb, err := db.Prepare(`INSERT INTO "node" ("hostname","ip","path","onlyadmin","maxcpu","maxmem","status") VALUES (?,?,?,?,?,?,?)`)
 		if err != nil {
@@ -38,6 +39,8 @@ func AddDBNode(data Node) bool {
 
 func RemoveDBNode(id int) bool {
 	db := *connectdb()
+	defer db.Close()
+
 	deleteDb := "DELETE FROM node WHERE id = ?"
 	_, err := db.Exec(deleteDb, id)
 	if err != nil {
@@ -49,6 +52,7 @@ func RemoveDBNode(id int) bool {
 
 func NodeDBStatusUpdate(id, status int) bool {
 	db := *connectdb()
+	defer db.Close()
 
 	cmd := "UPDATE node SET status = ? WHERE id = ?"
 	_, err := db.Exec(cmd, status, id)
@@ -61,6 +65,7 @@ func NodeDBStatusUpdate(id, status int) bool {
 
 func GetDBNodeID(id int) (Node, bool) {
 	db := *connectdb()
+	defer db.Close()
 
 	rows := db.QueryRow("SELECT * FROM node WHERE id = ?", id)
 
@@ -81,8 +86,8 @@ func GetDBNodeID(id int) (Node, bool) {
 }
 
 func GetDBAllNode() []Node {
-
 	db := *connectdb()
+	defer db.Close()
 
 	rows, err := db.Query("SELECT * FROM node")
 	if err != nil {

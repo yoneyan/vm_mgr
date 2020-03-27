@@ -9,6 +9,8 @@ import (
 //groupdata
 func AddDBGroup(data Group) bool {
 	db := connectdb()
+	defer db.Close()
+
 	addDb, err := db.Prepare(`INSERT INTO "groupdata" ("name","admin","user","uuid","maxvm","maxcpu","maxmem","maxstorage","net") VALUES (?,?,?,?,?,?,?,?,?)`)
 	if err != nil {
 		fmt.Println(err)
@@ -25,6 +27,8 @@ func AddDBGroup(data Group) bool {
 
 func RemoveDBGroup(id int) bool {
 	db := connectdb()
+	defer db.Close()
+
 	deletedb := "DELETE FROM groupdata WHERE id = ?"
 	_, err := db.Exec(deletedb, id)
 	if err != nil {
@@ -36,6 +40,8 @@ func RemoveDBGroup(id int) bool {
 
 func GetDBAllGroup() []Group {
 	db := *connectdb()
+	defer db.Close()
+
 	rows, err := db.Query("SELECT * FROM groupdata")
 	if err != nil {
 		fmt.Println(err)
@@ -56,6 +62,8 @@ func GetDBAllGroup() []Group {
 
 func GetDBGroupToken(uuid string) (Group, bool) {
 	db := connectdb()
+	defer db.Close()
+
 	rows := db.QueryRow("SELECT * FROM groupdata WHERE uuid = ?", uuid)
 
 	var b Group
@@ -76,6 +84,8 @@ func GetDBGroupToken(uuid string) (Group, bool) {
 
 func GetDBGroup(id int) (Group, bool) {
 	db := connectdb()
+	defer db.Close()
+
 	rows := db.QueryRow("SELECT * FROM groupdata WHERE id = ?", id)
 
 	var b Group
@@ -96,6 +106,7 @@ func GetDBGroup(id int) (Group, bool) {
 
 func GetDBGroupID(name string) (int, bool) {
 	db := connectdb()
+	defer db.Close()
 
 	var id int
 	if err := db.QueryRow("SELECT id FROM groupdata WHERE name = ?", name).Scan(&id); err != nil {
@@ -109,6 +120,7 @@ func GetDBGroupID(name string) (int, bool) {
 
 func ChangeDBGroupName(id int, data string) bool {
 	db := connectdb()
+	defer db.Close()
 
 	dbdata := "UPDATE groupdata SET name = ? WHERE id = ?"
 	_, err := db.Exec(dbdata, data, id)
@@ -123,6 +135,7 @@ func ChangeDBGroupName(id int, data string) bool {
 
 func ChangeDBGroupAdmin(id int, data string) bool {
 	db := connectdb()
+	defer db.Close()
 
 	dbdata := "UPDATE groupdata SET admin = ? WHERE id = ?"
 	_, err := db.Exec(dbdata, data, id)
@@ -137,6 +150,7 @@ func ChangeDBGroupAdmin(id int, data string) bool {
 
 func ChangeDBGroupUser(id int, data string) bool {
 	db := connectdb()
+	defer db.Close()
 
 	dbdata := "UPDATE groupdata SET user = ? WHERE id = ?"
 	_, err := db.Exec(dbdata, data, id)

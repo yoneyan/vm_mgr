@@ -33,15 +33,14 @@ func connectDB() *sql.DB {
 	if err != nil {
 		fmt.Println("SQL open error")
 		fmt.Println(err)
-		//panic(err)
 	}
 
-	//defer db.Close()
 	return db
 }
 
 func createDB(database string) bool {
 	db := *connectDB()
+	defer db.Close()
 
 	_, err := db.Exec(database)
 	if err != nil {
