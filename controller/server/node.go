@@ -82,8 +82,7 @@ func (s *server) GetNode(d *pb.Base, stream pb.Grpc_GetNodeServer) error {
 		fmt.Println("Auth Failed...")
 		return nil
 	}
-	fmt.Println("Administrator certification failed!!!")
-	return nil
+
 	result := db.GetDBAllNode()
 	fmt.Println(result)
 	var OnlyAdmin bool

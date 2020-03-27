@@ -143,7 +143,6 @@ func (s *server) GetGroup(d *pb.GroupData, stream pb.Grpc_GetGroupServer) error 
 	log.Printf("Receive GetAllGroup")
 	if data.AdminUserCertification(d.Base.GetUser(), d.Base.GetPass(), d.Base.GetToken()) {
 		isAdmin = true
-		return nil
 	}
 
 	_, _, r := data.TokenCertification(d.Base.GetToken())
