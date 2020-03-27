@@ -75,7 +75,7 @@ var testStorageAddCmd = &cobra.Command{
 
 		err := manage.CreateStorage(&s)
 		if err != nil {
-			log.Fatal(err)
+			log.Println(err)
 		}
 
 		return nil

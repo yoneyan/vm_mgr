@@ -128,7 +128,7 @@ func VMDBStatusUpdate(id, status int) bool {
 	cmd := "UPDATE vm SET status = ? WHERE id = ?"
 	_, err := db.Exec(cmd, status, id)
 	if err != nil {
-		log.Fatalln(err)
+		log.Println(err)
 		return false
 	}
 

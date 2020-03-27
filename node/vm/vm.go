@@ -180,7 +180,7 @@ func GenerateNetworkCmd(net string) []string {
 	fmt.Println(data)
 	mode, err := strconv.Atoi(data[0])
 	if err != nil {
-		log.Fatal(err)
+		log.Println(err)
 	}
 	var bridge []string
 	var mac []string
