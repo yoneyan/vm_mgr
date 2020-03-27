@@ -33,7 +33,8 @@ go 1.10はgGate以外であれば可能だが、ggateはgo 1.11以上である�
 * cliライブラリとしてspf13/cobraの使用
 
 ## 仕組み
-![vm_mgr](https://user-images.githubusercontent.com/40447529/77657892-4413c280-6fb9-11ea-941e-c45926dfe544.png)
+![vm_mgr](https://user-images.githubusercontent.com/40447529/77657892-4413c280-6fb9-11ea-941e-c45926dfe544.png)  
+
 |名称|内容|
 |---|---|
 |Client|コマンドによる操作|
