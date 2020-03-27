@@ -29,6 +29,11 @@ func main() {
 	//image
 	router.GET("/api/v1/image", data.GetAllImage)
 
+	//group
+	router.GET("/api/v1/group", data.GetGroup)
+	//node
+	router.GET("/api/v1/node", data.GetNode)
+
 	log.Fatal(http.ListenAndServe(":8080", router))
 }
 
