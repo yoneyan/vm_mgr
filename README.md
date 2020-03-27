@@ -22,7 +22,7 @@ go 1.10はgGate以外であれば可能だが、ggateはgo 1.11以上である�
 |node|OK(おそらく)|
 |client|OK(おそらく)|
 |gGate|OK(VM作成やユーザ・グループ追加などを除く)|
-|wGate|OK(gGateに対応機能のみ)|
+|nginx|Webサービス(Docker対応予定)|
 |imacon|OK(Joinのみ。SFTP経由による追加は未定)|
 現時点では基本的な機能は動作できるようになっています。  
 

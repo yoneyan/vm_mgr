@@ -1,9 +1,0 @@
-{
-  "server": {
-    "ip": "127.0.0.1:50200"
-  },
-  "path": {
-    "novnc": "/home/yoneyan/git/noVNC",
-    "dashboard": "/home/yoneyan/web"
-  }
-}
