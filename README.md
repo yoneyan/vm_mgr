@@ -22,7 +22,6 @@ go 1.10はgGate以外であれば可能だが、ggateはgo 1.11以上である�
 |node|OK(おそらく)|
 |client|OK(おそらく)|
 |gGate|OK(VM作成やユーザ・グループ追加などを除く)|
-|nginx|Webサービス(Docker対応予定)|
 |imacon|OK(Joinのみ。SFTP経由による追加は未定)|
 現時点では基本的な機能は動作できるようになっています。  
 
@@ -33,23 +32,23 @@ go 1.10はgGate以外であれば可能だが、ggateはgo 1.11以上である�
 * cliライブラリとしてspf13/cobraの使用
 
 ## 仕組み
-![vm_mgr](https://user-images.githubusercontent.com/40447529/77657892-4413c280-6fb9-11ea-941e-c45926dfe544.png)  
+![vm_mgr](https://user-images.githubusercontent.com/40447529/77772317-43e3f780-708b-11ea-8e12-0dea6d622174.png)
 
 |名称|内容|
 |---|---|
 |Client|コマンドによる操作|
 |Controller|ユーザやグループやノード管理など|
 |ggate|RestAPIの提供|  
-|wgate|WebGUIの提供|
 |imacon|Imageの提供|  
 |Node|VMホスト|
+|Nginx(3rd party)|Webサーバ|
+
 
 ## スケーラビリティ
 ### 対応状況
 * imacon  
 * node  
 * gGate  
-* wGate
 上記の3つのシステムのみ可能  
 コントローラは現時点ではできないが、対応予定あり  
 
@@ -60,10 +59,10 @@ go 1.10はgGate以外であれば可能だが、ggateはgo 1.11以上である�
 |imacon|50300/tcp|
 |Controller|50200/tcp|
 |Node| 50100/tcp|
-### RestAPI
+### その他
 |機能|ポート|用途|
 |---|---|---|
-|wGate|80/tcp|Webサーバ|
+|nginx|80/tcp,443/tcp|Webサーバ|
 |gGate|8080/tcp|RestAPI|
 |Controller|8081/tcp|WebSocket(VNC)|
 
