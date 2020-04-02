@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import {Injectable} from '@angular/core';
 import {HttpClient, HttpHeaders} from "@angular/common/http";
 import {AuthService} from "./auth/auth.service";
 import {environment} from "../../environments/environment";
@@ -15,7 +15,7 @@ export class GroupService {
   }
 
   public getGroup(): Promise<any> {
-    let url: string = "http://" + environment.APIHostIP + ":8080/api/v1/group"
+    let url: string = environment.http + "://" + environment.APIHostIP + "/api/v1/group"
     const httpOptions = {
       headers: new HttpHeaders({
         'Content-Type': 'application/json',

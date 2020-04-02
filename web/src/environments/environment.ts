@@ -4,7 +4,8 @@
 
 export const environment = {
   production: false,
-  APIHostIP: "172.16.200.152"
+  http: "http",
+  APIHostIP: "172.16.200.152:8080"
 };
 
 /*

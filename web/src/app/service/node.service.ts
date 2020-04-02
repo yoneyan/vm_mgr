@@ -15,7 +15,7 @@ export class NodeService {
   }
 
   public getNode(): Promise<any> {
-    let url: string = "http://" + environment.APIHostIP + ":8080/api/v1/node"
+    let url: string = environment.http + "://" + environment.APIHostIP + "/api/v1/node"
     const httpOptions = {
       headers: new HttpHeaders({
         'Content-Type': 'application/json',
