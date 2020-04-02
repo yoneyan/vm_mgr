@@ -3,7 +3,7 @@ package client
 import (
 	"context"
 	"fmt"
-	"github.com/yoneyan/vm_mgr/gate/etc"
+	"github.com/yoneyan/vm_mgr/ggate/etc"
 	pb "github.com/yoneyan/vm_mgr/proto/proto-go"
 	"google.golang.org/grpc"
 	"io"

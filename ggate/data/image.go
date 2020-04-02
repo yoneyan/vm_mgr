@@ -2,7 +2,7 @@ package data
 
 import (
 	"github.com/gin-gonic/gin"
-	"github.com/yoneyan/vm_mgr/gate/client"
+	"github.com/yoneyan/vm_mgr/ggate/client"
 	"log"
 )
 

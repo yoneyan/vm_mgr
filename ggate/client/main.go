@@ -1,6 +1,6 @@
 package client
 
-import "github.com/yoneyan/vm_mgr/gate/etc"
+import "github.com/yoneyan/vm_mgr/ggate/etc"
 
 type AuthResult struct {
 	Result   bool   `json:"result"`

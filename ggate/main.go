@@ -2,7 +2,7 @@ package main
 
 import (
 	"github.com/gin-gonic/gin"
-	"github.com/yoneyan/vm_mgr/gate/data"
+	"github.com/yoneyan/vm_mgr/ggate/data"
 	"log"
 	"net/http"
 )
