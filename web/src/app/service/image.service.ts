@@ -15,7 +15,7 @@ export class ImageService {
   }
 
   public getImage(): Promise<any> {
-    let url: string = "http://" + environment.APIHostIP + ":8080/api/v1/image"
+    let url: string = environment.http + "://" + environment.APIHostIP + "/api/v1/image"
     const httpOptions = {
       headers: new HttpHeaders({
         'Content-Type': 'application/json',

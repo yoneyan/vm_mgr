@@ -1,5 +1,6 @@
 export const environment = {
   production: true,
-  APIHostIP: "localhost"
+  http: "https",
+  APIHostIP: "vps.あちゃー.com"
 
 };

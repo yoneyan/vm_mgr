@@ -34,7 +34,7 @@ export class AuthService {
     console.log("user: " + body.user)
     console.log("pass: " + body.pass)
 
-    this.http.post('http://' + environment.APIHostIP + ':8080/api/v1/token', body, this.defalutHttpOptions)
+    this.http.post(environment.http + '://' + environment.APIHostIP + '/api/v1/token', body, this.defalutHttpOptions)
       .toPromise()
       .then((result: any) => {
         if (result.result === true) {
@@ -78,7 +78,7 @@ export class AuthService {
     }
     const body: any = {};
 
-    return this.http.post('http://' + environment.APIHostIP + ':8080/api/v1/token/check', body, httpOptions)
+    return this.http.post(environment.http+'://' + environment.APIHostIP + '/api/v1/token/check', body, httpOptions)
       .toPromise()
       .then((res) => {
         const response: any = res;
