@@ -77,10 +77,12 @@ func (s *server) GetNode(d *pb.Base, stream pb.Grpc_GetNodeServer) error {
 		isAdmin = true
 	}
 
-	_, _, r := data.TokenCertification(d.GetToken())
-	if r == false {
-		fmt.Println("Auth Failed...")
-		return nil
+	if d.GetToken() != "" {
+		_, _, r := data.TokenCertification(d.GetToken())
+		if r == false {
+			fmt.Println("Auth Failed...")
+			return nil
+		}
 	}
 
 	result := db.GetDBAllNode()

@@ -7,7 +7,6 @@ import (
 	"google.golang.org/grpc"
 	"log"
 	"time"
-	//a "github.com/yoneyan/vm_mgr/ggate"
 )
 
 func GenerateTokenClient(user, pass string) *AuthResult {
