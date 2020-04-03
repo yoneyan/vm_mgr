@@ -35,11 +35,6 @@ func (s *server) CreateVM(ctx context.Context, in *pb.VMData) (*pb.Result, error
 	r.VNC = int(in.GetOption().Vnc)
 	r.AutoStart = in.GetOption().Autostart
 
-	if manage.InputCheck(in.Option.GetStoragePath(), r.Storage) == false {
-		return &pb.Result{Status: false, Info: "Input Error!!"}, nil
-	}
-
-	//
 	if in.GetType()/10 == 1 {
 		//Disk copy process
 		log.Printf("AutoVMProcess")
