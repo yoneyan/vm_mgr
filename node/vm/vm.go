@@ -216,15 +216,16 @@ func GenerateNetworkCmd(net string) []string {
 	//not tested for multiple nic enviroment...
 
 	if mode == 0 {
-		//default Network(VirtIO)
-		for i, m := range mac {
-			cmd = append(cmd, "-nic")
-			cmd = append(cmd, "bridge,br="+bridge[i]+",mac="+m+",model=virtio")
-		}
-	} else if mode == 1 {
+		//e1000
 		for i, m := range mac {
 			cmd = append(cmd, "-nic")
 			cmd = append(cmd, "bridge,br="+bridge[i]+",mac="+m+",model=e1000")
+		}
+	} else if mode == 1 {
+		//virtio
+		for i, m := range mac {
+			cmd = append(cmd, "-nic")
+			cmd = append(cmd, "bridge,br="+bridge[i]+",mac="+m+",model=virtio")
 		}
 	}
 
