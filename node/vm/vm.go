@@ -203,24 +203,28 @@ func GenerateNetworkCmd(net string) []string {
 	//-net nic,macaddr=52:54:01:11:22:33 -net bridge,br=br0
 	//2 Network
 	//-net nic,macaddr=52:54:01:11:22:33 -net bridge,br=br0 -net nic,macaddr=52:54:02:11:22:33 -net bridge,br=br0
+	//3 Network(Default)
+	//-nic bridge,br=br1000,mac=.... , -nic bridge,br=br1100,mac=...,model=virtio
 
+	//old setting
 	//-netdev tap,helper=/usr/lib/qemu/qemu-bridge-helper,id=br0 -device virtio-net-pci,netdev=br0,id=net1,mac=52:54:85:98:60:93
 	//-netdev tap,helper=/usr/lib/qemu/qemu-bridge-helper,id=br100 -device virtio-net-pci,netdev=br100,id=net2,mac=52:54:85:98:60:94
 	//-netdev tap,helper=/usr/lib/qemu/qemu-bridge-helper,id=br200 -device virtio-net-pci,netdev=br200,id=net3,mac=52:54:85:98:60:95
+
+	//new setting
+	//-nic bridge,br=br1000,mac=.... ,model=e1000 -nic bridge,br=br1100,mac=...,model=virtio
+	//not tested for multiple nic enviroment...
+
 	if mode == 0 {
 		//default Network(VirtIO)
 		for i, m := range mac {
-			cmd = append(cmd, "-netdev")
-			cmd = append(cmd, "tap,helper=/usr/lib/qemu/qemu-bridge-helper,id="+bridge[i])
-			cmd = append(cmd, "-device")
-			cmd = append(cmd, "virtio-net-pci,netdev="+bridge[i]+",id=net"+strconv.Itoa(i)+",mac="+m)
+			cmd = append(cmd, "-nic")
+			cmd = append(cmd, "bridge,br="+bridge[i]+",mac="+m+",model=virtio")
 		}
 	} else if mode == 1 {
 		for i, m := range mac {
-			cmd = append(cmd, "-netdev")
-			cmd = append(cmd, "tap,helper=/usr/lib/qemu/qemu-bridge-helper,id="+bridge[i])
-			cmd = append(cmd, "-device")
-			cmd = append(cmd, "e1000,netdev="+bridge[i]+",id=net"+strconv.Itoa(i)+",mac="+m)
+			cmd = append(cmd, "-nic")
+			cmd = append(cmd, "bridge,br="+bridge[i]+",mac="+m+",model=e1000")
 		}
 	}
 
