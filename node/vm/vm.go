@@ -127,15 +127,13 @@ func GenerateDiskCmd(storagepath string, index int) []string {
 
 	for i, a := range data {
 		if i%2 == 0 {
-			m, err := strconv.Atoi(a)
-			if err != nil {
-				diskmode = 0
-				pathmode = 0
-			}
-			diskmode = m % 10 //*0
-			pathmode = m / 10 //0*
+			m, _ := strconv.Atoi(a)
+			diskmode = m / 10 //*0
+			pathmode = m % 10 //0*
+			fmt.Println("disk: " + strconv.Itoa(diskmode) + " path: " + strconv.Itoa(pathmode))
 		} else {
 			if diskmode == 0 {
+				//0_ <= default Disk Mode
 				//default disk mount diskmode
 				//-drive file=/images/image2.raw,index=1,media=disk
 				cmd = append(cmd, "-drive")
