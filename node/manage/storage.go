@@ -45,45 +45,63 @@ func GetMainStorage(data *pb.VMData) string {
 }
 
 func StorageProcess(data *pb.VMData) string {
+	//GetStorage is StorageSize
 	s := strings.Split(data.GetStorage(), ",")
+	//GetStoragePath is StoragePath and Mode
 	sp := strings.Split(data.Option.GetStoragePath(), ",")
 	j := 0
-	var path string
+	var path, basepath string
 	var result []string
 	var mode int
-	for i, a := range sp {
-		if i/2 == 0 {
-			result = append(result, a)
+
+	//auto mode
+	if data.GetType()/10 == 1 {
+		fmt.Println("Storage AutoMode")
+		for _, a := range sp {
 			mode, _ = strconv.Atoi(a)
-		} else {
-			if mode/10 == 0 {
-				path = a
-				fmt.Println("path: " + path)
-			} else {
-				path = etc.GetDiskPath(mode % 10)
-				if path == "" {
-					fmt.Println("Config DiskPath Error")
-					return ""
-				}
-				fmt.Println("basepath: " + path)
+			result = append(result, strconv.Itoa(mode+10))
+			basepath = etc.GetDiskPath(mode % 10)
+			if basepath == "" {
+				fmt.Println("Config DiskPath Error")
+				return ""
 			}
-			path = path + "/" + data.GetVmname() + "-" + strconv.Itoa(j) + ".img"
+			fmt.Println("basepath: " + path)
+			image := data.GetVmname() + "-" + strconv.Itoa(j) + ".img"
+			path = basepath + "/" + image
 			fmt.Println("path: " + path)
-			if FileExistsCheck(path) == false {
+
+			if FileExistsCheck(path) == false && j != 0 {
 				size, result := strconv.Atoi(s[j])
 				if result != nil {
 					fmt.Println("Error: string to int")
 				}
 				CreateStorage(&Storage{Path: path, Format: "qcow2", Size: size})
 			}
-			if mode/10 == 0 {
-				result = append(result, path)
-			} else {
-				result = append(result, data.GetVmname()+"-"+strconv.Itoa(j)+".img")
-			}
+			result = append(result, image)
 			j++
 		}
+	} else {
+		fmt.Println("Storage ManualMode")
+		for i, a := range sp {
+			if i/2 == 0 {
+				result = append(result, a)
+				mode, _ = strconv.Atoi(a)
+			} else {
+				path = a + "/" + data.GetVmname() + "-" + strconv.Itoa(j) + ".img"
+				fmt.Println("path: " + path)
+				if FileExistsCheck(path) == false {
+					size, result := strconv.Atoi(s[j])
+					if result != nil {
+						fmt.Println("Error: string to int")
+					}
+					CreateStorage(&Storage{Path: path, Format: "qcow2", Size: size})
+				}
+				result = append(result, data.GetVmname()+"-"+strconv.Itoa(j)+".img")
+				j++
+			}
+		}
 	}
+
 	fmt.Println("StorageProcess Result: ")
 	fmt.Println(result)
 	return strings.Join(result, ",")

@@ -132,8 +132,8 @@ func GenerateDiskCmd(storagepath string, index int) []string {
 				diskmode = 0
 				pathmode = 0
 			}
-			diskmode = m % 10
-			pathmode = m / 10
+			diskmode = m % 10 //*0
+			pathmode = m / 10 //0*
 		} else {
 			if diskmode == 0 {
 				//default disk mount diskmode
