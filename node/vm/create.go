@@ -44,7 +44,7 @@ func CreateAutoVMProcess(c *pb.VMData) (string, bool) {
 	r.CDROM = c.GetOption().CdromPath
 	r.Net = c.GetVnet()
 	r.VNC = etc.GenerateVNCPort()
-	r.AutoStart = c.GetOption().Autostart
+	r.AutoStart = true
 	r.StoragePath = manage.StorageProcess(c)
 
 	info, result := CreateVMProcess(&r)
