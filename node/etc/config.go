@@ -3,6 +3,7 @@ package etc
 import (
 	"encoding/json"
 	"io/ioutil"
+	"log"
 )
 
 type Config struct {
@@ -27,7 +28,7 @@ type ImageData struct {
 func GetDiskPath(id int) string {
 	file, err := ioutil.ReadFile("./config.json")
 	if err != nil {
-		panic(err)
+		log.Println(err)
 	}
 	var config Config
 	json.Unmarshal(file, &config)
@@ -42,7 +43,7 @@ func GetDiskPath(id int) string {
 func GetImagePath() string {
 	file, err := ioutil.ReadFile("config.json")
 	if err != nil {
-		panic(err)
+		log.Println(err)
 	}
 	var config Config
 	json.Unmarshal(file, &config)
