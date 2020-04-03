@@ -40,10 +40,10 @@ func (s *server) CreateVM(ctx context.Context, in *pb.VMData) (*pb.Result, error
 	}
 
 	//
-	if in.GetType()%10 == 1 {
+	if in.GetType()/10 == 1 {
 		//Disk copy process
-		fmt.Println("AutoVMProcess")
-		vm.CreateAutoVMProcess(in)
+		log.Printf("AutoVMProcess")
+		go vm.CreateAutoVMProcess(in)
 		return &pb.Result{Status: true, Info: "Add process.. wait...."}, nil
 	}
 
