@@ -27,6 +27,7 @@ type CreateVMInformation struct {
 
 func CreateAutoVMProcess(c *pb.VMData) (string, bool) {
 	path := manage.GetMainStorage(c)
+	fmt.Println("Path: " + path)
 	if etc.FileCopy(etc.GetImagePath()+"/"+c.Image.GetPath(), path) == false {
 		return "File Copy Failed...", false
 	}

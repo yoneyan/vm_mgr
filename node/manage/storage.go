@@ -30,8 +30,10 @@ func GetMainStorage(data *pb.VMData) string {
 	mode, _ := strconv.Atoi(sp[0])
 	if mode%10 == 0 {
 		path = sp[1] + "/" + data.GetVmname() + "-" + "0.img"
+		fmt.Println("0 Mode")
 	} else {
 		basepath = etc.GetDiskPath(mode % 10)
+		fmt.Println(strconv.Itoa(mode%10) + " Mode")
 		if basepath == "" {
 			fmt.Println("Config DiskPath Error")
 			return ""
