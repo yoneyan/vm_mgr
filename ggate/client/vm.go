@@ -58,7 +58,7 @@ func CreateVM(vm CreateVMData, token string) Result {
 		Vmem:    int64(vm.Mem),
 		Type:    1,
 		Storage: strconv.Itoa(vm.Storage),
-		Option:  &pb.Option{StoragePath: strconv.Itoa(vm.StorageType) + ",", Autostart: vm.AutoStart},
+		Option:  &pb.Option{StoragePath: strconv.Itoa(vm.StorageType), Autostart: true},
 		Image:   &pb.Image{Name: vm.ImageName, Tag: vm.ImageType},
 	})
 	if err != nil {
