@@ -220,13 +220,11 @@ func GenerateNetworkCmd(net string) []string {
 		for i, m := range mac {
 			cmd = append(cmd, "-nic")
 			cmd = append(cmd, "bridge,br="+bridge[i]+",mac="+m+",model=virtio")
-			cmd = append(cmd, "tap,helper=/usr/lib/qemu/qemu-bridge-helper,id="+bridge[i])
 		}
 	} else if mode == 1 {
 		for i, m := range mac {
 			cmd = append(cmd, "-nic")
 			cmd = append(cmd, "bridge,br="+bridge[i]+",mac="+m+",model=e1000")
-			cmd = append(cmd, "tap,helper=/usr/lib/qemu/qemu-bridge-helper,id="+bridge[i])
 		}
 	}
 
