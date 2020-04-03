@@ -52,11 +52,11 @@ func StorageProcess(data *pb.VMData) string {
 	var result []string
 	var mode int
 	for i, a := range sp {
-		if i%2 == 0 {
+		if i/2 == 0 {
 			result = append(result, a)
 			mode, _ = strconv.Atoi(a)
 		} else {
-			if mode%10 == 0 {
+			if mode/10 == 0 {
 				path = a
 				fmt.Println("path: " + path)
 			} else {

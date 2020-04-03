@@ -78,6 +78,23 @@ export class VmService {
       })
   }
 
+  public deleteVM(id): Promise<any> {
+    let url: string = environment.http + "://" + environment.APIHostIP + "/api/v1/vm/" + id
+    const httpOptions = {
+      headers: new HttpHeaders({
+        'Content-Type': 'application/json',
+        'Authorization': this.auth.getAuthHeader(),
+      }),
+      body: {
+      }
+    }
+    return this.http.delete<any>(url, httpOptions)
+      .toPromise()
+      .then((r) => {
+        return r
+      })
+  }
+
   public startVM(id): Promise<any> {
     let url: string = environment.http + "://" + environment.APIHostIP + "/api/v1/vm/" + id + "/power"
     const httpOptions = {

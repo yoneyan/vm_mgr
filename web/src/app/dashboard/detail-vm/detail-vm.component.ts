@@ -48,6 +48,11 @@ export class DetailVMComponent implements OnInit {
     this.vm.resetVM(id)
   }
 
+  delete(): void {
+    const id = +this.route.snapshot.paramMap.get('id');
+    this.vm.deleteVM(id)
+  }
+
   goBack(): void {
     this.location.back();
   }
