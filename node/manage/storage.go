@@ -28,10 +28,10 @@ func GetMainStorage(data *pb.VMData) string {
 		return ""
 	}
 	mode, _ := strconv.Atoi(sp[0])
-	if mode/10 == 0 {
+	if mode%10 == 0 {
 		path = sp[1] + "/" + data.GetVmname() + "-" + "0.img"
 	} else {
-		basepath = etc.GetDiskPath(mode / 10)
+		basepath = etc.GetDiskPath(mode % 10)
 		if basepath == "" {
 			fmt.Println("Config DiskPath Error")
 			return ""
@@ -54,11 +54,11 @@ func StorageProcess(data *pb.VMData) string {
 			result = append(result, a)
 			mode, _ = strconv.Atoi(a)
 		} else {
-			if mode/10 == 0 {
+			if mode%10 == 0 {
 				path = a
 				fmt.Println("path: " + path)
 			} else {
-				path = etc.GetDiskPath(mode / 10)
+				path = etc.GetDiskPath(mode % 10)
 				if path == "" {
 					fmt.Println("Config DiskPath Error")
 					return ""
