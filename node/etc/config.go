@@ -2,7 +2,6 @@ package etc
 
 import (
 	"encoding/json"
-	"fmt"
 	"io/ioutil"
 	"log"
 )
@@ -33,8 +32,6 @@ func GetDiskPath(id int) string {
 	}
 	var config Config
 	json.Unmarshal(file, &config)
-	fmt.Println(config)
-	fmt.Println(config.Disk)
 	for _, v := range config.Disk.Path {
 		if v.Type == id && v.Status {
 			return v.Path

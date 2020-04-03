@@ -34,7 +34,6 @@ func GetMainStorage(data *pb.VMData) string {
 	} else {
 		basepath = etc.GetDiskPath(mode % 10)
 		fmt.Println(strconv.Itoa(mode%10) + " Mode")
-		fmt.Println("Basepath: " + basepath)
 		if basepath == "" {
 			fmt.Println("Config DiskPath Error")
 			return ""
