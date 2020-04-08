@@ -55,6 +55,7 @@ func (s *server) CreateVM(ctx context.Context, in *pb.VMData) (*pb.Result, error
 		return &pb.Result{Status: false, Info: "Node is only Admin...."}, nil
 	}
 
+	//Issue #49
 	if isAdmin && in.GetType() == 0 {
 		createtype = 0
 		fmt.Println("Admin Mode(manual)")

@@ -57,18 +57,6 @@ func InputCheck(inputstoragepath, inputstorage string) bool {
 		fmt.Println("StoragePath or Storage InputError!!")
 		return false
 	}
-
-	//var tmp []string
-	//
-	//for _, a := range strings.Split(inputstoragepath, ",") {
-	//	tmp = append(tmp, a)
-	//	for _, b := range tmp {
-	//		if a == b {
-	//			fmt.Println("Error Same Virtual NIC!!")
-	//			return false
-	//		}
-	//	}
-	//}
 	return true
 }
 
