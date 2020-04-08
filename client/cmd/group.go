@@ -179,17 +179,4 @@ func init() {
 	groupCmd.AddCommand(groupjoinCmd)
 	groupjoinCmd.AddCommand(groupjoinAddCmd)
 	groupjoinCmd.AddCommand(groupjoinRemoveCmd)
-
-	//groupCmd.PersistentFlags().StringP("host", "H", "127.0.0.1:50200", "host example: 127.0.0.1:50001")
-	//groupCmd.PersistentFlags().StringP("authuser", "u", "test", "username")
-	//groupCmd.PersistentFlags().StringP("authpass", "p", "test", "password")
-	// Here you will define your flags and configuration settings.
-
-	// Cobra supports Persistent Flags which will work for this command
-	// and all subcommands, e.g.:
-	// groupCmd.PersistentFlags().String("foo", "", "A help for foo")
-
-	// Cobra supports local flags which will only run when this command
-	// is called directly, e.g.:
-	// groupCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
 }
