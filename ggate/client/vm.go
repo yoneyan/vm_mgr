@@ -39,7 +39,7 @@ type CreateVMData struct {
 }
 
 func CreateVM(vm CreateVMData, token string) Result {
-
+	UseChange(true)
 	conn, err := grpc.Dial(GetgRPCServerAddress(), grpc.WithInsecure(), grpc.WithBlock())
 	if err != nil {
 		log.Println("Not connect; %v", err)
@@ -91,6 +91,7 @@ func DeleteVM(id, token string) Result {
 	if err != nil {
 		log.Println("could not greet: %v", err)
 	}
+	UseChange(false)
 	return Result{
 		Result: r.GetStatus(),
 		Info:   r.GetInfo(),

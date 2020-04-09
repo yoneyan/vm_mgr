@@ -14,6 +14,16 @@ type Result struct {
 	Info   string `json:"info"`
 }
 
+var use = false
+
 func GetgRPCServerAddress() string {
 	return etc.GetControllerIP()
+}
+
+func UseChange(u bool) {
+	use = u
+}
+
+func UseStatus() bool {
+	return use
 }

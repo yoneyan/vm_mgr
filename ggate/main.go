@@ -28,7 +28,6 @@ func main() {
 	router.DELETE("/api/v1/vm/:id/pause", data.PauseVM)
 	//image
 	router.GET("/api/v1/image", data.GetAllImage)
-
 	//group
 	router.GET("/api/v1/group", data.GetGroup)
 	//node

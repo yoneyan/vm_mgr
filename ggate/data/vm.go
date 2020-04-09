@@ -14,11 +14,16 @@ func CreateVM(c *gin.Context) {
 	log.Println("------CreateVM------")
 
 	var vmdata client.CreateVMData
+	var data client.Result
+
 	c.BindJSON(&vmdata)
 
 	token := GetToken(c.Request.Header.Get("Authorization"))
-	data := client.CreateVM(vmdata, token)
-
+	if client.UseStatus() {
+		data = client.Result{Result: false, Info: "Another process is running."}
+	} else {
+		data = client.CreateVM(vmdata, token)
+	}
 	c.JSON(200, data)
 }
 
